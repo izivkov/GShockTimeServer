@@ -5,7 +5,7 @@ import time
 
 from connection import Connection
 from data_watcher import dataWatcher
-from utils import to_ascii_string, trimNonAsciiCharacters, to_int_array, to_compact_string, current_milli_time
+from utils import to_ascii_string, trimNonAsciiCharacters, to_int_array, to_compact_string, current_milli_time, clean_str
 from result_queue import result_queue, KeyedResult
 from casio_watch import WATCH_BUTTON, DTS_STATE
 from alarms import alarmsInst
@@ -34,7 +34,7 @@ class GshockAPI:
             resultKey = keyedData["key"]
             
             if (resultKey == _key):
-                resultStr = trimNonAsciiCharacters(toAsciiString(resultValue, 1))
+                resultStr = clean_str(resultValue)
                 res = result_queue.dequeue(_key)
                 res.set_result(resultStr)
 
@@ -103,7 +103,6 @@ class GshockAPI:
         def process_home_time(keyedData):
             value = keyedData["value"]
             key = keyedData["key"]
-            self.logger.info("Got HOME_TIME: {}".format(toAsciiString(value, 1)))
 
         self.subscribe("CASIO_WORLD_CITIES", casio_world_cities_callback)
         # self.subscribe("HOME_TIME", process_home_time)
