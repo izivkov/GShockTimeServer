@@ -27,15 +27,16 @@ async def main(args: argparse.Namespace):
 
     api = GshockAPI(connection)
 
-    await api.get_app_info()
+    # await api.get_app_info()
 
     # pressed_button = await api.getPressedButton()
     # logger.info("pressed button: {}".format(pressed_button))
 
-    # watch_name = await api.getWatchName()
-    # logger.info("got watch name: {}".format(watch_name))
+    watch_name = await api.getWatchName()
+    logger.info("got watch name: {}".format(watch_name))
 
-    # await api.setTime()
+    await api.setTime()
+
     # alarms = await api.getAlarms()
     # logger.info("alarms: {}".format(alarms))
 
@@ -71,11 +72,13 @@ async def main(args: argparse.Namespace):
     # event_json_str = ("""{"time":"10002", "title":"Test Event", "selected":\"""" + str(False) +  """\", "enabled":\"""" + str(True) + """\", "repeatPeriod":\""""+RepeatPeriod.WEEKLY+"""\","daysOfWeek":\"""" + "MONDAY" + """\", "startDate":"""+event_date_str+""", "endDate":"""+event_date_str+"""}""")
     # event = Event(json.loads(event_json_str))
 
-    reminders = await api.get_reminders()
-    for reminder in reminders:
-        logger.info("reminder: {}".format(reminder.__str__()))
+    # reminders = await api.get_reminders()
+    # for reminder in reminders:
+    #     logger.info("reminder: {}".format(reminder.__str__()))
 
     # await api.set_remonders(reminders)
+
+    await connection.disconnect()
 
     logger.info("--- END OF PROGRAM ---")
 
