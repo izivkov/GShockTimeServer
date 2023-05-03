@@ -31,6 +31,7 @@ __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__version__)
 
 
 # ---- Python API ----
