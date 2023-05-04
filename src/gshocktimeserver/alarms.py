@@ -11,7 +11,6 @@ ALARM_CONSTANT_VALUE = 0x40
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
-
 class Alarm:
     def __init__(self, hour, minute, enabled, hasHourlyChime):
         self.hour = hour
