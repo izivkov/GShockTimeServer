@@ -24,9 +24,14 @@ class Connection:
         dataWatcher.emit_event(name, value)
 
     async def connect(self):
-        await self.client.connect()
-        await self.client.start_notify(CasioConstants.CASIO_ALL_FEATURES_CHARACTERISTIC_UUID, self.notification_handler)
-
+        try:
+            await self.client.connect()
+            await self.client.start_notify(CasioConstants.CASIO_ALL_FEATURES_CHARACTERISTIC_UUID, self.notification_handler)
+            return True
+        except Exception as e:
+            self.logger.warning(f"Cannot connect: {e}")
+            return False
+            
     async def disconnect(self):
         await self.client.disconnect()
 

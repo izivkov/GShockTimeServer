@@ -1,4 +1,5 @@
 import logging
+import sys
 
 from bleak import BleakScanner
 from configurator import conf
@@ -10,24 +11,25 @@ class Scanner:
 
     async def scan(self):
         self.logger.info("starting scan...")
+
         scanner = BleakScanner()
 
-        while True:
-            self.logger.info("Scanning for devices...")
-            
-            device_address = conf.get("device.address")
-            if device_address == None:
-                filter = {"name": "CASIO*"}
-                device = await scanner.find_device_by_filter(lambda d, ad: d.name and d.name.lower().startswith("casio"))
-                if (device == None):
-                    continue
+        self.logger.warning("Scanning for devices...")
+        
+        device_address = conf.get("device.address")
+        if device_address == None:
+            filter = {"name": "CASIO*"}
+            device = await scanner.find_device_by_filter(lambda d, ad: d.name and d.name.lower().startswith("casio"))
+            if (device == None):
+                return
 
-                conf.put("device.address", device.address)
-                conf.put("device.name", device.name)
-            else:
-                device = await scanner.find_device_by_address(device_address)
+            conf.put("device.address", device.address)
+            conf.put("device.name", device.name)
+        else:
+            self.logger.warning("Waiting for device by address...")
+            device = await scanner.find_device_by_address(device_address, sys.float_info.max)
 
-            return device
+        return device
 
 
 
