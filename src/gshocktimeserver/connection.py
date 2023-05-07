@@ -7,6 +7,7 @@ from utils import to_casio_cmd
 from data_watcher import dataWatcher
 from casio_watch import to_json, callWriter
 
+
 class Connection:
 
     logger = logging.getLogger("connection")
@@ -16,7 +17,10 @@ class Connection:
         self.device = device
         self.client = BleakClient(device)
 
-    def notification_handler(self, characteristic: BleakGATTCharacteristic, data: bytearray):
+    def notification_handler(
+            self,
+            characteristic: BleakGATTCharacteristic,
+            data: bytearray):
         """Simple notification handler which prints the data received."""
         json = to_json(data)
         name = list(dict(json).keys())[0]
@@ -31,7 +35,7 @@ class Connection:
         except Exception as e:
             self.logger.warning(f"Cannot connect: {e}")
             return False
-            
+
     async def disconnect(self):
         await self.client.disconnect()
 
@@ -61,4 +65,3 @@ class Connection:
 
     async def sendMessage(self, message):
         await callWriter(self, message)
-    

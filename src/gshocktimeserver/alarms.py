@@ -1,4 +1,5 @@
-import json, logging
+import json
+import logging
 import numpy as np
 from casio_constants import CasioConstants
 from utils import to_int_array, to_compact_string, to_hex_string
@@ -10,6 +11,7 @@ ENABLED_MASK = 0b01000000
 ALARM_CONSTANT_VALUE = 0x40
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
+
 
 class Alarm:
     def __init__(self, hour, minute, enabled, hasHourlyChime):

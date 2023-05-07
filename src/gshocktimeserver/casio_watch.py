@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
+
 class WATCH_BUTTON(IntEnum):
     UPPER_LEFT = 1
     LOWER_LEFT = 2
@@ -18,10 +19,12 @@ class WATCH_BUTTON(IntEnum):
     NO_BUTTON = 5
     INVALID = 6
 
+
 class DTS_STATE(IntEnum):
     ZERO = 0
     TWO = 2
     FOUR = 4
+
 
 class Settings:
     time_format = ""
@@ -33,7 +36,9 @@ class Settings:
     button_tone = True
     time_adjustment = True
 
+
 settings = Settings()
+
 
 class ReminderMasks:
     YEARLY_MASK = 0b00001000
@@ -55,6 +60,7 @@ class SettingsDecoder:
     def to_json_time_adjustment(settings):
         return {'timeAdjustment': settings.time_adjustment}
 
+
 class ReminderDecoder:
     def reminder_title_to_json(titleByte: str) -> dict:
         intArr = to_int_array(titleByte)
@@ -66,6 +72,7 @@ class ReminderDecoder:
         reminderJson['title'] = clean_str(to_ascii_string(titleByte, 2))
         return reminderJson
 
+
 def create_key(data):
     shortStr = to_compact_string(data)
     keyLength = 2
@@ -75,6 +82,7 @@ def create_key(data):
         keyLength = 4
     key = shortStr[0:keyLength].upper()
     return key
+
 
 def to_json(_data):
     data = to_hex_string(_data)
@@ -86,7 +94,7 @@ def to_json(_data):
 
     if int_array[0] == CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]:
         return {"ALARMS2": {"value": alarmDecoder.toJson(data)["ALARMS"],
-                           "key": "GET_ALARMS2"}}
+                            "key": "GET_ALARMS2"}}
 
     # Add topics so the right component will receive data
     elif int_array[0] == CHARACTERISTICS["CASIO_DST_SETTING"]:
@@ -141,25 +149,24 @@ def to_json(_data):
         data_json = {"key": create_key(data), "value": create_json_settings(data)}
         settings_json = {"SETTINGS": data_json}
         return settings_json
-    
+
     elif int_array[0] == CHARACTERISTICS["CASIO_SETTING_FOR_BLE"]:
         settings.CasioIsAutoTimeOriginalValue = data
         value_json = SettingsDecoder.to_json_time_adjustment(settings)
         data_json = {"key": create_key(data), "value": value_json}
         return {"TIME_ADJUSTMENT": data_json}
-    
+
     elif int_array[0] == CHARACTERISTICS["CASIO_REMINDER_TIME"]:
         reminder_json = {}
 
         def reminder_time_to_json(reminder_str):
 
-            def convert_array_list_to_json_array(arrayList): 
+            def convert_array_list_to_json_array(arrayList):
                 jsonArray = []
-                for item in arrayList: 
+                for item in arrayList:
                     jsonArray.append(item)
-            
-                return jsonArray
 
+                return jsonArray
 
             def decode_time_period(timePeriod: int) -> tuple:
 
@@ -177,39 +184,39 @@ def to_json(_data):
                     repeatPeriod = "YEARLY"
                 else:
                     repeatPeriod = "NEVER"
-                
+
                 return (enabled, repeatPeriod)
 
             def decode_time_detail(timeDetail):
 
                 def decodeDate(timeDetail):
 
-                    def intToMonthStr(monthInt): 
-                        if monthInt == 1: 
+                    def intToMonthStr(monthInt):
+                        if monthInt == 1:
                             return "JANUARY"
-                        elif monthInt == 2: 
+                        elif monthInt == 2:
                             return "FEBRUARY"
-                        elif monthInt == 3: 
+                        elif monthInt == 3:
                             return "MARCH"
-                        elif monthInt == 4: 
+                        elif monthInt == 4:
                             return "APRIL"
-                        elif monthInt == 5: 
+                        elif monthInt == 5:
                             return "MAY"
-                        elif monthInt == 6: 
+                        elif monthInt == 6:
                             return "JUNE"
-                        elif monthInt == 7: 
+                        elif monthInt == 7:
                             return "JULY"
-                        elif monthInt == 8: 
+                        elif monthInt == 8:
                             return "AUGUST"
-                        elif monthInt == 9: 
+                        elif monthInt == 9:
                             return "SEPTEMBER"
-                        elif monthInt == 10: 
+                        elif monthInt == 10:
                             return "OCTOBER"
-                        elif monthInt == 11: 
+                        elif monthInt == 11:
                             return "NOVEMBER"
-                        elif monthInt == 12: 
+                        elif monthInt == 12:
                             return "DECEMBER"
-                        else: 
+                        else:
                             return ""
 
                     date = json.loads("{}")
@@ -219,7 +226,7 @@ def to_json(_data):
                     date["day"] = dec_to_hex(timeDetail[2])
 
                     return date
-                
+
                 result = {}
 
                 #                  00 23 02 21 23 02 21 00 00
@@ -244,7 +251,8 @@ def to_json(_data):
                     daysOfWeek.append("MONDAY")
                 if (dayOfWeek & ReminderMasks.TUESDAY_MASK == ReminderMasks.TUESDAY_MASK):
                     daysOfWeek.append("TUESDAY")
-                if (dayOfWeek & ReminderMasks.WEDNESDAY_MASK == ReminderMasks.WEDNESDAY_MASK):
+                if (dayOfWeek & ReminderMasks.WEDNESDAY_MASK ==
+                        ReminderMasks.WEDNESDAY_MASK):
                     daysOfWeek.append("WEDNESDAY")
                 if (dayOfWeek & ReminderMasks.THURSDAY_MASK == ReminderMasks.THURSDAY_MASK):
                     daysOfWeek.append("THURSDAY")
@@ -259,7 +267,7 @@ def to_json(_data):
             if int_arr[3] == 0xFF:
                 # 0XFF indicates end of reminders
                 return json.dumps({"end": ""})
-            
+
             short_str = to_compact_string(reminder_str)
             # get the first byte of the returned data, which indicates the data content.
             key = short_str[:4].upper()
@@ -279,14 +287,17 @@ def to_json(_data):
 
             reminder_json["startDate"] = time_detail_map["startDate"]
             reminder_json["endDate"] = time_detail_map["endDate"]
-            reminder_json["daysOfWeek"] = convert_array_list_to_json_array(time_detail_map["daysOfWeek"])
+            reminder_json["daysOfWeek"] = convert_array_list_to_json_array(
+                time_detail_map["daysOfWeek"])
 
             return json.dumps({"time": reminder_json})
 
         value = reminder_time_to_json(data[2:])
-        reminder_json["REMINDERS"] = {"key": create_key(data), "value": json.loads(value)}
+        reminder_json["REMINDERS"] = {
+            "key": create_key(data),
+            "value": json.loads(value)}
         return reminder_json
-    
+
     elif int_array[0] == CHARACTERISTICS["CASIO_REMINDER_TITLE"]:
         return {"REMINDERS": {"key": create_key(data),
                               "value": ReminderDecoder.reminder_title_to_json(data)}}
@@ -319,13 +330,15 @@ def to_json(_data):
         json_obj["BUTTON_PRESSED"] = dataJson
     return json_obj
 
+
 async def callWriter(connection, message: str):
     print(message)
     actionJson = json.loads(message)
     action = actionJson.get("action")
     match action:
         case "GET_ALARMS":
-            alarm_command = to_compact_string(to_hex_string(bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_ALM"]])))
+            alarm_command = to_compact_string(to_hex_string(
+                bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_ALM"]])))
 
             await connection.write(
                 0x000c,
@@ -333,24 +346,29 @@ async def callWriter(connection, message: str):
 
         case "GET_ALARMS2":
             # get the rest of the alarms
-            alarm_command2 = to_compact_string(to_hex_string(bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]])))
+            alarm_command2 = to_compact_string(to_hex_string(
+                bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]])))
             await connection.write(
                 0x000c,
                 alarm_command2)
 
         case "SET_ALARMS":
             alarmsJsonArr = json.loads(message).get("value")
-            alarmCasio0 = to_compact_string(to_hex_string(alarmsInst.fromJsonAlarmFirstAlarm(alarmsJsonArr[0])))
+            alarmCasio0 = to_compact_string(
+                to_hex_string(
+                    alarmsInst.fromJsonAlarmFirstAlarm(
+                        alarmsJsonArr[0])))
             await connection.write(0x000e, alarmCasio0)
-            alarmCasio = to_compact_string(to_hex_string(alarmsInst.fromJsonAlarmSecondaryAlarms(alarmsJsonArr)))
+            alarmCasio = to_compact_string(to_hex_string(
+                alarmsInst.fromJsonAlarmSecondaryAlarms(alarmsJsonArr)))
             await connection.write(0x000e, alarmCasio)
 
         case "SET_REMINDERS":
 
             def reminderTitleFromJson(reminderJson):
                 titleStr = reminderJson.get("title")
-                return to_byte_array (titleStr, 18)
-            
+                return to_byte_array(titleStr, 18)
+
             def reminderTimeFromJson(reminderJson):
 
                 def createTimeDetail(repeatPeriod, startDate, endDate, daysOfWeek):
@@ -404,20 +422,20 @@ async def callWriter(connection, message: str):
                                 return Month.JANUARY
 
                         def hex_to_dec(hex):
-                            return int (str(hex), 16)
-                        
+                            return int(str(hex), 16)
+
                         # take the last 2 digits only
                         timeDetail[0] = hex_to_dec(startDate['year'] % 2000)
                         timeDetail[1] = hex_to_dec(stringToMonth(startDate['month']))
                         timeDetail[2] = hex_to_dec(startDate['day'])
 
-                        timeDetail[3] = hex_to_dec(endDate['year'] % 2000) # get the last 2 gits only
+                        timeDetail[3] = hex_to_dec(
+                            endDate['year'] % 2000)  # get the last 2 gits only
                         timeDetail[4] = hex_to_dec(stringToMonth(endDate['month']))
                         timeDetail[5] = hex_to_dec(endDate['day'])
 
                         timeDetail[6] = 0
                         timeDetail[7] = 0
-
 
                     timeDetail = [0] * 8
 
@@ -428,7 +446,7 @@ async def callWriter(connection, message: str):
                         encodeDate(timeDetail, startDate, endDate)
 
                         dayOfWeek = 0
-                        if daysOfWeek != None:
+                        if daysOfWeek is not None:
                             for i in range(len(daysOfWeek)):
                                 if daysOfWeek[i] == "SUNDAY":
                                     dayOfWeek = dayOfWeek | ReminderMasks.SUNDAY_MASK
@@ -444,7 +462,7 @@ async def callWriter(connection, message: str):
                                     dayOfWeek = dayOfWeek | ReminderMasks.FRIDAY_MASK
                                 elif daysOfWeek[i] == "SATURDAY":
                                     dayOfWeek = dayOfWeek | ReminderMasks.SATURDAY_MASK
-                        
+
                         timeDetail[6] = dayOfWeek
                         timeDetail[7] = 0
 
@@ -454,10 +472,11 @@ async def callWriter(connection, message: str):
                     elif repeatPeriod == "YEARLY":
                         encodeDate(timeDetail, startDate, endDate)
                     else:
-                        logger.info("Cannot handle Repeat Period: {}".format(repeatPeriod))
-                    
+                        logger.info(
+                            "Cannot handle Repeat Period: {}".format(repeatPeriod))
+
                     return timeDetail
-                
+
                 def createTimePeriod(enabled: bool, repeatPeriod: str) -> int:
                     timePeriod = 0
 
@@ -471,7 +490,6 @@ async def callWriter(connection, message: str):
                         timePeriod = timePeriod | ReminderMasks.YEARLY_MASK
                     return timePeriod
 
-                
                 enabled = reminderJson.get("enabled")
                 repeatPeriod = reminderJson.get("repeatPeriod")
                 startDate = reminderJson.get("startDate")
@@ -481,10 +499,11 @@ async def callWriter(connection, message: str):
                 reminderCmd = bytearray()
 
                 reminderCmd += bytearray([createTimePeriod(enabled, repeatPeriod)])
-                reminderCmd += bytearray(createTimeDetail(repeatPeriod, startDate, endDate, daysOfWeek))
+                reminderCmd += bytearray(createTimeDetail(repeatPeriod,
+                                         startDate, endDate, daysOfWeek))
 
                 return reminderCmd
-            
+
             remindersJsonArr = json.loads(message).get("value")
             for index, element in enumerate(remindersJsonArr):
                 reminderJson = element
@@ -493,24 +512,27 @@ async def callWriter(connection, message: str):
                 title_byte_arr = bytearray([CHARACTERISTICS["CASIO_REMINDER_TITLE"]])
                 title_byte_arr += bytearray([index + 1])
                 title_byte_arr += title
-                title_byte_arr_to_send = to_compact_string(to_hex_string(title_byte_arr))
+                title_byte_arr_to_send = to_compact_string(
+                    to_hex_string(title_byte_arr))
                 await connection.write(0x000e, title_byte_arr_to_send)
 
                 reminder_time_byte_arr = bytearray([])
-                reminder_time_byte_arr += bytearray([CHARACTERISTICS["CASIO_REMINDER_TIME"]])
+                reminder_time_byte_arr += bytearray(
+                    [CHARACTERISTICS["CASIO_REMINDER_TIME"]])
                 reminder_time_byte_arr += bytearray([index + 1])
                 reminder_time_byte_arr += reminderTimeFromJson(reminderJson)
-                reminder_time_byte_arr_to_send = to_compact_string(to_hex_string(bytearray(reminder_time_byte_arr)))
-                logger.error (reminder_time_byte_arr_to_send)
+                reminder_time_byte_arr_to_send = to_compact_string(
+                    to_hex_string(bytearray(reminder_time_byte_arr)))
+                logger.error(reminder_time_byte_arr_to_send)
                 await connection.write(0x000e, reminder_time_byte_arr_to_send)
-                 
+
         case "GET_SETTINGS":
             await connection.write(0x000c, bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_BASIC"]]))
 
         case "SET_SETTINGS":
             # settings = json.loads(message).get("value")
 
-            def encode(settings: dict): 
+            def encode(settings: dict):
                 MASK_24_HOURS = 0b00000001
                 MASK_BUTTON_TONE_OFF = 0b00000010
                 MASK_LIGHT_OFF = 0b00000100
@@ -520,16 +542,16 @@ async def callWriter(connection, message: str):
                 arr[0] = CHARACTERISTICS["CASIO_SETTING_FOR_BASIC"]
                 if settings.time_format == "24h":
                     arr[1] = (arr[1] | MASK_24_HOURS)
-                if settings.button_tone == False:
+                if not settings.button_tone:
                     arr[1] = (arr[1] | MASK_BUTTON_TONE_OFF)
-                if settings.auto_light == False:
+                if not settings.auto_light:
                     arr[1] = (arr[1] | MASK_LIGHT_OFF)
-                if settings.power_saving_mode == False:
+                if not settings.power_saving_mode:
                     arr[1] = (arr[1] | POWER_SAVING_MODE)
 
                 if settings.light_duration == "4s":
                     arr[2] = 1
-                if settings.date_format == "DD:MM": 
+                if settings.date_format == "DD:MM":
                     arr[4] = 1
 
                 language = settings.language
@@ -547,7 +569,7 @@ async def callWriter(connection, message: str):
                     arr[5] = 5
 
                 return arr
-            
+
             encoded_settings = encode(settings)
             await connection.write(0x000e, to_compact_string(to_hex_string(encoded_settings)))
 
@@ -563,7 +585,7 @@ async def callWriter(connection, message: str):
 
                 intArray[12] = 0x80 if timeAdjustment == 'True' else 0x00
                 return bytes(intArray)
-        
+
             encodedTimeAdj = encodeTimeAdjustment(value)
             write_cmd = to_compact_string(to_hex_string(encodedTimeAdj))
             await connection.write(0x000e, write_cmd)
@@ -587,18 +609,20 @@ async def callWriter(connection, message: str):
                 arr[2] = minutes
                 arr[3] = seconds
                 return arr
-            
+
             seconds_as_byte_arr = encode(seconds)
-            seconds_as_compact_str = to_compact_string(to_hex_string(seconds_as_byte_arr))
+            seconds_as_compact_str = to_compact_string(
+                to_hex_string(seconds_as_byte_arr))
             await connection.write(0x000e, seconds_as_compact_str)
 
         case "SET_TIME":
             dateTimeMs = int(json.loads(message).get("value"))
             print("dateTimeMs: {}".format(dateTimeMs))
-            dateTime = datetime.datetime.fromtimestamp(dateTimeMs/1000.0)
+            dateTime = datetime.datetime.fromtimestamp(dateTimeMs / 1000.0)
             timeData = TimeEncoder.prepare_current_time(dateTime)
-            timeCommand = to_hex_string(bytearray([CHARACTERISTICS["CASIO_CURRENT_TIME"]])+timeData)
-            await connection.write(0xe, to_compact_string (timeCommand))
+            timeCommand = to_hex_string(
+                bytearray([CHARACTERISTICS["CASIO_CURRENT_TIME"]]) + timeData)
+            await connection.write(0xe, to_compact_string(timeCommand))
 
         case _:
             print("callWriter: Unhandled command", action)

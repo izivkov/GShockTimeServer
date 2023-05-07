@@ -3,7 +3,7 @@ import asyncio
 import logging
 import json
 import pytz
-from datetime import datetime,timezone
+from datetime import datetime, timezone
 
 from bleak import BleakClient, BleakScanner
 from bleak.backends.characteristic import BleakGATTCharacteristic
@@ -19,9 +19,11 @@ from casio_watch import WATCH_BUTTON
 logger = logging.getLogger(__name__)
 scanner = Scanner()
 
+
 async def main():
     # await run_time_server()
     await run_api_tests()
+
 
 async def run_time_server():
     while True:
@@ -45,6 +47,7 @@ async def run_time_server():
 
         except Exception as e:
             continue
+
 
 async def run_api_tests():
     device = await scanner.scan()
@@ -76,7 +79,7 @@ async def run_api_tests():
     seconds = await api.getTimer()
     logger.info("timer: {} seconds".format(seconds))
 
-    await api.setTimer(seconds+10)
+    await api.setTimer(seconds + 10)
     time_adjstment = await api.get_time_adjustment()
     logger.info("time_adjstment: {}".format(time_adjstment))
 
@@ -93,12 +96,25 @@ async def run_api_tests():
     await api.set_settings(settings_local)
 
     # Create a single event
-    tz = pytz.timezone('America/Toronto') 
+    tz = pytz.timezone('America/Toronto')
     dt = datetime.now(timezone.utc)
     utc_timestamp = dt.timestamp()
-    event_date = createEventDate(utc_timestamp, tz) 
+    event_date = createEventDate(utc_timestamp, tz)
     event_date_str = json.dumps(event_date.__dict__)
-    event_json_str = ("""{"title":"Test Event", "time":{"selected":\"""" + str(False) +  """\", "enabled":\"""" + str(True) + """\", "repeatPeriod":\""""+RepeatPeriod.WEEKLY+"""\","daysOfWeek":\"""" + "MONDAY" + """\", "startDate":"""+event_date_str+""", "endDate":"""+event_date_str+"""}}""")
+    event_json_str = (
+        """{"title":"Test Event", "time":{"selected":\"""" +
+        str(False) +
+        """\", "enabled":\"""" +
+        str(True) +
+        """\", "repeatPeriod":\"""" +
+        RepeatPeriod.WEEKLY +
+        """\","daysOfWeek":\"""" +
+        "MONDAY" +
+        """\", "startDate":""" +
+        event_date_str +
+        """, "endDate":""" +
+        event_date_str +
+        """}}""")
     event = Event().createEvent(json.loads(event_json_str))
 
     reminders = await api.get_reminders()
