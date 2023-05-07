@@ -4,10 +4,10 @@ import json
 import time
 
 from connection import Connection
-from data_watcher import dataWatcher
+from data_watcher import data_watcher
 from utils import to_ascii_string, trimNonAsciiCharacters, to_int_array, to_compact_string, current_milli_time, clean_str
 from result_queue import result_queue, KeyedResult
-from casio_watch import WATCH_BUTTON, DTS_STATE
+from casio_watch import WatchButton, DtsState
 from alarms import alarmsInst
 from event import Event
 
@@ -28,32 +28,32 @@ class GshockAPI:
         result = loop.create_future()
         result_queue.enqueue(KeyedResult(key, result))
 
-        def onDataReceived(keyedData):
+        def on_data_received(keyed_data):
             _key = "23"
 
-            resultValue = keyedData["value"]
-            resultKey = keyedData["key"]
+            result_value = keyed_data["value"]
+            result_key = keyed_data["key"]
 
-            if (resultKey == _key):
-                resultStr = clean_str(resultValue)
+            if (result_key == _key):
+                result_str = clean_str(result_value)
                 res = result_queue.dequeue(_key)
-                res.set_result(resultStr)
+                res.set_result(result_str)
 
-        self.subscribe("CASIO_WATCH_NAME", lambda data: onDataReceived(data))
+        self.subscribe("CASIO_WATCH_NAME", lambda data: on_data_received(data))
         return await result
 
     ######################
-    async def getPressedButton(self) -> WATCH_BUTTON:
+    async def getPressedButton(self) -> WatchButton:
         return await self._getPressedButton("10")
 
-    async def _getPressedButton(self, key: str) -> WATCH_BUTTON:
+    async def _getPressedButton(self, key: str) -> WatchButton:
         await self.connection.request(key)
 
         loop = asyncio.get_running_loop()
         result = loop.create_future()
         result_queue.enqueue(KeyedResult(key, result))
 
-        def button_pressed_callback(keyedData):
+        def button_pressed_callback(keyed_data):
             """
             RIGHT BUTTON: 0x10 17 62 07 38 85 CD 7F ->04<- 03 0F FF FF FF FF 24 00 00 00
             LEFT BUTTON:  0x10 17 62 07 38 85 CD 7F ->01<- 03 0F FF FF FF FF 24 00 00 00
@@ -61,19 +61,19 @@ class GshockAPI:
             AUTO-TIME:    0x10 17 62 16 05 85 dd 7f ->03<- 03 0f ff ff ff ff 24 00 00 00 // no button pressed
             """
 
-            resultValue = keyedData["value"]
-            resultKey = keyedData["key"]
+            result_value = keyed_data["value"]
+            result_key = keyed_data["key"]
 
-            ret = WATCH_BUTTON.INVALID
+            ret = WatchButton.INVALID
 
-            if resultKey == "10" and resultValue != "" and len(
-                    to_int_array(resultValue)) >= 19:
-                bleIntArr = to_int_array(resultValue)
-                button_indicator = bleIntArr[8]
-                ret = WATCH_BUTTON.LOWER_LEFT if (button_indicator == 0 or button_indicator == 1) else \
-                    WATCH_BUTTON.LOWER_RIGHT if button_indicator == 4 else \
-                    WATCH_BUTTON.NO_BUTTON if button_indicator == 3 else \
-                    WATCH_BUTTON.INVALID
+            if result_key == "10" and result_value != "" and len(
+                    to_int_array(result_value)) >= 19:
+                ble_int_arr = to_int_array(result_value)
+                button_indicator = ble_int_arr[8]
+                ret = WatchButton.LOWER_LEFT if (button_indicator == 0 or button_indicator == 1) else \
+                    WatchButton.LOWER_RIGHT if button_indicator == 4 else \
+                    WatchButton.NO_BUTTON if button_indicator == 3 else \
+                    WatchButton.INVALID
 
                 res = result_queue.dequeue("10")
                 res.set_result(ret)
@@ -95,16 +95,16 @@ class GshockAPI:
         result = loop.create_future()
         result_queue.enqueue(KeyedResult(key, result))
 
-        def casio_world_cities_callback(keyedData):
-            value = keyedData["value"]
-            key = keyedData["key"]
+        def casio_world_cities_callback(keyed_data):
+            value = keyed_data["value"]
+            key = keyed_data["key"]
 
             res = result_queue.dequeue(key)
             res.set_result(value)
 
-        def process_home_time(keyedData):
-            value = keyedData["value"]
-            key = keyedData["key"]
+        def process_home_time(keyed_data):
+            value = keyed_data["value"]
+            key = keyed_data["key"]
 
         self.subscribe("CASIO_WORLD_CITIES", casio_world_cities_callback)
         # self.subscribe("HOME_TIME", process_home_time)
@@ -121,9 +121,9 @@ class GshockAPI:
         result = loop.create_future()
         result_queue.enqueue(KeyedResult(key, result))
 
-        def casio_dts_world_cities_callback(keyedData):
-            value = keyedData["value"]
-            key = keyedData["key"]
+        def casio_dts_world_cities_callback(keyed_data):
+            value = keyed_data["value"]
+            key = keyed_data["key"]
 
             res = result_queue.dequeue(key)
             res.set_result(value)
@@ -132,7 +132,7 @@ class GshockAPI:
 
         return await result
 
-    async def getDSTWatchState(self, state: DTS_STATE) -> str:
+    async def getDSTWatchState(self, state: DtsState) -> str:
         key = f"1d0{state.value}"
         return await self._getDSTWatchState(key)
 
@@ -143,14 +143,14 @@ class GshockAPI:
         result = loop.create_future()
         result_queue.enqueue(KeyedResult(key, result))
 
-        def handleMessage(keyedData):
-            value = keyedData["value"]
-            key = keyedData["key"]
+        def handle_message(keyed_data):
+            value = keyed_data["value"]
+            key = keyed_data["key"]
 
             res = result_queue.dequeue(key)
             res.set_result(value)
 
-        self.subscribe("CASIO_DST_WATCH_STATE", handleMessage)
+        self.subscribe("CASIO_DST_WATCH_STATE", handle_message)
 
         return await result
 
@@ -160,12 +160,12 @@ class GshockAPI:
 
         async def readAndWrite(function, param):
             ret = await function(param)
-            shortStr = to_compact_string(ret)
-            await self.connection.write(0xE, shortStr)
+            short_str = to_compact_string(ret)
+            await self.connection.write(0xE, short_str)
 
-        await readAndWrite(self.getDSTWatchState, DTS_STATE.ZERO)
-        await readAndWrite(self.getDSTWatchState, DTS_STATE.TWO)
-        await readAndWrite(self.getDSTWatchState, DTS_STATE.FOUR)
+        await readAndWrite(self.getDSTWatchState, DtsState.ZERO)
+        await readAndWrite(self.getDSTWatchState, DtsState.TWO)
+        await readAndWrite(self.getDSTWatchState, DtsState.FOUR)
 
         await readAndWrite(self.getDSTForWorldCities, 0)
         await readAndWrite(self.getDSTForWorldCities, 1)
@@ -181,7 +181,7 @@ class GshockAPI:
         await readAndWrite(self.getWorldCities, 4)
         await readAndWrite(self.getWorldCities, 5)
 
-    async def setTime(self, changeHomeTime=True):
+    async def setTime(self, change_home_time=True):
         await self.initializeForSettingTime()
 
         message = {
@@ -206,8 +206,8 @@ class GshockAPI:
         result = loop.create_future()
         result_queue.enqueue(KeyedResult(key, result))
 
-        def alarms_received(keyedData):
-            data = keyedData["value"]
+        def alarms_received(keyed_data):
+            data = keyed_data["value"]
             key = "GET_ALARMS"
 
             alarmsInst.addAlarms(data)
@@ -228,8 +228,8 @@ class GshockAPI:
         result = loop.create_future()
         result_queue.enqueue(KeyedResult(key, result))
 
-        def alarms_received2(keyedData):
-            data = keyedData["value"]
+        def alarms_received2(keyed_data):
+            data = keyed_data["value"]
             key = "GET_ALARMS2"
 
             alarmsInst.addAlarms(data)
@@ -245,9 +245,9 @@ class GshockAPI:
             self.logger.info("Alarm model not initialised! Cannot set alarm")
             return
 
-        alarmsStr = json.dumps(alarms)
-        setActionCmd = '{{"action":"SET_ALARMS", "value":{} }}'.format(alarmsStr)
-        await self.connection.sendMessage(setActionCmd)
+        alarms_str = json.dumps(alarms)
+        set_action_cmd = '{{"action":"SET_ALARMS", "value":{} }}'.format(alarms_str)
+        await self.connection.sendMessage(set_action_cmd)
         self.logger.info("Returning from setAlarms")
 
     ############################
@@ -261,25 +261,25 @@ class GshockAPI:
         result = loop.create_future()
         result_queue.enqueue(KeyedResult(key, result))
 
-        def decodeValue(data: str) -> str:
-            timerIntArray = to_int_array(data)
+        def decode_value(data: str) -> str:
+            timer_int_array = to_int_array(data)
 
-            hours = timerIntArray[1]
-            minutes = timerIntArray[2]
-            seconds = timerIntArray[3]
+            hours = timer_int_array[1]
+            minutes = timer_int_array[2]
+            seconds = timer_int_array[3]
 
-            inSeconds = hours * 3600 + minutes * 60 + seconds
-            return inSeconds
+            in_seconds = hours * 3600 + minutes * 60 + seconds
+            return in_seconds
 
-        def getTimer(keyedData):
-            value = keyedData["value"]
-            key = keyedData["key"]
+        def get_timer(keyed_data):
+            value = keyed_data["value"]
+            key = keyed_data["key"]
 
-            seconds = decodeValue(value)
+            seconds = decode_value(value)
             res = result_queue.dequeue(key)
             res.set_result(seconds)
 
-        self.subscribe("CASIO_TIMER", getTimer)
+        self.subscribe("CASIO_TIMER", get_timer)
         return await result
 
     async def setTimer(self, timerValue):
@@ -387,11 +387,11 @@ class GshockAPI:
 
             return events_json
 
-        def getSelectedEvents(events: list):
-            selectedEvents = [event for event in events if event.selected]
-            return to_json(selectedEvents)
+        def get_selected_events(events: list):
+            selected_events = [event for event in events if event.selected]
+            return to_json(selected_events)
 
-        selected = getSelectedEvents(events)
+        selected = get_selected_events(events)
 
         await self.connection.sendMessage("""{{\"action\": \"SET_REMINDERS\", \"value\": {}}}""".format(json.dumps(selected)))
 
@@ -430,6 +430,6 @@ class GshockAPI:
         return await result
 
     ############################
-    def subscribe(self, subjectName, on_next) -> None:
-        dataWatcher.add_subject(subjectName)
-        dataWatcher.subscribe("GshockAPI", subjectName, on_next)
+    def subscribe(self, subject_name, on_next) -> None:
+        data_watcher.add_subject(subject_name)
+        data_watcher.subscribe("GshockAPI", subject_name, on_next)

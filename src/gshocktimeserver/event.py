@@ -119,13 +119,13 @@ class Event:
         timeObj = eventJsn.get("time")
         self.title = eventJsn.get("title")
 
-        self.startDate = timeObj.get("startDate")
-        self.endDate = timeObj.get("endDate")
-        self.weekDays = timeObj.get("daysOfWeek")
+        self.startDate = timeObj.get("start_date")
+        self.endDate = timeObj.get("end_date")
+        self.weekDays = timeObj.get("days_of_week")
         self.enabled = timeObj.get("enabled") or False
         self.incompatible = timeObj.get("incompatible") or False
         self.selected = timeObj.get("selected") or True
-        self.repeatPeriod = stringToRepeatPeriod(timeObj["repeatPeriod"])
+        self.repeatPeriod = stringToRepeatPeriod(timeObj["repeat_period"])
         return self
 
     def to_json(

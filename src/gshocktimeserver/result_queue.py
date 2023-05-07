@@ -9,28 +9,28 @@ class KeyedResult:
 
 class ResultQueue:
     def __init__(self):
-        self.keyedResultMap = {}
+        self.keyed_result_map = {}
 
     def enqueue(self, element):
-        self.keyedResultMap[element.key.upper()] = element.result
+        self.keyed_result_map[element.key.upper()] = element.result
 
     def dequeue(self, _key):
-        if not self.keyedResultMap:
+        if not self.keyed_result_map:
             return None
         else:
             key = _key.upper()
-            value = self.keyedResultMap[key]
-            del self.keyedResultMap[key]
+            value = self.keyed_result_map[key]
+            del self.keyed_result_map[key]
             return value
 
-    def isEmpty(self):
-        return not bool(self.keyedResultMap)
+    def is_empty(self):
+        return not bool(self.keyed_result_map)
 
     def size(self):
-        return len(self.keyedResultMap)
+        return len(self.keyed_result_map)
 
     def clear(self):
-        self.keyedResultMap.clear()
+        self.keyed_result_map.clear()
 
 
 result_queue = ResultQueue()

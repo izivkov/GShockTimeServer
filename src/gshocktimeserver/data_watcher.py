@@ -53,4 +53,4 @@ class DataWatcher:
             subject.on_next(event)
 
 
-dataWatcher = DataWatcher()
+data_watcher = DataWatcher()

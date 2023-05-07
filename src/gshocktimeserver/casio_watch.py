@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
 
-class WATCH_BUTTON(IntEnum):
+class WatchButton(IntEnum):
     UPPER_LEFT = 1
     LOWER_LEFT = 2
     UPPER_RIGHT = 3
@@ -20,7 +20,7 @@ class WATCH_BUTTON(IntEnum):
     INVALID = 6
 
 
-class DTS_STATE(IntEnum):
+class DtsState(IntEnum):
     ZERO = 0
     TWO = 2
     FOUR = 4
@@ -62,25 +62,25 @@ class SettingsDecoder:
 
 
 class ReminderDecoder:
-    def reminder_title_to_json(titleByte: str) -> dict:
-        intArr = to_int_array(titleByte)
-        if intArr[2] == 0xFF:
+    def reminder_title_to_json(title_byte: str) -> dict:
+        int_arr = to_int_array(title_byte)
+        if int_arr[2] == 0xFF:
             # 0XFF indicates end of reminders
             return {'end': ''}
-        reminderJson = {}
+        reminder_json = {}
 
-        reminderJson['title'] = clean_str(to_ascii_string(titleByte, 2))
-        return reminderJson
+        reminder_json['title'] = clean_str(to_ascii_string(title_byte, 2))
+        return reminder_json
 
 
 def create_key(data):
-    shortStr = to_compact_string(data)
-    keyLength = 2
+    short_str = to_compact_string(data)
+    key_length = 2
     # get the first byte of the returned data, which indicates the data content.
-    startOfData = shortStr[0:2].upper()
-    if startOfData in ["1D", "1E", "1F", "30", "31"]:
-        keyLength = 4
-    key = shortStr[0:keyLength].upper()
+    start_of_data = short_str[0:2].upper()
+    if start_of_data in ["1D", "1E", "1F", "30", "31"]:
+        key_length = 4
+    key = short_str[0:key_length].upper()
     return key
 
 
@@ -104,7 +104,7 @@ def to_json(_data):
     elif int_array[0] == CHARACTERISTICS["CASIO_SETTING_FOR_BASIC"]:
 
         def create_json_settings(setting_string):
-            MASK_24_HOURS = 0b00000001
+            mask_24_hours = 0b00000001
             MASK_BUTTON_TONE_OFF = 0b00000010
             MASK_LIGHT_OFF = 0b00000100
             POWER_SAVING_MODE = 0b00010000
@@ -113,7 +113,7 @@ def to_json(_data):
 
             setting_array = to_int_array(setting_string)
 
-            if setting_array[1] & MASK_24_HOURS != 0:
+            if setting_array[1] & mask_24_hours != 0:
                 settings.time_format = "24h"
             else:
                 settings.time_format = "12h"
@@ -161,69 +161,69 @@ def to_json(_data):
 
         def reminder_time_to_json(reminder_str):
 
-            def convert_array_list_to_json_array(arrayList):
-                jsonArray = []
-                for item in arrayList:
-                    jsonArray.append(item)
+            def convert_array_list_to_json_array(array_list):
+                json_array = []
+                for item in array_list:
+                    json_array.append(item)
 
-                return jsonArray
+                return json_array
 
-            def decode_time_period(timePeriod: int) -> tuple:
+            def decode_time_period(time_period: int) -> tuple:
 
                 enabled = False
-                repeatPeriod = ""
+                repeat_period = ""
 
-                if timePeriod & ReminderMasks.ENABLED_MASK == ReminderMasks.ENABLED_MASK:
+                if time_period & ReminderMasks.ENABLED_MASK == ReminderMasks.ENABLED_MASK:
                     enabled = True
 
-                if timePeriod & ReminderMasks.WEEKLY_MASK == ReminderMasks.WEEKLY_MASK:
-                    repeatPeriod = "WEEKLY"
-                elif timePeriod & ReminderMasks.MONTHLY_MASK == ReminderMasks.MONTHLY_MASK:
-                    repeatPeriod = "MONTHLY"
-                elif timePeriod & ReminderMasks.YEARLY_MASK == ReminderMasks.YEARLY_MASK:
-                    repeatPeriod = "YEARLY"
+                if time_period & ReminderMasks.WEEKLY_MASK == ReminderMasks.WEEKLY_MASK:
+                    repeat_period = "WEEKLY"
+                elif time_period & ReminderMasks.MONTHLY_MASK == ReminderMasks.MONTHLY_MASK:
+                    repeat_period = "MONTHLY"
+                elif time_period & ReminderMasks.YEARLY_MASK == ReminderMasks.YEARLY_MASK:
+                    repeat_period = "YEARLY"
                 else:
-                    repeatPeriod = "NEVER"
+                    repeat_period = "NEVER"
 
-                return (enabled, repeatPeriod)
+                return (enabled, repeat_period)
 
-            def decode_time_detail(timeDetail):
+            def decode_time_detail(time_detail):
 
-                def decodeDate(timeDetail):
+                def decode_date(time_detail):
 
-                    def intToMonthStr(monthInt):
-                        if monthInt == 1:
+                    def int_to_month_str(month_int):
+                        if month_int == 1:
                             return "JANUARY"
-                        elif monthInt == 2:
+                        elif month_int == 2:
                             return "FEBRUARY"
-                        elif monthInt == 3:
+                        elif month_int == 3:
                             return "MARCH"
-                        elif monthInt == 4:
+                        elif month_int == 4:
                             return "APRIL"
-                        elif monthInt == 5:
+                        elif month_int == 5:
                             return "MAY"
-                        elif monthInt == 6:
+                        elif month_int == 6:
                             return "JUNE"
-                        elif monthInt == 7:
+                        elif month_int == 7:
                             return "JULY"
-                        elif monthInt == 8:
+                        elif month_int == 8:
                             return "AUGUST"
-                        elif monthInt == 9:
+                        elif month_int == 9:
                             return "SEPTEMBER"
-                        elif monthInt == 10:
+                        elif month_int == 10:
                             return "OCTOBER"
-                        elif monthInt == 11:
+                        elif month_int == 11:
                             return "NOVEMBER"
-                        elif monthInt == 12:
+                        elif month_int == 12:
                             return "DECEMBER"
                         else:
                             return ""
 
                     date = json.loads("{}")
 
-                    date["year"] = dec_to_hex(timeDetail[0]) + 2000
-                    date["month"] = intToMonthStr(dec_to_hex(timeDetail[1]))
-                    date["day"] = dec_to_hex(timeDetail[2])
+                    date["year"] = dec_to_hex(time_detail[0]) + 2000
+                    date["month"] = int_to_month_str(dec_to_hex(time_detail[1]))
+                    date["day"] = dec_to_hex(time_detail[2])
 
                     return date
 
@@ -232,35 +232,35 @@ def to_json(_data):
                 #                  00 23 02 21 23 02 21 00 00
                 # start from here:    ^
                 # so, skip 1
-                startDate = decodeDate(timeDetail[1:])
+                start_date = decode_date(time_detail[1:])
 
-                result["startDate"] = startDate
+                result["start_date"] = start_date
 
                 #                  00 23 02 21 23 02 21 00 00
                 # start from here:             ^
                 # so, skip 4
-                endDate = decodeDate(timeDetail[4:])
+                end_date = decode_date(time_detail[4:])
 
-                result["endDate"] = endDate
+                result["end_date"] = end_date
 
-                dayOfWeek = timeDetail[7]
-                daysOfWeek = []
-                if (dayOfWeek & ReminderMasks.SUNDAY_MASK == ReminderMasks.SUNDAY_MASK):
-                    daysOfWeek.append("SUNDAY")
-                if (dayOfWeek & ReminderMasks.MONDAY_MASK == ReminderMasks.MONDAY_MASK):
-                    daysOfWeek.append("MONDAY")
-                if (dayOfWeek & ReminderMasks.TUESDAY_MASK == ReminderMasks.TUESDAY_MASK):
-                    daysOfWeek.append("TUESDAY")
-                if (dayOfWeek & ReminderMasks.WEDNESDAY_MASK ==
+                day_of_week = time_detail[7]
+                days_of_week = []
+                if (day_of_week & ReminderMasks.SUNDAY_MASK == ReminderMasks.SUNDAY_MASK):
+                    days_of_week.append("SUNDAY")
+                if (day_of_week & ReminderMasks.MONDAY_MASK == ReminderMasks.MONDAY_MASK):
+                    days_of_week.append("MONDAY")
+                if (day_of_week & ReminderMasks.TUESDAY_MASK == ReminderMasks.TUESDAY_MASK):
+                    days_of_week.append("TUESDAY")
+                if (day_of_week & ReminderMasks.WEDNESDAY_MASK ==
                         ReminderMasks.WEDNESDAY_MASK):
-                    daysOfWeek.append("WEDNESDAY")
-                if (dayOfWeek & ReminderMasks.THURSDAY_MASK == ReminderMasks.THURSDAY_MASK):
-                    daysOfWeek.append("THURSDAY")
-                if (dayOfWeek & ReminderMasks.FRIDAY_MASK == ReminderMasks.FRIDAY_MASK):
-                    daysOfWeek.append("FRIDAY")
-                if (dayOfWeek & ReminderMasks.SATURDAY_MASK == ReminderMasks.SATURDAY_MASK):
-                    daysOfWeek.append("SATURDAY")
-                result["daysOfWeek"] = daysOfWeek
+                    days_of_week.append("WEDNESDAY")
+                if (day_of_week & ReminderMasks.THURSDAY_MASK == ReminderMasks.THURSDAY_MASK):
+                    days_of_week.append("THURSDAY")
+                if (day_of_week & ReminderMasks.FRIDAY_MASK == ReminderMasks.FRIDAY_MASK):
+                    days_of_week.append("FRIDAY")
+                if (day_of_week & ReminderMasks.SATURDAY_MASK == ReminderMasks.SATURDAY_MASK):
+                    days_of_week.append("SATURDAY")
+                result["days_of_week"] = days_of_week
                 return result
 
             int_arr = to_int_array(reminder_str)
@@ -281,14 +281,14 @@ def to_json(_data):
 
             time_period = decode_time_period(reminder[0])
             reminder_json["enabled"] = time_period[0]
-            reminder_json["repeatPeriod"] = time_period[1]
+            reminder_json["repeat_period"] = time_period[1]
 
             time_detail_map = decode_time_detail(reminder)
 
-            reminder_json["startDate"] = time_detail_map["startDate"]
-            reminder_json["endDate"] = time_detail_map["endDate"]
-            reminder_json["daysOfWeek"] = convert_array_list_to_json_array(
-                time_detail_map["daysOfWeek"])
+            reminder_json["start_date"] = time_detail_map["start_date"]
+            reminder_json["end_date"] = time_detail_map["end_date"]
+            reminder_json["days_of_week"] = convert_array_list_to_json_array(
+                time_detail_map["days_of_week"])
 
             return json.dumps({"time": reminder_json})
 
@@ -323,18 +323,18 @@ def to_json(_data):
         data_json = {"key": create_key(data), "value": data}
         json_obj["CASIO_WATCH_CONDITION"] = data_json
     elif int_array[0] == CHARACTERISTICS["CASIO_APP_INFORMATION"]:
-        dataJson = {"key": create_key(data), "value": data}
-        json_obj["CASIO_APP_INFORMATION"] = dataJson
+        data_json = {"key": create_key(data), "value": data}
+        json_obj["CASIO_APP_INFORMATION"] = data_json
     elif int_array[0] == CHARACTERISTICS["CASIO_BLE_FEATURES"]:
-        dataJson = {"key": create_key(data), "value": data}
-        json_obj["BUTTON_PRESSED"] = dataJson
+        data_json = {"key": create_key(data), "value": data}
+        json_obj["BUTTON_PRESSED"] = data_json
     return json_obj
 
 
 async def callWriter(connection, message: str):
     print(message)
-    actionJson = json.loads(message)
-    action = actionJson.get("action")
+    action_json = json.loads(message)
+    action = action_json.get("action")
     match action:
         case "GET_ALARMS":
             alarm_command = to_compact_string(to_hex_string(
@@ -353,27 +353,27 @@ async def callWriter(connection, message: str):
                 alarm_command2)
 
         case "SET_ALARMS":
-            alarmsJsonArr = json.loads(message).get("value")
-            alarmCasio0 = to_compact_string(
+            alarms_json_arr = json.loads(message).get("value")
+            alarm_casio0 = to_compact_string(
                 to_hex_string(
                     alarmsInst.fromJsonAlarmFirstAlarm(
-                        alarmsJsonArr[0])))
-            await connection.write(0x000e, alarmCasio0)
-            alarmCasio = to_compact_string(to_hex_string(
-                alarmsInst.fromJsonAlarmSecondaryAlarms(alarmsJsonArr)))
-            await connection.write(0x000e, alarmCasio)
+                        alarms_json_arr[0])))
+            await connection.write(0x000e, alarm_casio0)
+            alarm_casio = to_compact_string(to_hex_string(
+                alarmsInst.fromJsonAlarmSecondaryAlarms(alarms_json_arr)))
+            await connection.write(0x000e, alarm_casio)
 
         case "SET_REMINDERS":
 
-            def reminderTitleFromJson(reminderJson):
-                titleStr = reminderJson.get("title")
-                return to_byte_array(titleStr, 18)
+            def reminder_title_from_json(reminder_json):
+                title_str = reminder_json.get("title")
+                return to_byte_array(title_str, 18)
 
-            def reminderTimeFromJson(reminderJson):
+            def reminder_time_from_json(reminder_json):
 
-                def createTimeDetail(repeatPeriod, startDate, endDate, daysOfWeek):
+                def create_time_detail(repeat_period, start_date, end_date, days_of_week):
 
-                    def encodeDate(timeDetail, startDate, endDate):
+                    def encode_date(time_detail, start_date, end_date):
 
                         class Month:
                             JANUARY = 1
@@ -392,31 +392,31 @@ async def callWriter(connection, message: str):
                             def __init__(self):
                                 pass
 
-                        def stringToMonth(monthStr):
-                            monthStr = monthStr.lower()
-                            if monthStr == "january":
+                        def string_to_month(month_str):
+                            month_str = month_str.lower()
+                            if month_str == "january":
                                 return Month.JANUARY
-                            elif monthStr == "february":
+                            elif month_str == "february":
                                 return Month.FEBRUARY
-                            elif monthStr == "march":
+                            elif month_str == "march":
                                 return Month.MARCH
-                            elif monthStr == "april":
+                            elif month_str == "april":
                                 return Month.APRIL
-                            elif monthStr == "may":
+                            elif month_str == "may":
                                 return Month.MAY
-                            elif monthStr == "june":
+                            elif month_str == "june":
                                 return Month.JUNE
-                            elif monthStr == "july":
+                            elif month_str == "july":
                                 return Month.JULY
-                            elif monthStr == "august":
+                            elif month_str == "august":
                                 return Month.AUGUST
-                            elif monthStr == "september":
+                            elif month_str == "september":
                                 return Month.SEPTEMBER
-                            elif monthStr == "october":
+                            elif month_str == "october":
                                 return Month.OCTOBER
-                            elif monthStr == "november":
+                            elif month_str == "november":
                                 return Month.NOVEMBER
-                            elif monthStr == "december":
+                            elif month_str == "december":
                                 return Month.DECEMBER
                             else:
                                 return Month.JANUARY
@@ -425,89 +425,89 @@ async def callWriter(connection, message: str):
                             return int(str(hex), 16)
 
                         # take the last 2 digits only
-                        timeDetail[0] = hex_to_dec(startDate['year'] % 2000)
-                        timeDetail[1] = hex_to_dec(stringToMonth(startDate['month']))
-                        timeDetail[2] = hex_to_dec(startDate['day'])
+                        time_detail[0] = hex_to_dec(start_date['year'] % 2000)
+                        time_detail[1] = hex_to_dec(string_to_month(start_date['month']))
+                        time_detail[2] = hex_to_dec(start_date['day'])
 
-                        timeDetail[3] = hex_to_dec(
-                            endDate['year'] % 2000)  # get the last 2 gits only
-                        timeDetail[4] = hex_to_dec(stringToMonth(endDate['month']))
-                        timeDetail[5] = hex_to_dec(endDate['day'])
+                        time_detail[3] = hex_to_dec(
+                            end_date['year'] % 2000)  # get the last 2 gits only
+                        time_detail[4] = hex_to_dec(string_to_month(end_date['month']))
+                        time_detail[5] = hex_to_dec(end_date['day'])
 
-                        timeDetail[6] = 0
-                        timeDetail[7] = 0
+                        time_detail[6] = 0
+                        time_detail[7] = 0
 
-                    timeDetail = [0] * 8
+                    time_detail = [0] * 8
 
-                    if repeatPeriod == "NEVER":
-                        encodeDate(timeDetail, startDate, endDate)
+                    if repeat_period == "NEVER":
+                        encode_date(time_detail, start_date, end_date)
 
-                    elif repeatPeriod == "WEEKLY":
-                        encodeDate(timeDetail, startDate, endDate)
+                    elif repeat_period == "WEEKLY":
+                        encode_date(time_detail, start_date, end_date)
 
-                        dayOfWeek = 0
-                        if daysOfWeek is not None:
-                            for i in range(len(daysOfWeek)):
-                                if daysOfWeek[i] == "SUNDAY":
-                                    dayOfWeek = dayOfWeek | ReminderMasks.SUNDAY_MASK
-                                elif daysOfWeek[i] == "MONDAY":
-                                    dayOfWeek = dayOfWeek | ReminderMasks.MONDAY_MASK
-                                elif daysOfWeek[i] == "TUESDAY":
-                                    dayOfWeek = dayOfWeek | ReminderMasks.TUESDAY_MASK
-                                elif daysOfWeek[i] == "WEDNESDAY":
-                                    dayOfWeek = dayOfWeek | ReminderMasks.WEDNESDAY_MASK
-                                elif daysOfWeek[i] == "THURSDAY":
-                                    dayOfWeek = dayOfWeek | ReminderMasks.THURSDAY_MASK
-                                elif daysOfWeek[i] == "FRIDAY":
-                                    dayOfWeek = dayOfWeek | ReminderMasks.FRIDAY_MASK
-                                elif daysOfWeek[i] == "SATURDAY":
-                                    dayOfWeek = dayOfWeek | ReminderMasks.SATURDAY_MASK
+                        day_of_week = 0
+                        if days_of_week is not None:
+                            for i in range(len(days_of_week)):
+                                if days_of_week[i] == "SUNDAY":
+                                    day_of_week = day_of_week | ReminderMasks.SUNDAY_MASK
+                                elif days_of_week[i] == "MONDAY":
+                                    day_of_week = day_of_week | ReminderMasks.MONDAY_MASK
+                                elif days_of_week[i] == "TUESDAY":
+                                    day_of_week = day_of_week | ReminderMasks.TUESDAY_MASK
+                                elif days_of_week[i] == "WEDNESDAY":
+                                    day_of_week = day_of_week | ReminderMasks.WEDNESDAY_MASK
+                                elif days_of_week[i] == "THURSDAY":
+                                    day_of_week = day_of_week | ReminderMasks.THURSDAY_MASK
+                                elif days_of_week[i] == "FRIDAY":
+                                    day_of_week = day_of_week | ReminderMasks.FRIDAY_MASK
+                                elif days_of_week[i] == "SATURDAY":
+                                    day_of_week = day_of_week | ReminderMasks.SATURDAY_MASK
 
-                        timeDetail[6] = dayOfWeek
-                        timeDetail[7] = 0
+                        time_detail[6] = day_of_week
+                        time_detail[7] = 0
 
-                    elif repeatPeriod == "MONTHLY":
-                        encodeDate(timeDetail, startDate, endDate)
+                    elif repeat_period == "MONTHLY":
+                        encode_date(time_detail, start_date, end_date)
 
-                    elif repeatPeriod == "YEARLY":
-                        encodeDate(timeDetail, startDate, endDate)
+                    elif repeat_period == "YEARLY":
+                        encode_date(time_detail, start_date, end_date)
                     else:
                         logger.info(
-                            "Cannot handle Repeat Period: {}".format(repeatPeriod))
+                            "Cannot handle Repeat Period: {}".format(repeat_period))
 
-                    return timeDetail
+                    return time_detail
 
-                def createTimePeriod(enabled: bool, repeatPeriod: str) -> int:
-                    timePeriod = 0
+                def create_time_period(enabled: bool, repeat_period: str) -> int:
+                    time_period = 0
 
                     if enabled:
-                        timePeriod = timePeriod | ReminderMasks.ENABLED_MASK
-                    if repeatPeriod == "WEEKLY":
-                        timePeriod = timePeriod | ReminderMasks.WEEKLY_MASK
-                    elif repeatPeriod == "MONTHLY":
-                        timePeriod = timePeriod | ReminderMasks.MONTHLY_MASK
-                    elif repeatPeriod == "YEARLY":
-                        timePeriod = timePeriod | ReminderMasks.YEARLY_MASK
-                    return timePeriod
+                        time_period = time_period | ReminderMasks.ENABLED_MASK
+                    if repeat_period == "WEEKLY":
+                        time_period = time_period | ReminderMasks.WEEKLY_MASK
+                    elif repeat_period == "MONTHLY":
+                        time_period = time_period | ReminderMasks.MONTHLY_MASK
+                    elif repeat_period == "YEARLY":
+                        time_period = time_period | ReminderMasks.YEARLY_MASK
+                    return time_period
 
-                enabled = reminderJson.get("enabled")
-                repeatPeriod = reminderJson.get("repeatPeriod")
-                startDate = reminderJson.get("startDate")
-                endDate = reminderJson.get("endDate")
-                daysOfWeek = reminderJson.get("daysOfWeek")
+                enabled = reminder_json.get("enabled")
+                repeat_period = reminder_json.get("repeat_period")
+                start_date = reminder_json.get("start_date")
+                end_date = reminder_json.get("end_date")
+                days_of_week = reminder_json.get("days_of_week")
 
-                reminderCmd = bytearray()
+                reminder_cmd = bytearray()
 
-                reminderCmd += bytearray([createTimePeriod(enabled, repeatPeriod)])
-                reminderCmd += bytearray(createTimeDetail(repeatPeriod,
-                                         startDate, endDate, daysOfWeek))
+                reminder_cmd += bytearray([create_time_period(enabled, repeat_period)])
+                reminder_cmd += bytearray(create_time_detail(repeat_period,
+                                         start_date, end_date, days_of_week))
 
-                return reminderCmd
+                return reminder_cmd
 
-            remindersJsonArr = json.loads(message).get("value")
-            for index, element in enumerate(remindersJsonArr):
-                reminderJson = element
-                title = reminderTitleFromJson(reminderJson)
+            reminders_json_arr = json.loads(message).get("value")
+            for index, element in enumerate(reminders_json_arr):
+                reminder_json = element
+                title = reminder_title_from_json(reminder_json)
 
                 title_byte_arr = bytearray([CHARACTERISTICS["CASIO_REMINDER_TITLE"]])
                 title_byte_arr += bytearray([index + 1])
@@ -520,7 +520,7 @@ async def callWriter(connection, message: str):
                 reminder_time_byte_arr += bytearray(
                     [CHARACTERISTICS["CASIO_REMINDER_TIME"]])
                 reminder_time_byte_arr += bytearray([index + 1])
-                reminder_time_byte_arr += reminderTimeFromJson(reminderJson)
+                reminder_time_byte_arr += reminder_time_from_json(reminder_json)
                 reminder_time_byte_arr_to_send = to_compact_string(
                     to_hex_string(bytearray(reminder_time_byte_arr)))
                 logger.error(reminder_time_byte_arr_to_send)
@@ -533,7 +533,7 @@ async def callWriter(connection, message: str):
             # settings = json.loads(message).get("value")
 
             def encode(settings: dict):
-                MASK_24_HOURS = 0b00000001
+                mask_24_hours = 0b00000001
                 MASK_BUTTON_TONE_OFF = 0b00000010
                 MASK_LIGHT_OFF = 0b00000100
                 POWER_SAVING_MODE = 0b00010000
@@ -541,7 +541,7 @@ async def callWriter(connection, message: str):
                 arr = bytearray(12)
                 arr[0] = CHARACTERISTICS["CASIO_SETTING_FOR_BASIC"]
                 if settings.time_format == "24h":
-                    arr[1] = (arr[1] | MASK_24_HOURS)
+                    arr[1] = (arr[1] | mask_24_hours)
                 if not settings.button_tone:
                     arr[1] = (arr[1] | MASK_BUTTON_TONE_OFF)
                 if not settings.auto_light:
@@ -579,15 +579,15 @@ async def callWriter(connection, message: str):
         case "SET_TIME_ADJUSTMENT":
             value = json.loads(message).get("value")
 
-            def encodeTimeAdjustment(timeAdjustment):
+            def encode_time_adjustment(time_adjustment):
                 raw_string = settings.CasioIsAutoTimeOriginalValue
-                intArray = to_int_array(raw_string)
+                int_array = to_int_array(raw_string)
 
-                intArray[12] = 0x80 if timeAdjustment == 'True' else 0x00
-                return bytes(intArray)
+                int_array[12] = 0x80 if time_adjustment == 'True' else 0x00
+                return bytes(int_array)
 
-            encodedTimeAdj = encodeTimeAdjustment(value)
-            write_cmd = to_compact_string(to_hex_string(encodedTimeAdj))
+            encoded_time_adj = encode_time_adjustment(value)
+            write_cmd = to_compact_string(to_hex_string(encoded_time_adj))
             await connection.write(0x000e, write_cmd)
 
         case "GET_TIMER":
@@ -596,12 +596,12 @@ async def callWriter(connection, message: str):
         case "SET_TIMER":
             seconds = json.loads(message).get("value")
 
-            def encode(secondsStr):
-                inSeconds = int(secondsStr)
-                hours = inSeconds // 3600
-                minutesAndSeconds = inSeconds % 3600
-                minutes = minutesAndSeconds // 60
-                seconds = minutesAndSeconds % 60
+            def encode(seconds_str):
+                in_seconds = int(seconds_str)
+                hours = in_seconds // 3600
+                minutes_and_seconds = in_seconds % 3600
+                minutes = minutes_and_seconds // 60
+                seconds = minutes_and_seconds % 60
 
                 arr = bytearray(7)
                 arr[0] = 0x18
@@ -616,13 +616,13 @@ async def callWriter(connection, message: str):
             await connection.write(0x000e, seconds_as_compact_str)
 
         case "SET_TIME":
-            dateTimeMs = int(json.loads(message).get("value"))
-            print("dateTimeMs: {}".format(dateTimeMs))
-            dateTime = datetime.datetime.fromtimestamp(dateTimeMs / 1000.0)
-            timeData = TimeEncoder.prepare_current_time(dateTime)
-            timeCommand = to_hex_string(
-                bytearray([CHARACTERISTICS["CASIO_CURRENT_TIME"]]) + timeData)
-            await connection.write(0xe, to_compact_string(timeCommand))
+            date_time_ms = int(json.loads(message).get("value"))
+            print("date_time_ms: {}".format(date_time_ms))
+            date_time = datetime.datetime.fromtimestamp(date_time_ms / 1000.0)
+            time_data = TimeEncoder.prepare_current_time(date_time)
+            time_command = to_hex_string(
+                bytearray([CHARACTERISTICS["CASIO_CURRENT_TIME"]]) + time_data)
+            await connection.write(0xe, to_compact_string(time_command))
 
         case _:
             print("callWriter: Unhandled command", action)

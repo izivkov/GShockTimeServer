@@ -14,7 +14,7 @@ from connection import Connection
 from gshock_api import GshockAPI
 from casio_watch import settings
 from event import Event, createEventDate, RepeatPeriod, DayOfWeek
-from casio_watch import WATCH_BUTTON
+from casio_watch import WatchButton
 
 logger = logging.getLogger(__name__)
 scanner = Scanner()
@@ -37,7 +37,7 @@ async def run_time_server():
             api = GshockAPI(connection)
 
             pressed_button = await api.getPressedButton()
-            if pressed_button != WATCH_BUTTON.LOWER_RIGHT and pressed_button != WATCH_BUTTON.NO_BUTTON:
+            if pressed_button != WatchButton.LOWER_RIGHT and pressed_button != WatchButton.NO_BUTTON:
                 continue
 
             await api.get_app_info()
@@ -106,13 +106,13 @@ async def run_api_tests():
         str(False) +
         """\", "enabled":\"""" +
         str(True) +
-        """\", "repeatPeriod":\"""" +
+        """\", "repeat_period":\"""" +
         RepeatPeriod.WEEKLY +
-        """\","daysOfWeek":\"""" +
+        """\","days_of_week":\"""" +
         "MONDAY" +
-        """\", "startDate":""" +
+        """\", "start_date":""" +
         event_date_str +
-        """, "endDate":""" +
+        """, "end_date":""" +
         event_date_str +
         """}}""")
     event = Event().createEvent(json.loads(event_json_str))
