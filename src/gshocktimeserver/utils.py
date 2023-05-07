@@ -62,6 +62,7 @@ def clean_str(dirty_str):
     printable = set(string.printable)
     return ''.join(filter(lambda x: x in printable, dirty_str))
 
+
 def to_byte_array(string, maxLen):
     retArr = string.encode('utf-8')
     if len(retArr) > maxLen:
@@ -70,6 +71,7 @@ def to_byte_array(string, maxLen):
         return retArr + bytearray(maxLen - len(retArr))
     else:
         return retArr
+
 
 def dec_to_hex(dec):
     return int(str(hex(dec))[2:])

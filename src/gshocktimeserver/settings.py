@@ -8,4 +8,5 @@ class Settings:
     button_tone = True
     time_adjustment = True
 
+
 settings = Settings()

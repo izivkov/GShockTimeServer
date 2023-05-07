@@ -19,6 +19,7 @@ from casio_watch import WatchButton
 logger = logging.getLogger(__name__)
 scanner = Scanner()
 
+
 async def main():
     # await run_time_server()
     await run_api_tests()
@@ -46,6 +47,7 @@ async def run_time_server():
 
         except Exception as e:
             continue
+
 
 async def run_api_tests():
     device = await scanner.scan()

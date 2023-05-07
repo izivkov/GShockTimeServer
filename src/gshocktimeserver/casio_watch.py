@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
+
 class WatchButton(IntEnum):
     UPPER_LEFT = 1
     LOWER_LEFT = 2
@@ -46,6 +47,7 @@ class SettingsDecoder:
     def to_json_time_adjustment(settings):
         return {'timeAdjustment': settings.time_adjustment}
 
+
 class ReminderDecoder:
     def reminder_title_to_json(title_byte: str) -> dict:
         int_arr = to_int_array(title_byte)
@@ -56,6 +58,7 @@ class ReminderDecoder:
 
         reminder_json['title'] = clean_str(to_ascii_string(title_byte, 2))
         return reminder_json
+
 
 def create_key(data):
     short_str = to_compact_string(data)
@@ -174,11 +177,23 @@ def to_json(_data):
                 def decode_date(time_detail):
 
                     def int_to_month_str(month_int):
-                        months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"]
+                        months = [
+                            "JANUARY",
+                            "FEBRUARY",
+                            "MARCH",
+                            "APRIL",
+                            "MAY",
+                            "JUNE",
+                            "JULY",
+                            "AUGUST",
+                            "SEPTEMBER",
+                            "OCTOBER",
+                            "NOVEMBER",
+                            "DECEMBER"]
                         if month_int < 1 or month_int > 12:
                             return ""
                         else:
-                            return months[month_int-1]
+                            return months[month_int - 1]
 
                     date = json.loads("{}")
 
@@ -215,11 +230,13 @@ def to_json(_data):
                 if (day_of_week & ReminderMasks.WEDNESDAY_MASK ==
                         ReminderMasks.WEDNESDAY_MASK):
                     days_of_week.append("WEDNESDAY")
-                if (day_of_week & ReminderMasks.THURSDAY_MASK == ReminderMasks.THURSDAY_MASK):
+                if (day_of_week & ReminderMasks.THURSDAY_MASK ==
+                        ReminderMasks.THURSDAY_MASK):
                     days_of_week.append("THURSDAY")
                 if (day_of_week & ReminderMasks.FRIDAY_MASK == ReminderMasks.FRIDAY_MASK):
                     days_of_week.append("FRIDAY")
-                if (day_of_week & ReminderMasks.SATURDAY_MASK == ReminderMasks.SATURDAY_MASK):
+                if (day_of_week & ReminderMasks.SATURDAY_MASK ==
+                        ReminderMasks.SATURDAY_MASK):
                     days_of_week.append("SATURDAY")
                 result["days_of_week"] = days_of_week
                 return result
@@ -328,7 +345,11 @@ async def callWriter(connection, message: str):
 
             def reminder_time_from_json(reminder_json):
 
-                def create_time_detail(repeat_period, start_date, end_date, days_of_week):
+                def create_time_detail(
+                        repeat_period,
+                        start_date,
+                        end_date,
+                        days_of_week):
 
                     def encode_date(time_detail, start_date, end_date):
 
@@ -351,17 +372,17 @@ async def callWriter(connection, message: str):
 
                         def string_to_month(month_str):
                             months = {'january': Month.JANUARY,
-                                    'february': Month.FEBRUARY,
-                                    'march': Month.MARCH,
-                                    'april': Month.APRIL,
-                                    'may': Month.MAY,
-                                    'june': Month.JUNE,
-                                    'july': Month.JULY,
-                                    'august': Month.AUGUST,
-                                    'september': Month.SEPTEMBER,
-                                    'october': Month.OCTOBER,
-                                    'november': Month.NOVEMBER,
-                                    'december': Month.DECEMBER}
+                                      'february': Month.FEBRUARY,
+                                      'march': Month.MARCH,
+                                      'april': Month.APRIL,
+                                      'may': Month.MAY,
+                                      'june': Month.JUNE,
+                                      'july': Month.JULY,
+                                      'august': Month.AUGUST,
+                                      'september': Month.SEPTEMBER,
+                                      'october': Month.OCTOBER,
+                                      'november': Month.NOVEMBER,
+                                      'december': Month.DECEMBER}
                             return months.get(month_str.lower(), Month.JANUARY)
 
                         def hex_to_dec(hex):
@@ -369,9 +390,11 @@ async def callWriter(connection, message: str):
 
                         # take the last 2 digits only
                         time_detail[0] = hex_to_dec(start_date['year'] % 2000)
-                        time_detail[1] = hex_to_dec(string_to_month(start_date['month']))
+                        time_detail[1] = hex_to_dec(
+                            string_to_month(start_date['month']))
                         time_detail[2] = hex_to_dec(start_date['day'])
-                        time_detail[3] = hex_to_dec(end_date['year'] % 2000)  # get the last 2 gits only
+                        time_detail[3] = hex_to_dec(
+                            end_date['year'] % 2000)  # get the last 2 gits only
                         time_detail[4] = hex_to_dec(string_to_month(end_date['month']))
                         time_detail[5] = hex_to_dec(end_date['day'])
                         time_detail[6], time_detail[7] = 0, 0
@@ -439,7 +462,7 @@ async def callWriter(connection, message: str):
 
                 reminder_cmd += bytearray([create_time_period(enabled, repeat_period)])
                 reminder_cmd += bytearray(create_time_detail(repeat_period,
-                                         start_date, end_date, days_of_week))
+                                                             start_date, end_date, days_of_week))
 
                 return reminder_cmd
 

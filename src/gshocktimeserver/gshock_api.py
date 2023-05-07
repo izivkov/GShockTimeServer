@@ -469,7 +469,7 @@ class GshockAPI:
         Returns
         -------
         settings: a list of `Settings`
-        """  
+        """
         key = "13"
         await self.connection.request(key)
 
@@ -506,7 +506,7 @@ class GshockAPI:
         Returns
         -------
         None
-        """  
+        """
         setting_json = json.dumps(settings)
         await self.connection.sendMessage("""{"action": "SET_SETTINGS", "value": """ + setting_json + """ }""")
 
@@ -520,7 +520,7 @@ class GshockAPI:
         Returns
         -------
         events: list of `Event`
-        """  
+        """
         reminders = []
 
         reminders.append(await self.getEventFromWatch(1))
@@ -541,7 +541,7 @@ class GshockAPI:
         Returns
         -------
         event: `Event`
-        """  
+        """
         await self.connection.request("30{}".format(eventNumber))  # reminder title
         await self.connection.request("31{}".format(eventNumber))  # reminder time
 
@@ -580,7 +580,7 @@ class GshockAPI:
         Returns
         -------
         None
-        """  
+        """
         if not events:
             return
 
@@ -604,7 +604,7 @@ class GshockAPI:
         """Gets and internally sets app info to the watch.
             This is needed to re-enable lower-right button after the watch has been reset or BLE has been cleared.
             Call this function after each time the connection has been established.
-     
+
         Parameters
         ----------
         None
