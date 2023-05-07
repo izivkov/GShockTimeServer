@@ -105,7 +105,7 @@ async def run_api_tests():
     for reminder in reminders:
         logger.warning("reminder: {}".format(reminder.__str__()))
 
-    await api.set_remonders(reminders)
+    await api.set_reminders(reminders)
 
     await connection.disconnect()
     logger.warning("--- END OF TESTS ---")

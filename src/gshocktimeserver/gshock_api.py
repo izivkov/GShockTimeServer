@@ -369,7 +369,7 @@ class GshockAPI:
         self.subscribe("REMINDERS", get_reminders)
         return await result
 
-    async def set_remonders(self, events: list):
+    async def set_reminders(self, events: list):
         if not events:
             return
         
