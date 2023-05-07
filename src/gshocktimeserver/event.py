@@ -125,7 +125,7 @@ class Event:
         self.enabled = timeObj.get("enabled") or False
         self.incompatible = timeObj.get("incompatible") or False
         self.selected = timeObj.get("selected") or True
-        self.repeatPeriod = stringToRepeatPeriod(timeObj["repeat_period"])
+        self.repeatPeriod = stringToRepeatPeriod(timeObj.get("repeat_period"))
         return self
 
     def to_json(

@@ -23,7 +23,7 @@ def to_compact_string(hexStr):
     strArray = hexStr.split(' ')
     for s in strArray:
         if s.startswith("0x"):
-            s = removePrefix(s, "0x")
+            s = remove_prefix(s, "0x")
         compactString += s
 
     return compactString
@@ -33,7 +33,7 @@ def to_hex_string(byte_arr):
     return '0x' + ' '.join(format(x, '02X') for x in byte_arr)
 
 
-def removePrefix(string, prefix):
+def remove_prefix(string, prefix):
     return string[len(prefix):] if string.startswith(prefix) else string
 
 
@@ -62,7 +62,6 @@ def clean_str(dirty_str):
     printable = set(string.printable)
     return ''.join(filter(lambda x: x in printable, dirty_str))
 
-
 def to_byte_array(string, maxLen):
     retArr = string.encode('utf-8')
     if len(retArr) > maxLen:
@@ -71,7 +70,6 @@ def to_byte_array(string, maxLen):
         return retArr + bytearray(maxLen - len(retArr))
     else:
         return retArr
-
 
 def dec_to_hex(dec):
     return int(str(hex(dec))[2:])

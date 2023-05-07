@@ -1,6 +1,7 @@
 import json
 import datetime
 import logging
+from settings import settings
 from utils import to_int_array, to_compact_string, to_hex_string, clean_str, to_ascii_string, to_byte_array, dec_to_hex
 from casio_constants import CasioConstants
 from enum import IntEnum
@@ -9,7 +10,6 @@ from alarms import alarmsInst, alarmDecoder
 logger = logging.getLogger(__name__)
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
-
 
 class WatchButton(IntEnum):
     UPPER_LEFT = 1
@@ -24,20 +24,6 @@ class DtsState(IntEnum):
     ZERO = 0
     TWO = 2
     FOUR = 4
-
-
-class Settings:
-    time_format = ""
-    date_format = ""
-    language = ""
-    auto_light = False
-    light_duration = ""
-    power_saving_mode = False
-    button_tone = True
-    time_adjustment = True
-
-
-settings = Settings()
 
 
 class ReminderMasks:
@@ -60,7 +46,6 @@ class SettingsDecoder:
     def to_json_time_adjustment(settings):
         return {'timeAdjustment': settings.time_adjustment}
 
-
 class ReminderDecoder:
     def reminder_title_to_json(title_byte: str) -> dict:
         int_arr = to_int_array(title_byte)
@@ -71,7 +56,6 @@ class ReminderDecoder:
 
         reminder_json['title'] = clean_str(to_ascii_string(title_byte, 2))
         return reminder_json
-
 
 def create_key(data):
     short_str = to_compact_string(data)
@@ -108,8 +92,6 @@ def to_json(_data):
             MASK_BUTTON_TONE_OFF = 0b00000010
             MASK_LIGHT_OFF = 0b00000100
             POWER_SAVING_MODE = 0b00010000
-
-            # settings = Settings()
 
             setting_array = to_int_array(setting_string)
 
@@ -192,32 +174,11 @@ def to_json(_data):
                 def decode_date(time_detail):
 
                     def int_to_month_str(month_int):
-                        if month_int == 1:
-                            return "JANUARY"
-                        elif month_int == 2:
-                            return "FEBRUARY"
-                        elif month_int == 3:
-                            return "MARCH"
-                        elif month_int == 4:
-                            return "APRIL"
-                        elif month_int == 5:
-                            return "MAY"
-                        elif month_int == 6:
-                            return "JUNE"
-                        elif month_int == 7:
-                            return "JULY"
-                        elif month_int == 8:
-                            return "AUGUST"
-                        elif month_int == 9:
-                            return "SEPTEMBER"
-                        elif month_int == 10:
-                            return "OCTOBER"
-                        elif month_int == 11:
-                            return "NOVEMBER"
-                        elif month_int == 12:
-                            return "DECEMBER"
-                        else:
+                        months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"]
+                        if month_int < 1 or month_int > 12:
                             return ""
+                        else:
+                            return months[month_int-1]
 
                     date = json.loads("{}")
 
@@ -308,10 +269,6 @@ def to_json(_data):
     elif int_array[0] == CHARACTERISTICS["CASIO_WORLD_CITIES"]:
         data_json = {"key": create_key(data), "value": data}
         characteristics_array = to_int_array(data)
-        # if characteristics_array[1] == 0:
-        #     # 0x1F 00 ... Only the first World City contains the home time.
-        #     # Send this data on topic "HOME_TIME" to be received by HomeTime custom component.
-        #     json["HOME_TIME"] = data_json
         json_obj["CASIO_WORLD_CITIES"] = data_json
     elif int_array[0] == CHARACTERISTICS["CASIO_DST_WATCH_STATE"]:
         data_json = {"key": create_key(data), "value": data}
@@ -356,7 +313,7 @@ async def callWriter(connection, message: str):
             alarms_json_arr = json.loads(message).get("value")
             alarm_casio0 = to_compact_string(
                 to_hex_string(
-                    alarmsInst.fromJsonAlarmFirstAlarm(
+                    alarmsInst.from_json_alarm_first_alarm(
                         alarms_json_arr[0])))
             await connection.write(0x000e, alarm_casio0)
             alarm_casio = to_compact_string(to_hex_string(
@@ -393,33 +350,19 @@ async def callWriter(connection, message: str):
                                 pass
 
                         def string_to_month(month_str):
-                            month_str = month_str.lower()
-                            if month_str == "january":
-                                return Month.JANUARY
-                            elif month_str == "february":
-                                return Month.FEBRUARY
-                            elif month_str == "march":
-                                return Month.MARCH
-                            elif month_str == "april":
-                                return Month.APRIL
-                            elif month_str == "may":
-                                return Month.MAY
-                            elif month_str == "june":
-                                return Month.JUNE
-                            elif month_str == "july":
-                                return Month.JULY
-                            elif month_str == "august":
-                                return Month.AUGUST
-                            elif month_str == "september":
-                                return Month.SEPTEMBER
-                            elif month_str == "october":
-                                return Month.OCTOBER
-                            elif month_str == "november":
-                                return Month.NOVEMBER
-                            elif month_str == "december":
-                                return Month.DECEMBER
-                            else:
-                                return Month.JANUARY
+                            months = {'january': Month.JANUARY,
+                                    'february': Month.FEBRUARY,
+                                    'march': Month.MARCH,
+                                    'april': Month.APRIL,
+                                    'may': Month.MAY,
+                                    'june': Month.JUNE,
+                                    'july': Month.JULY,
+                                    'august': Month.AUGUST,
+                                    'september': Month.SEPTEMBER,
+                                    'october': Month.OCTOBER,
+                                    'november': Month.NOVEMBER,
+                                    'december': Month.DECEMBER}
+                            return months.get(month_str.lower(), Month.JANUARY)
 
                         def hex_to_dec(hex):
                             return int(str(hex), 16)
@@ -428,14 +371,10 @@ async def callWriter(connection, message: str):
                         time_detail[0] = hex_to_dec(start_date['year'] % 2000)
                         time_detail[1] = hex_to_dec(string_to_month(start_date['month']))
                         time_detail[2] = hex_to_dec(start_date['day'])
-
-                        time_detail[3] = hex_to_dec(
-                            end_date['year'] % 2000)  # get the last 2 gits only
+                        time_detail[3] = hex_to_dec(end_date['year'] % 2000)  # get the last 2 gits only
                         time_detail[4] = hex_to_dec(string_to_month(end_date['month']))
                         time_detail[5] = hex_to_dec(end_date['day'])
-
-                        time_detail[6] = 0
-                        time_detail[7] = 0
+                        time_detail[6], time_detail[7] = 0, 0
 
                     time_detail = [0] * 8
 
@@ -530,8 +469,6 @@ async def callWriter(connection, message: str):
             await connection.write(0x000c, bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_BASIC"]]))
 
         case "SET_SETTINGS":
-            # settings = json.loads(message).get("value")
-
             def encode(settings: dict):
                 mask_24_hours = 0b00000001
                 MASK_BUTTON_TONE_OFF = 0b00000010
@@ -554,19 +491,15 @@ async def callWriter(connection, message: str):
                 if settings.date_format == "DD:MM":
                     arr[4] = 1
 
-                language = settings.language
-                if language == 'English':
-                    arr[5] = 0
-                elif language == 'Spanish':
-                    arr[5] = 1
-                elif language == 'French':
-                    arr[5] = 2
-                elif language == 'German':
-                    arr[5] = 3
-                elif language == 'Italian':
-                    arr[5] = 4
-                elif language == 'Russian':
-                    arr[5] = 5
+                language_index = {
+                    'English': 0,
+                    'Spanish': 1,
+                    'French': 2,
+                    'German': 3,
+                    'Italian': 4,
+                    'Russian': 5
+                }
+                arr[5] = language_index.get(settings.language, 0)
 
                 return arr
 

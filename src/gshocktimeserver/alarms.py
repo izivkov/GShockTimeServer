@@ -12,7 +12,6 @@ ALARM_CONSTANT_VALUE = 0x40
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
-
 class Alarm:
     def __init__(self, hour, minute, enabled, hasHourlyChime):
         self.hour = hour
@@ -27,19 +26,19 @@ class Alarms:
     def clear(self):
         self.alarms.clear()
 
-    def addAlarms(self, alarmJsonStrArr):
+    def add_alarms(self, alarmJsonStrArr):
         for alarmJsonStr in alarmJsonStrArr:
             alarm = json.loads(alarmJsonStr)
             self.alarms.append(alarm)
 
-    def fromJsonAlarmFirstAlarm(self, alarm):
+    def from_json_alarm_first_alarm(self, alarm):
         return self.createFirstAlarm(alarm)
 
     def createFirstAlarm(self, alarm):
         flag = 0
-        if alarm["enabled"]:
+        if alarm.get("enabled"):
             flag = flag | ENABLED_MASK
-        if alarm["hasHourlyChime"]:
+        if alarm.get("hasHourlyChime"):
             flag = flag | HOURLY_CHIME_MASK
 
         return bytearray(
@@ -47,8 +46,8 @@ class Alarms:
                 CHARACTERISTICS["CASIO_SETTING_FOR_ALM"],
                 flag,
                 ALARM_CONSTANT_VALUE,
-                alarm["hour"],
-                alarm["minute"],
+                alarm.get("hour"),
+                alarm.get("minute"),
             ]
         )
 
@@ -63,13 +62,13 @@ class Alarms:
 
         for alarm in alarms:
             flag = 0
-            if alarm["enabled"]:
+            if alarm.get("enabled"):
                 flag = flag | ENABLED_MASK
-            if alarm["hasHourlyChime"]:
+            if alarm.get("hasHourlyChime"):
                 flag = flag | HOURLY_CHIME_MASK
 
             allAlarms += bytearray(
-                [flag, ALARM_CONSTANT_VALUE, alarm["hour"], alarm["minute"]]
+                [flag, ALARM_CONSTANT_VALUE, alarm.get("hour"), alarm.get("minute")]
             )
 
         return allAlarms
