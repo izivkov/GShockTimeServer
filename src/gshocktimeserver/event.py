@@ -13,9 +13,11 @@ class EventDate:
         return json.loads(json.dumps(self, default=lambda o: o.__dict__))
 
     def equals(self, eventDate):
-        return (eventDate.year == self.year
-                and eventDate.month == self.month
-                and eventDate.day == self.day)
+        return (
+            eventDate.year == self.year
+            and eventDate.month == self.month
+            and eventDate.day == self.day
+        )
 
     def __str__(self):
         return f"year: {self.year}, month: {self.month}, day: {self.day}"
@@ -33,13 +35,14 @@ class RepeatPeriod:
 
 
 DayOfWeek = (
-    'MONDAY',
-    'TUESDAY',
-    'WEDNESDAY',
-    'THURSDAY',
-    'FRIDAY',
-    'SATURDAY',
-    'SUNDAY')
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY",
+    "SUNDAY",
+)
 Month = [
     "JANUARY",
     "FEBRUARY",
@@ -52,7 +55,8 @@ Month = [
     "SEPTEMBER",
     "OCTOBER",
     "NOVEMBER",
-    "DECEMBER"]
+    "DECEMBER",
+]
 
 
 def createEventDate(timeMs, zone):
@@ -90,18 +94,18 @@ class Event:
 
         def stringToMonth(monthStr: str):
             return {
-                'january': Month.JANUARY,
-                'february': Month.FEBRUARY,
-                'march': Month.MARCH,
-                'april': Month.APRIL,
-                'may': Month.MAY,
-                'june': Month.JUNE,
-                'july': Month.JULY,
-                'august': Month.AUGUST,
-                'september': Month.SEPTEMBER,
-                'october': Month.OCTOBER,
-                'november': Month.NOVEMBER,
-                'december': Month.DECEMBER
+                "january": Month.JANUARY,
+                "february": Month.FEBRUARY,
+                "march": Month.MARCH,
+                "april": Month.APRIL,
+                "may": Month.MAY,
+                "june": Month.JUNE,
+                "july": Month.JULY,
+                "august": Month.AUGUST,
+                "september": Month.SEPTEMBER,
+                "october": Month.OCTOBER,
+                "november": Month.NOVEMBER,
+                "december": Month.DECEMBER,
             }.get(monthStr.lower(), Month.JANUARY)
 
         def stringToRepeatPeriod(repeatPeriodStr: str) -> RepeatPeriod:
@@ -129,15 +133,16 @@ class Event:
         return self
 
     def to_json(
-            self,
-            title,
-            startDate,
-            endDate,
-            repeatPeriod,
-            daysOfWeek,
-            enabled,
-            incompatible,
-            selected):
+        self,
+        title,
+        startDate,
+        endDate,
+        repeatPeriod,
+        daysOfWeek,
+        enabled,
+        incompatible,
+        selected,
+    ):
         time_obj = types.SimpleNamespace()
         time_obj.repeatPeriod = repeatPeriod
         time_obj.daysOfWeek = daysOfWeek

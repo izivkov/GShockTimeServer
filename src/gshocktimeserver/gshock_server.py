@@ -37,7 +37,10 @@ async def run_time_server():
             api = GshockAPI(connection)
 
             pressed_button = await api.getPressedButton()
-            if pressed_button != WatchButton.LOWER_RIGHT and pressed_button != WatchButton.NO_BUTTON:
+            if (
+                pressed_button != WatchButton.LOWER_RIGHT
+                and pressed_button != WatchButton.NO_BUTTON
+            ):
                 continue
 
             await api.get_app_info()
@@ -71,9 +74,9 @@ async def run_api_tests():
     alarms = await api.getAlarms()
     logger.info("alarms: {}".format(alarms))
 
-    alarms[3]['enabled'] = True
-    alarms[3]['hour'] = 7
-    alarms[3]['minute'] = 25
+    alarms[3]["enabled"] = True
+    alarms[3]["hour"] = 7
+    alarms[3]["minute"] = 25
     await api.setAlarms(alarms)
 
     seconds = await api.getTimer()
@@ -96,25 +99,26 @@ async def run_api_tests():
     await api.set_settings(settings_local)
 
     # Create a single event
-    tz = pytz.timezone('America/Toronto')
+    tz = pytz.timezone("America/Toronto")
     dt = datetime.now(timezone.utc)
     utc_timestamp = dt.timestamp()
     event_date = createEventDate(utc_timestamp, tz)
     event_date_str = json.dumps(event_date.__dict__)
     event_json_str = (
-        """{"title":"Test Event", "time":{"selected":\"""" +
-        str(False) +
-        """\", "enabled":\"""" +
-        str(True) +
-        """\", "repeat_period":\"""" +
-        RepeatPeriod.WEEKLY +
-        """\","days_of_week":\"""" +
-        "MONDAY" +
-        """\", "start_date":""" +
-        event_date_str +
-        """, "end_date":""" +
-        event_date_str +
-        """}}""")
+        """{"title":"Test Event", "time":{"selected":\""""
+        + str(False)
+        + """\", "enabled":\""""
+        + str(True)
+        + """\", "repeat_period":\""""
+        + RepeatPeriod.WEEKLY
+        + """\","days_of_week":\""""
+        + "MONDAY"
+        + """\", "start_date":"""
+        + event_date_str
+        + """, "end_date":"""
+        + event_date_str
+        + """}}"""
+    )
     event = Event().createEvent(json.loads(event_json_str))
 
     reminders = await api.get_reminders()

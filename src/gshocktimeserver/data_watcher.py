@@ -3,7 +3,6 @@ import logging
 
 
 class DataWatcher:
-
     logger = logging.getLogger("DataWatcher")
 
     def __init__(self):
@@ -30,7 +29,10 @@ class DataWatcher:
         if subscriber not in self.subscribers:
             return False
         subjects_for_this_subscriber = self.subscribers[subscriber]
-        if subjects_for_this_subscriber is None or subject not in subjects_for_this_subscriber:
+        if (
+            subjects_for_this_subscriber is None
+            or subject not in subjects_for_this_subscriber
+        ):
             return False
         return True
 

@@ -3,14 +3,14 @@ import string
 
 
 def to_casio_cmd(bytesStr):
-    parts = [bytesStr[i:i + 2] for i in range(0, len(bytesStr), 2)]
+    parts = [bytesStr[i : i + 2] for i in range(0, len(bytesStr), 2)]
     hexArr = [int(str, 16) for str in parts]
     return bytes(hexArr)
 
 
 def to_int_array(hexStr):
     intArr = []
-    strArray = hexStr.split(' ')
+    strArray = hexStr.split(" ")
     for s in strArray:
         if s.startswith("0x"):
             s = s.replace("0x", "")
@@ -20,7 +20,7 @@ def to_int_array(hexStr):
 
 def to_compact_string(hexStr):
     compactString = ""
-    strArray = hexStr.split(' ')
+    strArray = hexStr.split(" ")
     for s in strArray:
         if s.startswith("0x"):
             s = remove_prefix(s, "0x")
@@ -30,22 +30,22 @@ def to_compact_string(hexStr):
 
 
 def to_hex_string(byte_arr):
-    return '0x' + ' '.join(format(x, '02X') for x in byte_arr)
+    return "0x" + " ".join(format(x, "02X") for x in byte_arr)
 
 
 def remove_prefix(string, prefix):
-    return string[len(prefix):] if string.startswith(prefix) else string
+    return string[len(prefix) :] if string.startswith(prefix) else string
 
 
 def to_ascii_string(hexStr, commandLengthToSkip):
     asciiStr = ""
-    strArrayWithCommand = hexStr.split(' ')
+    strArrayWithCommand = hexStr.split(" ")
     if len(strArrayWithCommand) == 1:  # no spaces between hex values, i.e. 4C4F4E444F4E
-        strArrayWithCommand = [hexStr[i:i + 2] for i in range(0, len(hexStr), 2)]
+        strArrayWithCommand = [hexStr[i : i + 2] for i in range(0, len(hexStr), 2)]
 
     # skip command
     strArray = strArrayWithCommand[commandLengthToSkip:]
-    asc = ''.join(strArray)
+    asc = "".join(strArray)
     asciiStr = bytes.fromhex(asc).decode("ASCII")
     return asciiStr
 
@@ -60,11 +60,11 @@ def current_milli_time():
 
 def clean_str(dirty_str):
     printable = set(string.printable)
-    return ''.join(filter(lambda x: x in printable, dirty_str))
+    return "".join(filter(lambda x: x in printable, dirty_str))
 
 
 def to_byte_array(string, maxLen):
-    retArr = string.encode('utf-8')
+    retArr = string.encode("utf-8")
     if len(retArr) > maxLen:
         return retArr[:maxLen]
     elif len(retArr) < maxLen:

@@ -5,7 +5,14 @@ import time
 
 from connection import Connection
 from data_watcher import data_watcher
-from utils import to_ascii_string, trimNonAsciiCharacters, to_int_array, to_compact_string, current_milli_time, clean_str
+from utils import (
+    to_ascii_string,
+    trimNonAsciiCharacters,
+    to_int_array,
+    to_compact_string,
+    current_milli_time,
+    clean_str,
+)
 from result_queue import result_queue, KeyedResult
 from casio_watch import WatchButton, DtsState
 from alarms import alarmsInst
@@ -56,7 +63,7 @@ class GshockAPI:
             result_value = keyed_data.get("value")
             result_key = keyed_data.get("key")
 
-            if (result_key == _key):
+            if result_key == _key:
                 result_str = clean_str(result_value)
                 res = result_queue.dequeue(_key)
                 res.set_result(result_str)
@@ -112,14 +119,22 @@ class GshockAPI:
 
             ret = WatchButton.INVALID
 
-            if result_key == "10" and result_value != "" and len(
-                    to_int_array(result_value)) >= 19:
+            if (
+                result_key == "10"
+                and result_value != ""
+                and len(to_int_array(result_value)) >= 19
+            ):
                 ble_int_arr = to_int_array(result_value)
                 button_indicator = ble_int_arr[8]
-                ret = WatchButton.LOWER_LEFT if (button_indicator == 0 or button_indicator == 1) else \
-                    WatchButton.LOWER_RIGHT if button_indicator == 4 else \
-                    WatchButton.NO_BUTTON if button_indicator == 3 else \
-                    WatchButton.INVALID
+                ret = (
+                    WatchButton.LOWER_LEFT
+                    if (button_indicator == 0 or button_indicator == 1)
+                    else WatchButton.LOWER_RIGHT
+                    if button_indicator == 4
+                    else WatchButton.NO_BUTTON
+                    if button_indicator == 3
+                    else WatchButton.INVALID
+                )
 
                 res = result_queue.dequeue("10")
                 res.set_result(ret)
@@ -273,10 +288,8 @@ class GshockAPI:
 
         message = {
             "action": "SET_TIME",
-            "value": "{}".format(
-                round(
-                    time.time() *
-                    1000))}
+            "value": "{}".format(round(time.time() * 1000)),
+        }
         await self.connection.sendMessage(json.dumps(message))
 
     async def getAlarms(self):
@@ -409,7 +422,9 @@ class GshockAPI:
         -------
         None
         """
-        await self.connection.sendMessage("""{"action": "SET_TIMER", "value": """ + str(timerValue) + """ }""")
+        await self.connection.sendMessage(
+            """{"action": "SET_TIMER", "value": """ + str(timerValue) + """ }"""
+        )
 
     async def get_time_adjustment(self):
         """Determine if auto-tame adjustment is set or not
@@ -432,7 +447,7 @@ class GshockAPI:
         def get_time_adjustment(keyed_data):
             value = keyed_data.get("value")
             key = keyed_data.get("key")
-            if (key != "11"):
+            if key != "11":
                 return
 
             res = result_queue.dequeue(key)
@@ -453,7 +468,11 @@ class GshockAPI:
         -------
         None
         """
-        await self.connection.sendMessage("""{"action": "SET_TIME_ADJUSTMENT", "value": \"""" + str(settings.timeAdjustment) + """\" }""")
+        await self.connection.sendMessage(
+            """{"action": "SET_TIME_ADJUSTMENT", "value": \""""
+            + str(settings.timeAdjustment)
+            + """\" }"""
+        )
 
     async def get_basic_settings(self):
         """Get settings from the watch. Example:
@@ -508,7 +527,9 @@ class GshockAPI:
         None
         """
         setting_json = json.dumps(settings)
-        await self.connection.sendMessage("""{"action": "SET_SETTINGS", "value": """ + setting_json + """ }""")
+        await self.connection.sendMessage(
+            """{"action": "SET_SETTINGS", "value": """ + setting_json + """ }"""
+        )
 
     async def get_reminders(self):
         """Gets the current reminders (events) from the watch. Up to 5 events are supported.
@@ -598,7 +619,11 @@ class GshockAPI:
 
         selected = get_selected_events(events)
 
-        await self.connection.sendMessage("""{{\"action\": \"SET_REMINDERS\", \"value\": {}}}""".format(json.dumps(selected)))
+        await self.connection.sendMessage(
+            """{{\"action\": \"SET_REMINDERS\", \"value\": {}}}""".format(
+                json.dumps(selected)
+            )
+        )
 
     async def get_app_info(self):
         """Gets and internally sets app info to the watch.
