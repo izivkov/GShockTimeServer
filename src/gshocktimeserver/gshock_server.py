@@ -20,7 +20,8 @@ logger = logging.getLogger(__name__)
 scanner = Scanner()
 
 async def main():
-    await run_time_server()
+    # await run_time_server()
+    await run_api_tests()
 
 async def run_time_server():
     while True:
@@ -38,8 +39,8 @@ async def run_time_server():
                 continue
 
             await api.get_app_info()
-
             await api.setTime()
+
             await connection.disconnect()
 
         except Exception as e:
@@ -79,7 +80,7 @@ async def run_api_tests():
     time_adjstment = await api.get_time_adjustment()
     logger.info("time_adjstment: {}".format(time_adjstment))
 
-    settings.timeAdjustment = False
+    settings.timeAdjustment = True
     await api.set_time_adjustment(settings)
 
     settings_local = await api.get_basic_settings()
@@ -91,22 +92,23 @@ async def run_api_tests():
 
     await api.set_settings(settings_local)
 
+    # Create a single event
     tz = pytz.timezone('America/Toronto') 
     dt = datetime.now(timezone.utc)
     utc_timestamp = dt.timestamp()
     event_date = createEventDate(utc_timestamp, tz) 
     event_date_str = json.dumps(event_date.__dict__)
-    event_json_str = ("""{"time":"10002", "title":"Test Event", "selected":\"""" + str(False) +  """\", "enabled":\"""" + str(True) + """\", "repeatPeriod":\""""+RepeatPeriod.WEEKLY+"""\","daysOfWeek":\"""" + "MONDAY" + """\", "startDate":"""+event_date_str+""", "endDate":"""+event_date_str+"""}""")
-    event = Event(json.loads(event_json_str))
+    event_json_str = ("""{"title":"Test Event", "time":{"selected":\"""" + str(False) +  """\", "enabled":\"""" + str(True) + """\", "repeatPeriod":\""""+RepeatPeriod.WEEKLY+"""\","daysOfWeek":\"""" + "MONDAY" + """\", "startDate":"""+event_date_str+""", "endDate":"""+event_date_str+"""}}""")
+    event = Event().createEvent(json.loads(event_json_str))
 
     reminders = await api.get_reminders()
     for reminder in reminders:
-        logger.info("reminder: {}".format(reminder.__str__()))
+        logger.warning("reminder: {}".format(reminder.__str__()))
 
     await api.set_remonders(reminders)
 
     await connection.disconnect()
-    logger.info("--- END OF TESTS ---")
+    logger.warning("--- END OF TESTS ---")
 
 
 if __name__ == "__main__":
