@@ -64,7 +64,7 @@ class GshockAPI:
             result_key = keyed_data.get("key")
 
             if result_key == _key:
-                result_str = clean_str(result_value)
+                result_str = clean_str(to_ascii_string(result_value, 1))
                 res = result_queue.dequeue(_key)
                 res.set_result(result_str)
 
