@@ -13,7 +13,7 @@ from utils import (
 )
 from casio_constants import CasioConstants
 from enum import IntEnum
-from alarms import alarmsInst, alarmDecoder
+from alarms import alarms_inst, alarm_decoder
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +86,7 @@ def to_json(_data):
     if int_array[0] == CHARACTERISTICS["CASIO_SETTING_FOR_ALM"]:
         return {
             "ALARMS": {
-                "value": alarmDecoder.toJson(data)["ALARMS"],
+                "value": alarm_decoder.to_json(data)["ALARMS"],
                 "key": "GET_ALARMS",
             }
         }
@@ -94,7 +94,7 @@ def to_json(_data):
     if int_array[0] == CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]:
         return {
             "ALARMS2": {
-                "value": alarmDecoder.toJson(data)["ALARMS"],
+                "value": alarm_decoder.to_json(data)["ALARMS"],
                 "key": "GET_ALARMS2",
             }
         }
@@ -364,12 +364,12 @@ async def callWriter(connection, message: str):
             alarms_json_arr = json.loads(message).get("value")
             alarm_casio0 = to_compact_string(
                 to_hex_string(
-                    alarmsInst.from_json_alarm_first_alarm(alarms_json_arr[0])
+                    alarms_inst.from_json_alarm_first_alarm(alarms_json_arr[0])
                 )
             )
             await connection.write(0x000E, alarm_casio0)
             alarm_casio = to_compact_string(
-                to_hex_string(alarmsInst.fromJsonAlarmSecondaryAlarms(alarms_json_arr))
+                to_hex_string(alarms_inst.from_json_alarm_secondary_alarms(alarms_json_arr))
             )
             await connection.write(0x000E, alarm_casio)
 

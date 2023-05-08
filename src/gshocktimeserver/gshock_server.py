@@ -13,7 +13,7 @@ from scanner import Scanner
 from connection import Connection
 from gshock_api import GshockAPI
 from casio_watch import settings
-from event import Event, createEventDate, RepeatPeriod, DayOfWeek
+from event import Event, create_event_date, RepeatPeriod, day_of_week
 from casio_watch import WatchButton
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ async def run_time_server():
 
             api = GshockAPI(connection)
 
-            pressed_button = await api.getPressedButton()
+            pressed_button = await api.get_pressed_button()
             if (
                 pressed_button != WatchButton.LOWER_RIGHT
                 and pressed_button != WatchButton.NO_BUTTON
@@ -44,7 +44,7 @@ async def run_time_server():
                 continue
 
             await api.get_app_info()
-            await api.setTime()
+            await api.set_time()
 
             await connection.disconnect()
 
@@ -63,26 +63,26 @@ async def run_api_tests():
 
     await api.get_app_info()
 
-    pressed_button = await api.getPressedButton()
+    pressed_button = await api.get_pressed_button()
     logger.info("pressed button: {}".format(pressed_button))
 
-    watch_name = await api.getWatchName()
+    watch_name = await api.get_watch_name()
     logger.error("got watch name: {}".format(watch_name))
 
-    await api.setTime()
+    await api.set_time()
 
-    alarms = await api.getAlarms()
+    alarms = await api.get_alarms()
     logger.info("alarms: {}".format(alarms))
 
     alarms[3]["enabled"] = True
     alarms[3]["hour"] = 7
     alarms[3]["minute"] = 25
-    await api.setAlarms(alarms)
+    await api.set_alarms(alarms)
 
-    seconds = await api.getTimer()
+    seconds = await api.get_timer()
     logger.info("timer: {} seconds".format(seconds))
 
-    await api.setTimer(seconds + 10)
+    await api.set_timer(seconds + 10)
     time_adjstment = await api.get_time_adjustment()
     logger.info("time_adjstment: {}".format(time_adjstment))
 
@@ -102,7 +102,7 @@ async def run_api_tests():
     tz = pytz.timezone("America/Toronto")
     dt = datetime.now(timezone.utc)
     utc_timestamp = dt.timestamp()
-    event_date = createEventDate(utc_timestamp, tz)
+    event_date = create_event_date(utc_timestamp, tz)
     event_date_str = json.dumps(event_date.__dict__)
     event_json_str = (
         """{"title":"Test Event", "time":{"selected":\""""
@@ -119,7 +119,7 @@ async def run_api_tests():
         + event_date_str
         + """}}"""
     )
-    event = Event().createEvent(json.loads(event_json_str))
+    event = Event().create_event(json.loads(event_json_str))
 
     reminders = await api.get_reminders()
     for reminder in reminders:

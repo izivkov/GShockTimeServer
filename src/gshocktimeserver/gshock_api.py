@@ -15,7 +15,7 @@ from utils import (
 )
 from result_queue import result_queue, KeyedResult
 from casio_watch import WatchButton, DtsState
-from alarms import alarmsInst
+from alarms import alarms_inst
 from event import Event
 
 
@@ -37,7 +37,7 @@ class GshockAPI:
     def __init__(self, connection):
         self.connection = connection
 
-    async def getWatchName(self):
+    async def get_watch_name(self):
         """Get the name of the watch.
 
         Parameters
@@ -48,9 +48,9 @@ class GshockAPI:
         -------
         name : String, i.e: "GW-B5600"
         """
-        return await self._getWatchName("23")
+        return await self._get_watch_name("23")
 
-    async def _getWatchName(self, key):
+    async def _get_watch_name(self, key):
         await self.connection.request(key)
 
         loop = asyncio.get_running_loop()
@@ -71,7 +71,7 @@ class GshockAPI:
         self.subscribe("CASIO_WATCH_NAME", lambda data: on_data_received(data))
         return await result
 
-    async def getPressedButton(self) -> WatchButton:
+    async def get_pressed_button(self) -> WatchButton:
         """This function tells us which button was pressed on the watch to
         initiate the connection. Remember, the connection between the phone and the
         watch can only be initiated from the <b>watch</b>.
@@ -97,9 +97,9 @@ class GshockAPI:
         -------
         button: WATCH_BUTTON
         """
-        return await self._getPressedButton("10")
+        return await self._get_pressed_button("10")
 
-    async def _getPressedButton(self, key: str) -> WatchButton:
+    async def _get_pressed_button(self, key: str) -> WatchButton:
         await self.connection.request(key)
 
         loop = asyncio.get_running_loop()
@@ -143,7 +143,7 @@ class GshockAPI:
 
         return await result
 
-    async def getWorldCities(self, cityNumber: int):
+    async def get_world_cities(self, cityNumber: int):
         """Get the name for a particular World City set on the watch. There are 6 world cities that can be stored.
 
         Parameters
@@ -155,9 +155,9 @@ class GshockAPI:
         name : String, The name of the requested World City as a String.
         """
         key = "1f0{}".format(cityNumber)
-        return await self._getWorldCities(key)
+        return await self._get_world_cities(key)
 
-    async def _getWorldCities(self, key: str):
+    async def _get_world_cities(self, key: str):
         await self.connection.request(key)
 
         loop = asyncio.get_running_loop()
@@ -179,7 +179,7 @@ class GshockAPI:
         # self.subscribe("HOME_TIME", process_home_time)
         return await result
 
-    async def getDSTForWorldCities(self, cityNumber: int) -> str:
+    async def get_dst_for_world_cities(self, cityNumber: int) -> str:
         """Get the **Daylight Saving Time** for a particular World City set on the watch.
             There are 6 world cities that can be stored.
 
@@ -192,9 +192,9 @@ class GshockAPI:
         name : String, Daylight Saving Time state of the requested World City as a String.
         """
         key = "1e0{}".format(cityNumber)
-        return await self._getDSTForWorldCities(key)
+        return await self._get_dst_for_world_cities(key)
 
-    async def _getDSTForWorldCities(self, key: str) -> str:
+    async def _get_dst_for_world_cities(self, key: str) -> str:
         await self.connection.request(key)
 
         loop = asyncio.get_running_loop()
@@ -212,7 +212,7 @@ class GshockAPI:
 
         return await result
 
-    async def getDSTWatchState(self, state: DtsState) -> str:
+    async def get_dst_watch_state(self, state: DtsState) -> str:
         """Get the DST state of the watch.
 
         Parameters
@@ -224,9 +224,9 @@ class GshockAPI:
         dst: String, the Daylight Saving Time state of the watch as a String.
         """
         key = f"1d0{state.value}"
-        return await self._getDSTWatchState(key)
+        return await self._get_dst_watch_state(key)
 
-    async def _getDSTWatchState(self, key: str) -> str:
+    async def _get_dst_watch_state(self, key: str) -> str:
         await self.connection.request(key)
 
         loop = asyncio.get_running_loop()
@@ -244,34 +244,34 @@ class GshockAPI:
 
         return await result
 
-    async def initializeForSettingTime(self):
+    async def initialize_for_setting_time(self):
         # Before we can set time, we must read and write back these values.
         # Why? Not sure, ask Casio
 
-        async def readAndWrite(function, param):
+        async def read_and_rite(function, param):
             ret = await function(param)
             short_str = to_compact_string(ret)
             await self.connection.write(0xE, short_str)
 
-        await readAndWrite(self.getDSTWatchState, DtsState.ZERO)
-        await readAndWrite(self.getDSTWatchState, DtsState.TWO)
-        await readAndWrite(self.getDSTWatchState, DtsState.FOUR)
+        await read_and_rite(self.get_dst_watch_state, DtsState.ZERO)
+        await read_and_rite(self.get_dst_watch_state, DtsState.TWO)
+        await read_and_rite(self.get_dst_watch_state, DtsState.FOUR)
 
-        await readAndWrite(self.getDSTForWorldCities, 0)
-        await readAndWrite(self.getDSTForWorldCities, 1)
-        await readAndWrite(self.getDSTForWorldCities, 2)
-        await readAndWrite(self.getDSTForWorldCities, 3)
-        await readAndWrite(self.getDSTForWorldCities, 4)
-        await readAndWrite(self.getDSTForWorldCities, 5)
+        await read_and_rite(self.get_dst_for_world_cities, 0)
+        await read_and_rite(self.get_dst_for_world_cities, 1)
+        await read_and_rite(self.get_dst_for_world_cities, 2)
+        await read_and_rite(self.get_dst_for_world_cities, 3)
+        await read_and_rite(self.get_dst_for_world_cities, 4)
+        await read_and_rite(self.get_dst_for_world_cities, 5)
 
-        await readAndWrite(self.getWorldCities, 0)
-        await readAndWrite(self.getWorldCities, 1)
-        await readAndWrite(self.getWorldCities, 2)
-        await readAndWrite(self.getWorldCities, 3)
-        await readAndWrite(self.getWorldCities, 4)
-        await readAndWrite(self.getWorldCities, 5)
+        await read_and_rite(self.get_world_cities, 0)
+        await read_and_rite(self.get_world_cities, 1)
+        await read_and_rite(self.get_world_cities, 2)
+        await read_and_rite(self.get_world_cities, 3)
+        await read_and_rite(self.get_world_cities, 4)
+        await read_and_rite(self.get_world_cities, 5)
 
-    async def setTime(self):
+    async def set_time(self):
         """Sets the current time on the watch from the time on the phone. In addition, it can optionally set the Home Time
         to the current time zone. If timezone changes during travel, the watch will automatically be set to the
         correct time and timezone after running this function.
@@ -284,7 +284,7 @@ class GshockAPI:
         -------
         None
         """
-        await self.initializeForSettingTime()
+        await self.initialize_for_setting_time()
 
         message = {
             "action": "SET_TIME",
@@ -292,7 +292,7 @@ class GshockAPI:
         }
         await self.connection.sendMessage(json.dumps(message))
 
-    async def getAlarms(self):
+    async def get_alarms(self):
         """Gets the current alarms from the watch. Up to 5 alarms are supported on the watch.
 
         Parameters
@@ -303,12 +303,12 @@ class GshockAPI:
         -------
         alarms: List of `Alarm`
         """
-        alarmsInst.clear()
-        await self._getAlarms()
-        await self._getAlarms2()
-        return alarmsInst.alarms
+        alarms_inst.clear()
+        await self._get_alarms()
+        await self._get_alarms2()
+        return alarms_inst.alarms
 
-    async def _getAlarms(self):
+    async def _get_alarms(self):
         await self.connection.sendMessage("""{ "action": "GET_ALARMS"}""")
         key = "GET_ALARMS"
 
@@ -320,7 +320,7 @@ class GshockAPI:
             data = keyed_data.get("value")
             key = "GET_ALARMS"
 
-            alarmsInst.add_alarms(data)
+            alarms_inst.add_alarms(data)
 
             res = result_queue.dequeue(key)
             res.set_result(data)
@@ -328,7 +328,7 @@ class GshockAPI:
         self.subscribe("ALARMS", alarms_received)
         return await result
 
-    async def _getAlarms2(self):
+    async def _get_alarms2(self):
         await self.connection.sendMessage("""{ "action": "GET_ALARMS2"}""")
         key = "GET_ALARMS2"
 
@@ -342,7 +342,7 @@ class GshockAPI:
             data = keyed_data.get("value")
             key = "GET_ALARMS2"
 
-            alarmsInst.add_alarms(data)
+            alarms_inst.add_alarms(data)
 
             res = result_queue.dequeue(key)
             res.set_result(data)
@@ -350,7 +350,7 @@ class GshockAPI:
         self.subscribe("ALARMS2", alarms_received2)
         return await result
 
-    async def setAlarms(self, alarms):
+    async def set_alarms(self, alarms):
         """Sets alarms to the watch. Up to 5 alarms are supported on the watch.
 
         Parameters
@@ -370,7 +370,7 @@ class GshockAPI:
         await self.connection.sendMessage(set_action_cmd)
         self.logger.info("Returning from setAlarms")
 
-    async def getTimer(self):
+    async def get_timer(self):
         """Get Timer value in seconds.
 
         Parameters
@@ -381,9 +381,9 @@ class GshockAPI:
         -------
         timer_value: Integer, the timer number in seconds as an Int. E.g.: 180 means the timer is set for 3 minutes.
         """
-        return await self._getTimer("18")
+        return await self._get_timer("18")
 
-    async def _getTimer(self, key):
+    async def _get_timer(self, key):
         await self.connection.request(key)
 
         loop = asyncio.get_running_loop()
@@ -411,7 +411,7 @@ class GshockAPI:
         self.subscribe("CASIO_TIMER", get_timer)
         return await result
 
-    async def setTimer(self, timerValue):
+    async def set_timer(self, timerValue):
         """Set Timer value in seconds.
 
         Parameters
@@ -544,15 +544,15 @@ class GshockAPI:
         """
         reminders = []
 
-        reminders.append(await self.getEventFromWatch(1))
-        reminders.append(await self.getEventFromWatch(2))
-        reminders.append(await self.getEventFromWatch(3))
-        reminders.append(await self.getEventFromWatch(4))
-        reminders.append(await self.getEventFromWatch(5))
+        reminders.append(await self.get_event_from_watch(1))
+        reminders.append(await self.get_event_from_watch(2))
+        reminders.append(await self.get_event_from_watch(3))
+        reminders.append(await self.get_event_from_watch(4))
+        reminders.append(await self.get_event_from_watch(5))
 
         return reminders
 
-    async def getEventFromWatch(self, eventNumber: int):
+    async def get_event_from_watch(self, eventNumber: int):
         """Gets a single event (reminder) from the watch.
 
         Parameters
@@ -583,7 +583,7 @@ class GshockAPI:
                     json_obj["title"] = self.title
                     json_obj["time"] = value.get("time")
                     event_obj = Event()
-                    event = event_obj.createEvent(json_obj)
+                    event = event_obj.create_event(json_obj)
 
                     res = result_queue.dequeue(key)
                     res.set_result(event)

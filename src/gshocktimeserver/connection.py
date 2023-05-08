@@ -12,7 +12,7 @@ class Connection:
     logger = logging.getLogger("connection")
 
     def __init__(self, device):
-        self.handles_map = self.initHandlesMap()
+        self.handles_map = self.init_handles_map()
         self.device = device
         self.client = BleakClient(device)
 
@@ -52,15 +52,13 @@ class Connection:
     async def request(self, request):
         await self.write(0xC, request)
 
-    def initHandlesMap(self):
+    def init_handles_map(self):
         handles_map = {}
 
         handles_map[0x04] = CasioConstants.CASIO_GET_DEVICE_NAME
         handles_map[0x06] = CasioConstants.CASIO_APPEARANCE
         handles_map[0x09] = CasioConstants.TX_POWER_LEVEL_CHARACTERISTIC_UUID
-        handles_map[
-            0x0C
-        ] = CasioConstants.CASIO_READ_REQUEST_FOR_ALL_FEATURES_CHARACTERISTIC_UUID
+        handles_map[0x0C] = CasioConstants.CASIO_READ_REQUEST_FOR_ALL_FEATURES_CHARACTERISTIC_UUID
         handles_map[0x0E] = CasioConstants.CASIO_ALL_FEATURES_CHARACTERISTIC_UUID
         handles_map[0x11] = CasioConstants.CASIO_DATA_REQUEST_SP_CHARACTERISTIC_UUID
         handles_map[0x14] = CasioConstants.CASIO_CONVOY_CHARACTERISTIC_UUID

@@ -14,11 +14,11 @@ CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
 
 class Alarm:
-    def __init__(self, hour, minute, enabled, hasHourlyChime):
+    def __init__(self, hour, minute, enabled, has_hourly_chime):
         self.hour = hour
         self.minute = minute
         self.enabled = enabled
-        self.hasHourlyChime = hasHourlyChime
+        self.has_hourly_chime = has_hourly_chime
 
 
 class Alarms:
@@ -27,15 +27,15 @@ class Alarms:
     def clear(self):
         self.alarms.clear()
 
-    def add_alarms(self, alarmJsonStrArr):
-        for alarmJsonStr in alarmJsonStrArr:
-            alarm = json.loads(alarmJsonStr)
+    def add_alarms(self, alarm_json_str_arr):
+        for alarm_json_str in alarm_json_str_arr:
+            alarm = json.loads(alarm_json_str)
             self.alarms.append(alarm)
 
     def from_json_alarm_first_alarm(self, alarm):
-        return self.createFirstAlarm(alarm)
+        return self.create_first_alarm(alarm)
 
-    def createFirstAlarm(self, alarm):
+    def create_first_alarm(self, alarm):
         flag = 0
         if alarm.get("enabled"):
             flag = flag | ENABLED_MASK
@@ -52,14 +52,14 @@ class Alarms:
             ]
         )
 
-    def fromJsonAlarmSecondaryAlarms(self, alarmsJson):
-        if len(alarmsJson) < 2:
+    def from_json_alarm_secondary_alarms(self, alarms_json):
+        if len(alarms_json) < 2:
             return []
         alarms = self.alarms[1:]
-        return self.createSecondaryAlarm(alarms)
+        return self.create_secondary_alarm(alarms)
 
-    def createSecondaryAlarm(self, alarms):
-        allAlarms = bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]])
+    def create_secondary_alarm(self, alarms):
+        all_alarms = bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]])
 
         for alarm in alarms:
             flag = 0
@@ -68,54 +68,54 @@ class Alarms:
             if alarm.get("hasHourlyChime"):
                 flag = flag | HOURLY_CHIME_MASK
 
-            allAlarms += bytearray(
+            all_alarms += bytearray(
                 [flag, ALARM_CONSTANT_VALUE, alarm.get("hour"), alarm.get("minute")]
             )
 
-        return allAlarms
+        return all_alarms
 
 
-alarmsInst = Alarms()
+alarms_inst = Alarms()
 
 
 class AlarmDecoder:
-    def toJson(self, command: str):
-        jsonResponse = {}
-        intArray = to_int_array(command)
+    def to_json(self, command: str):
+        json_response = {}
+        int_array = to_int_array(command)
         alarms = []
 
-        if intArray[0] == CHARACTERISTICS["CASIO_SETTING_FOR_ALM"]:
-            intArray.pop(0)
-            alarms.append(self.createJsonAlarm(intArray))
-            jsonResponse["ALARMS"] = alarms
-        elif intArray[0] == CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]:
-            intArray.pop(0)
-            for item in np.array_split(intArray, 4):
-                alarms.append(self.createJsonAlarm(item))
-            jsonResponse["ALARMS"] = alarms
+        if int_array[0] == CHARACTERISTICS["CASIO_SETTING_FOR_ALM"]:
+            int_array.pop(0)
+            alarms.append(self.create_json_alarm(int_array))
+            json_response["ALARMS"] = alarms
+        elif int_array[0] == CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]:
+            int_array.pop(0)
+            for item in np.array_split(int_array, 4):
+                alarms.append(self.create_json_alarm(item))
+            json_response["ALARMS"] = alarms
         else:
             logger.info("Unhandled Command {}".format(command))
 
-        return jsonResponse
+        return json_response
 
-    def createJsonAlarm(self, intArray):
+    def create_json_alarm(self, int_array):
         alarm = Alarm(
-            intArray[2],
-            intArray[3],
-            intArray[0] & ENABLED_MASK != 0,
-            intArray[0] & HOURLY_CHIME_MASK != 0,
+            int_array[2],
+            int_array[3],
+            int_array[0] & ENABLED_MASK != 0,
+            int_array[0] & HOURLY_CHIME_MASK != 0,
         )
-        return self.to_json(alarm)
+        return self.to_json_new_alarm(alarm)
 
-    def to_json(self, alarm):
+    def to_json_new_alarm(self, alarm):
         return json.dumps(
             {
                 "enabled": bool(alarm.enabled),
-                "hasHourlyChime": bool(alarm.hasHourlyChime),
+                "hasHourlyChime": bool(alarm.has_hourly_chime),
                 "hour": int(alarm.hour),
                 "minute": int(alarm.minute),
             }
         )
 
 
-alarmDecoder = AlarmDecoder()
+alarm_decoder = AlarmDecoder()
