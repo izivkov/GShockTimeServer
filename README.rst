@@ -33,8 +33,14 @@
 GShockTimeServer
 ================
 
+Installation:
 
-    Add a short description here!
+Install the following dependencies:
+
+    pip3 install pytz
+    pip3 install bleak
+    pip3 install reactivex
+
 
 
 A longer description of your project goes here...
