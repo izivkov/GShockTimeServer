@@ -1,6 +1,5 @@
 import json
 import logging
-import numpy as np
 from casio_constants import CasioConstants
 from utils import to_int_array, to_compact_string, to_hex_string
 
@@ -90,8 +89,25 @@ class AlarmDecoder:
             json_response["ALARMS"] = alarms
         elif int_array[0] == CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]:
             int_array.pop(0)
-            for item in np.array_split(int_array, 4):
-                alarms.append(self.create_json_alarm(item))
+
+            # for item in np.array_split(int_array, 4):
+            #     alarms.append(self.create_json_alarm(item))
+
+            # replacement to above 2 lines
+            alarms = []
+            # split int_array into 4 subarrays
+            subarr1 = int_array[:len(int_array)//4]
+            subarr2 = int_array[len(int_array)//4:len(int_array)//2]
+            subarr3 = int_array[len(int_array)//2:len(int_array)*3//4]
+            subarr4 = int_array[len(int_array)*3//4:]
+
+            # create json alarms for each subarray
+            alarms.append(self.create_json_alarm(subarr1))
+            alarms.append(self.create_json_alarm(subarr2))
+            alarms.append(self.create_json_alarm(subarr3))
+            alarms.append(self.create_json_alarm(subarr4))
+            # end replacement
+
             json_response["ALARMS"] = alarms
         else:
             logger.info("Unhandled Command {}".format(command))
