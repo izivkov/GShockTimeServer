@@ -1,8 +1,8 @@
-import argparse
 import asyncio
 import logging
 import json
 import pytz
+import sys
 from datetime import datetime, timezone
 
 from bleak import BleakClient, BleakScanner
@@ -15,21 +15,31 @@ from gshock_api import GshockAPI
 from casio_watch import settings
 from event import Event, create_event_date, RepeatPeriod, day_of_week
 from casio_watch import WatchButton
+from utils import (
+    to_ascii_string,
+    clean_str,
+)
+from configurator import conf
 
 logger = logging.getLogger(__name__)
 scanner = Scanner()
 
 
-async def main():
-    # await run_time_server()
-    await run_api_tests()
+async def main(argv):
+    await run_time_server(argv)
+    # await run_api_tests()
 
 
-async def run_time_server():
+async def run_time_server(argv):
     while True:
         try:
-            device = await scanner.scan()
-            logger.warning("Found: {}".format(device))
+            if len(argv) > 0 and argv[0] == "--multy_watch":
+                address = None
+            else:
+                address = conf.get("device.address")
+
+            device = await scanner.scan(address)
+            logger.info("Found: {}".format(device))
 
             connection = Connection(device)
             await connection.connect()
@@ -49,12 +59,13 @@ async def run_time_server():
             await connection.disconnect()
 
         except Exception as e:
+            print (f"Got error: {e}")
             continue
 
 
 async def run_api_tests():
     device = await scanner.scan()
-    logger.warning("Found: {}".format(device))
+    logger.info("Found: {}".format(device))
 
     connection = Connection(device)
     await connection.connect()
@@ -67,9 +78,10 @@ async def run_api_tests():
     logger.info("pressed button: {}".format(pressed_button))
 
     watch_name = await api.get_watch_name()
-    logger.error("got watch name: {}".format(watch_name))
+    logger.info("got watch name: {}".format(watch_name))
 
     await api.set_time()
+    # await api.reset_hand_to_12()
 
     alarms = await api.get_alarms()
     logger.info("alarms: {}".format(alarms))
@@ -123,12 +135,14 @@ async def run_api_tests():
 
     reminders = await api.get_reminders()
     for reminder in reminders:
-        logger.warning("reminder: {}".format(reminder.__str__()))
+        logger.info("reminder: {}".format(reminder.__str__()))
 
     await api.set_reminders(reminders)
 
+    # input("Hit any key to disconnect")
+
     await connection.disconnect()
-    logger.warning("--- END OF TESTS ---")
+    logger.info("--- END OF TESTS ---")
 
 
 if __name__ == "__main__":
@@ -137,4 +151,4 @@ if __name__ == "__main__":
         level=log_level,
         format="%(asctime)-15s %(name)-8s %(levelname)s: %(message)s",
     )
-    asyncio.run(main())
+    asyncio.run(main(sys.argv[1:]))

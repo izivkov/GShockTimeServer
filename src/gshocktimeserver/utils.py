@@ -49,7 +49,6 @@ def to_ascii_string(hexStr, commandLengthToSkip):
     asciiStr = bytes.fromhex(asc).decode("ASCII")
     return asciiStr
 
-
 def trimNonAsciiCharacters(string):
     return string.replace("\0", "")
 
@@ -73,5 +72,29 @@ def to_byte_array(string, maxLen):
         return retArr
 
 
+
+def to_hex_string_compact(asciiStr, maxLen):
+    byteArr = bytearray(asciiStr, 'ascii')
+    hexStr = ""
+    for byte in byteArr:
+        hexStr += "{:02x}".format(byte)
+    return hexStr
+
 def dec_to_hex(dec):
     return int(str(hex(dec))[2:])
+
+def encode_string(ascii_string, maxlen):
+  # Convert the ascii string into an array of integers
+  int_arr = [ord(c) for c in ascii_string]
+  
+  # Pad the array up to maxlen with zeroes
+  while len(int_arr) < maxlen:
+    int_arr.append(0)
+    
+  # Convert the array back into a string
+  hex_string = ''
+  for i in int_arr:
+    hex_string += '{:02X}'.format(i)
+    
+  return hex_string
+

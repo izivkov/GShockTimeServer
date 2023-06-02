@@ -7,16 +7,16 @@ from connection import Connection
 from data_watcher import data_watcher
 from utils import (
     to_ascii_string,
-    trimNonAsciiCharacters,
     to_int_array,
     to_compact_string,
-    current_milli_time,
     clean_str,
+    encode_string
 )
 from result_queue import result_queue, KeyedResult
 from casio_watch import WatchButton, DtsState
 from alarms import alarms_inst
 from event import Event
+from watch_info import watch_info
 
 
 class GshockAPI:
@@ -28,7 +28,7 @@ class GshockAPI:
 
         pressed_button = await api.getPressedButton()
         watch_name = await api.getWatchName()
-        await api.setTime()
+        await api.set_time()
         ...
     """
 
@@ -155,7 +155,8 @@ class GshockAPI:
         name : String, The name of the requested World City as a String.
         """
         key = "1f0{}".format(cityNumber)
-        return await self._get_world_cities(key)
+        city = await self._get_world_cities(key)
+        return city
 
     async def _get_world_cities(self, key: str):
         await self.connection.request(key)
@@ -244,6 +245,12 @@ class GshockAPI:
 
         return await result
 
+    # async def reset_hand_to_12 (self):
+    #     await self.connection.write(0xE, "1a0412000000")
+    #     await self.connection.write(0xE, "1a0418000000")
+
+
+
     async def initialize_for_setting_time(self):
         # Before we can set time, we must read and write back these values.
         # Why? Not sure, ask Casio
@@ -271,6 +278,22 @@ class GshockAPI:
         await read_and_rite(self.get_world_cities, 4)
         await read_and_rite(self.get_world_cities, 5)
 
+    async def initialize_for_setting_time_b2100(self):
+        # Before we can set time, we must read and write back these values.
+        # Why? Not sure, ask Casio
+
+        async def read_and_rite(function, param):
+            ret = await function(param)
+            short_str = to_compact_string(ret)
+            await self.connection.write(0xE, short_str)
+
+        await read_and_rite(self.get_dst_watch_state, DtsState.ZERO)
+        await read_and_rite(self.get_dst_for_world_cities, 0)
+        await read_and_rite(self.get_dst_for_world_cities, 1)
+
+        await read_and_rite(self.get_world_cities, 0)
+        await read_and_rite(self.get_world_cities, 1)
+
     async def set_time(self):
         """Sets the current time on the watch from the time on the phone. In addition, it can optionally set the Home Time
         to the current time zone. If timezone changes during travel, the watch will automatically be set to the
@@ -284,7 +307,11 @@ class GshockAPI:
         -------
         None
         """
-        await self.initialize_for_setting_time()
+
+        if watch_info.model == watch_info.model.B2100:
+            await self.initialize_for_setting_time_b2100()
+        else:
+            await self.initialize_for_setting_time()
 
         message = {
             "action": "SET_TIME",

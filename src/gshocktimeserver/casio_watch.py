@@ -541,7 +541,7 @@ async def callWriter(connection, message: str):
             reminder_time_byte_arr_to_send = to_compact_string(
                 to_hex_string(bytearray(reminder_time_byte_arr))
             )
-            logger.error(reminder_time_byte_arr_to_send)
+            logger.info(reminder_time_byte_arr_to_send)
             await connection.write(0x000E, reminder_time_byte_arr_to_send)
 
     elif action ==  "GET_SETTINGS":
