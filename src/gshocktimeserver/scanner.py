@@ -18,7 +18,8 @@ class Scanner:
             while True:
                 filter = {"name": "CASIO*"}
                 device = await scanner.find_device_by_filter(
-                    lambda d, ad: d.name and d.name.lower().startswith("casio")
+                    lambda d, ad: d.name and d.name.lower().startswith("casio"),
+                    timeout=5*60.0
                 )
                 print (f"device: {device}")
                 if device is None:
@@ -37,3 +38,5 @@ class Scanner:
             )
 
         return device
+
+scanner = Scanner()
