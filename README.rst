@@ -7,7 +7,7 @@ Overview:
 This project allows you to setup time on your Casio G-Shock B5000/B5600/B2100 watches.
 
 In addition, this repository provides an API for developing application for the above watches. This is WIP,
-but you can take a look at the **api_tests.py** file on how to use the API.
+but you can take a look at the ``api_tests.py`` file on how to use the API.
 
 Usage:
 ======
@@ -38,7 +38,7 @@ Install the following dependencies:
 
 Troubleshooting:
 ================
-If your watch cannot connect, and the `--multi-watch` parameter is not used, remove the "config.ini" file and try again.
+If your watch cannot connect, and the ``--multi-watch`` parameter is not used, remove the "config.ini" file and try again.
 
 To Do:
 ======
