@@ -31,7 +31,9 @@ Installation:
 Install the following dependencies:
 
     pip3 install pytz
+
     pip3 install bleak
+    
     pip3 install reactivex
 
 Troubleshooting:
