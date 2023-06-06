@@ -17,6 +17,7 @@ It has been tested on Linux OS only, but should be compatible with Windows as we
 1. Go to /src/gshocktimeserver
 
 2. run:
+
     **python3 gshock_server.py [----multi-watch]**
     (the --multi-watch parameter is used if you have multiple watches)
 
