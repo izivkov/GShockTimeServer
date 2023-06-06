@@ -4,7 +4,7 @@ GShockTimeServer
 
 Overview:
 =========
-This project allows you to setup time on your Casio G-Shock `B5600:https://amzn.to/3Mt68Qb`/ `B5000:https://amzn.to/4194M13`/ `[B2100:https://amzn.to/3MUDCGY` watches.
+This project allows you to setup time on your Casio G-Shock `B5600 <https://amzn.to/3Mt68Qb>`__/ `B5000:https://amzn.to/4194M13`/ `[B2100:https://amzn.to/3MUDCGY` watches.
 
 In addition, this repository provides an API for developing application for the above watches. This is WIP,
 but you can take a look at the ``api_tests.py`` file on how to use the API.
