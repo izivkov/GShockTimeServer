@@ -1,4 +1,4 @@
-name: demo-dsproject
+name: gshock-time-server
 channels:
   - defaults
   - conda-forge
