@@ -14,12 +14,12 @@ dependencies:
      - reactivex
 
   # DEVELOPMENT ONLY PACKAGES (could also be kept in a separate environment file)
-  - jupyterlab
+  # - jupyterlab
   - pytest
   - pytest-cov
-  - tox
-  - pre_commit
-  - nbdime
-  - nbstripout
-  - sphinx
-  - recommonmark
+ #  - tox
+ # - pre_commit
+ # - nbdime
+ # - nbstripout
+ # - sphinx
+ # - recommonmark
