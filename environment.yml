@@ -10,7 +10,7 @@ dependencies:
   - pip:
      - -e .  # install git checkout of demo-dsproject in editable mode
      - pytz
-     - bleak
+     # - bleak
      - reactivex
 
   # DEVELOPMENT ONLY PACKAGES (could also be kept in a separate environment file)
