@@ -4,15 +4,14 @@ import sys
 from bleak import BleakScanner
 from configurator import conf
 from watch_info import watch_info
+from logger import logger
 
 class Scanner:
-    logger = logging.getLogger("scanner")
     CASIO_SERVICE_UUID = "00001804-0000-1000-8000-00805f9b34fb"
 
     async def scan(self, device_address):
-        self.logger.info("starting scan...")
         scanner = BleakScanner()
-        self.logger.info("Scanning for devices...")
+        logger.info("Scanning for devices...")
 
         if device_address is None:
             while True:
@@ -21,7 +20,7 @@ class Scanner:
                     lambda d, ad: d.name and d.name.lower().startswith("casio"),
                     timeout=5*60.0
                 )
-                print (f"device: {device}")
+                logger.debug (f"device: {device}")
                 if device is None:
                     continue
 
@@ -32,7 +31,7 @@ class Scanner:
                 conf.put("device.name", device.name)
                 break
         else:
-            self.logger.info("Waiting for device by address...")
+            logger.info("Waiting for device by address...")
             device = await scanner.find_device_by_address(
                 device_address, sys.float_info.max
             )

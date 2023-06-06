@@ -14,8 +14,7 @@ from utils import (
 from casio_constants import CasioConstants
 from enum import IntEnum
 from alarms import alarms_inst, alarm_decoder
-
-logger = logging.getLogger(__name__)
+from logger import logger
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
@@ -342,7 +341,7 @@ def to_json(_data):
 
 
 async def callWriter(connection, message: str):
-    print(message)
+    logger.debug(message)
     action_json = json.loads(message)
     action = action_json.get("action")
 
@@ -640,7 +639,7 @@ async def callWriter(connection, message: str):
 
     elif action == "SET_TIME":
         date_time_ms = int(json.loads(message).get("value"))
-        print("date_time_ms: {}".format(date_time_ms))
+        logger.debug("date_time_ms: {}".format(date_time_ms))
         date_time = datetime.datetime.fromtimestamp(date_time_ms / 1000.0)
         time_data = TimeEncoder.prepare_current_time(date_time)
         time_command = to_hex_string(

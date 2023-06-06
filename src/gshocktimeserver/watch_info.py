@@ -15,7 +15,6 @@ class WatchInfo:
     def set_name (self, name):
         self.name = name
         self.model = self.model.B2100 if "2100" in name else self.model.B5600
-        print(f"Model set to {self.model}")
 
     def set_address (self, address):
         self.address = address

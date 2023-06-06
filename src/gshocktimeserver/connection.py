@@ -6,11 +6,9 @@ from casio_constants import CasioConstants
 from utils import to_casio_cmd
 from data_watcher import data_watcher
 from casio_watch import to_json, callWriter
-
+from logger import logger
 
 class Connection:
-    logger = logging.getLogger("connection")
-
     def __init__(self, device):
         self.handles_map = self.init_handles_map()
         self.device = device
@@ -41,13 +39,13 @@ class Connection:
         await self.client.disconnect()
 
     async def write(self, handle, data):
-        self.logger.info("write: {}".format(data))
+        logger.info("write: {}".format(data))
         try:
             await self.client.write_gatt_char(
                 self.handles_map[handle], to_casio_cmd(data)
             )
         except Exception as e:
-            self.logger.info("write failed with exception: {}".format(e))
+            logger.info("write failed with exception: {}".format(e))
 
     async def request(self, request):
         await self.write(0xC, request)

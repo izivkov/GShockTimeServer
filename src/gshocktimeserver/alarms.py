@@ -2,11 +2,10 @@ import json
 import logging
 from casio_constants import CasioConstants
 from utils import to_int_array, to_compact_string, to_hex_string
+from logger import logger
 
-logger = logging.getLogger(__name__)
-
-HOURLY_CHIME_MASK = 0b10000000
-ENABLED_MASK = 0b01000000
+HOURLY_CHIME_MASK   = 0b10000000
+ENABLED_MASK        = 0b01000000
 ALARM_CONSTANT_VALUE = 0x40
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
@@ -110,7 +109,7 @@ class AlarmDecoder:
 
             json_response["ALARMS"] = alarms
         else:
-            logger.info("Unhandled Command {}".format(command))
+            logger.warn("Unhandled Command {}".format(command))
 
         return json_response
 
