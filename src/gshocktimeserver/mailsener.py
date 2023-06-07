@@ -1,6 +1,7 @@
 import smtplib
 from datetime import date
 
+
 def send_mail_notification(to_address):
     # Import the email modules we'll need
     from email.mime.text import MIMEText

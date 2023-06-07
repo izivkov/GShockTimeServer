@@ -1,6 +1,5 @@
 import json
 import datetime
-import logging
 from settings import settings
 from utils import (
     to_int_array,
@@ -274,18 +273,12 @@ def to_json(_data):
             if int_arr[3] == 0xFF:
                 # 0XFF indicates end of reminders
                 return json.dumps({"end": ""})
-
-            short_str = to_compact_string(reminder_str)
-            # get the first byte of the returned data, which indicates the data content.
-            key = short_str[:4].upper()
-
+                    
             reminder_all = to_int_array(reminder_str)
             # Remove the first 2 chars:
             # 0x31 05 <--- 00 23 02 21 23 02 21 00 00
             reminder = reminder_all[2:]
-
             reminder_json = {}
-
             time_period = decode_time_period(reminder[0])
             reminder_json["enabled"] = time_period[0]
             reminder_json["repeat_period"] = time_period[1]
@@ -320,7 +313,6 @@ def to_json(_data):
 
     elif int_array[0] == CHARACTERISTICS["CASIO_WORLD_CITIES"]:
         data_json = {"key": create_key(data), "value": data}
-        characteristics_array = to_int_array(data)
         json_obj["CASIO_WORLD_CITIES"] = data_json
     elif int_array[0] == CHARACTERISTICS["CASIO_DST_WATCH_STATE"]:
         data_json = {"key": create_key(data), "value": data}
@@ -352,14 +344,14 @@ async def callWriter(connection, message: str):
 
         await connection.write(0x000C, alarm_command)
 
-    elif action ==  "GET_ALARMS2":
+    elif action == "GET_ALARMS2":
         # get the rest of the alarms
         alarm_command2 = to_compact_string(
             to_hex_string(bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]]))
         )
         await connection.write(0x000C, alarm_command2)
 
-    elif action ==  "SET_ALARMS":
+    elif action == "SET_ALARMS":
         alarms_json_arr = json.loads(message).get("value")
         alarm_casio0 = to_compact_string(
             to_hex_string(
@@ -372,7 +364,7 @@ async def callWriter(connection, message: str):
         )
         await connection.write(0x000E, alarm_casio)
 
-    elif action ==  "SET_REMINDERS":
+    elif action == "SET_REMINDERS":
 
         def reminder_title_from_json(reminder_json):
             title_str = reminder_json.get("title")
@@ -543,7 +535,7 @@ async def callWriter(connection, message: str):
             logger.info(reminder_time_byte_arr_to_send)
             await connection.write(0x000E, reminder_time_byte_arr_to_send)
 
-    elif action ==  "GET_SETTINGS":
+    elif action == "GET_SETTINGS":
         await connection.write(
             0x000C, bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_BASIC"]])
         )
@@ -589,7 +581,7 @@ async def callWriter(connection, message: str):
             0x000E, to_compact_string(to_hex_string(encoded_settings))
         )
 
-    elif action ==  "GET_TIME_ADJUSTMENT":
+    elif action == "GET_TIME_ADJUSTMENT":
         await connection.write(
             0x000C,
             to_compact_string(
@@ -597,7 +589,7 @@ async def callWriter(connection, message: str):
             ),
         )
 
-    elif action ==  "SET_TIME_ADJUSTMENT":
+    elif action == "SET_TIME_ADJUSTMENT":
         value = json.loads(message).get("value")
 
         def encode_time_adjustment(time_adjustment):

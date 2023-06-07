@@ -1,11 +1,10 @@
 import json
-import logging
 from casio_constants import CasioConstants
-from utils import to_int_array, to_compact_string, to_hex_string
+from utils import to_int_array
 from logger import logger
 
-HOURLY_CHIME_MASK   = 0b10000000
-ENABLED_MASK        = 0b01000000
+HOURLY_CHIME_MASK = 0b10000000
+ENABLED_MASK = 0b01000000
 ALARM_CONSTANT_VALUE = 0x40
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
@@ -95,10 +94,10 @@ class AlarmDecoder:
             # replacement to above 2 lines
             alarms = []
             # split int_array into 4 subarrays
-            subarr1 = int_array[:len(int_array)//4]
-            subarr2 = int_array[len(int_array)//4:len(int_array)//2]
-            subarr3 = int_array[len(int_array)//2:len(int_array)*3//4]
-            subarr4 = int_array[len(int_array)*3//4:]
+            subarr1 = int_array[:len(int_array) // 4]
+            subarr2 = int_array[len(int_array) // 4:len(int_array) // 2]
+            subarr3 = int_array[len(int_array) // 2:len(int_array) * 3 // 4]
+            subarr4 = int_array[len(int_array) * 3 // 4:]
 
             # create json alarms for each subarray
             alarms.append(self.create_json_alarm(subarr1))

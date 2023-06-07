@@ -3,14 +3,12 @@ import logging
 import json
 import time
 
-from connection import Connection
 from data_watcher import data_watcher
 from utils import (
     to_ascii_string,
     to_int_array,
     to_compact_string,
     clean_str,
-    encode_string
 )
 from result_queue import result_queue, KeyedResult
 from casio_watch import WatchButton, DtsState
@@ -21,7 +19,9 @@ from watch_info import watch_info
 
 class GshockAPI:
     """
-    This class contains all the API functions. This should the the main interface to the library.
+    This class contains all the API functions. This should the the main interface to the
+    library.
+
     Here is how to use it:
 
         api = GshockAPI(connection)
@@ -78,12 +78,13 @@ class GshockAPI:
 
         The return values are interpreted as follows:
 
-        - `LOWER_LEFT` - this connection is initiated by a long-press of the lower-left button on the watch.
-            The app receiving this type of connection can now send and receive commands to the watch.
+        - `LOWER_LEFT` - this connection is initiated by a long-press of the lower-left 
+            button on the watch.The app receiving this type of connection can now send and 
+            receive commands to the watch.
 
         - `LOWER_RIGHT` - this connection is initiated by a short-press of the lower-right button,
-            which is usually used to set time. But the app can use this signal to perform other arbitrary functions.
-            Therefore, this button is also referred as `ACTION BUTTON`.
+            which is usually used to set time. But the app can use this signal to perform other 
+            arbitrary functions. Therefore, this button is also referred as `ACTION BUTTON`.
             The connection will automatically disconnect in about 20 seconds.
 
         - `NO_BUTTON` - this connection is initiated automatically, periodically
@@ -173,8 +174,7 @@ class GshockAPI:
             res.set_result(value)
 
         def process_home_time(keyed_data):
-            value = keyed_data.get("value")
-            key = keyed_data.get("key")
+            pass
 
         self.subscribe("CASIO_WORLD_CITIES", casio_world_cities_callback)
         # self.subscribe("HOME_TIME", process_home_time)
@@ -248,8 +248,6 @@ class GshockAPI:
     # async def reset_hand_to_12 (self):
     #     await self.connection.write(0xE, "1a0412000000")
     #     await self.connection.write(0xE, "1a0418000000")
-
-
 
     async def initialize_for_setting_time(self):
         # Before we can set time, we must read and write back these values.

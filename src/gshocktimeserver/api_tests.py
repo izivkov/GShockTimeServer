@@ -1,4 +1,3 @@
-import logging
 import json
 import pytz
 from datetime import datetime, timezone
@@ -6,15 +5,10 @@ from datetime import datetime, timezone
 from connection import Connection
 from gshock_api import GshockAPI
 from casio_watch import settings
-from event import Event, create_event_date, RepeatPeriod, day_of_week
-from casio_watch import WatchButton
-from utils import (
-    to_ascii_string,
-    clean_str,
-)
-from configurator import conf
+from event import Event, create_event_date, RepeatPeriod
 from scanner import scanner
 from logger import logger
+
 
 async def run_api_tests(args):
     device = await scanner.scan()
@@ -85,7 +79,7 @@ async def run_api_tests(args):
         + event_date_str
         + """}}"""
     )
-    event = Event().create_event(json.loads(event_json_str))
+    Event().create_event(json.loads(event_json_str))
 
     reminders = await api.get_reminders()
     for reminder in reminders:

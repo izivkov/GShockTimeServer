@@ -1,5 +1,3 @@
-import logging
-
 from bleak import BleakClient
 from bleak.backends.characteristic import BleakGATTCharacteristic
 from casio_constants import CasioConstants
@@ -7,6 +5,7 @@ from utils import to_casio_cmd
 from data_watcher import data_watcher
 from casio_watch import to_json, callWriter
 from logger import logger
+
 
 class Connection:
     def __init__(self, device):
