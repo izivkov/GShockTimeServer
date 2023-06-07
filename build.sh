@@ -1,2 +1,1 @@
-python setup.py bdist
-
+python3 setup.py bdist

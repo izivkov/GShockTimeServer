@@ -8,6 +8,7 @@ from scanner import scanner
 from configurator import conf
 from logger import logger
 from args import args
+from api_tests import run_api_tests
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
@@ -16,10 +17,21 @@ __license__ = "MIT"
 
 async def main(argv):
     await run_time_server()
-    # await run_api_tests(args)
+    # await run_api_tests()
+
+
+def prompt():
+    print("==============================================================================================")
+    print("Short-press lower-right button on your watch for 3 seconds to start...")
+    print("")
+    print("If Auto-time set on watch, the watch will connect and run automatically up to 4 times per day.")
+    print("==============================================================================================")
+    print("")
 
 
 async def run_time_server():
+    prompt()
+
     while True:
         try:
             if args.get().multi_watch:
@@ -53,6 +65,7 @@ async def run_time_server():
         except Exception as e:
             logger.error(f"Got error: {e}")
             continue
+
 
 if __name__ == "__main__":
     asyncio.run(main(sys.argv[1:]))

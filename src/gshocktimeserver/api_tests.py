@@ -9,10 +9,17 @@ from event import Event, create_event_date, RepeatPeriod
 from scanner import scanner
 from logger import logger
 
+def prompt():
+    print ("========================================================================")
+    print ("Press and hold lower-left button on your watch for 3 seconds to start...")
+    print ("========================================================================")
+    print ("")
 
-async def run_api_tests(args):
+async def run_api_tests():
+    prompt()
+    
     device = await scanner.scan()
-    logger.debug("Found: {}".format(device))
+    logger.info("Found: {}".format(device))
 
     connection = Connection(device)
     await connection.connect()
@@ -22,16 +29,16 @@ async def run_api_tests(args):
     await api.get_app_info()
 
     pressed_button = await api.get_pressed_button()
-    logger.debug("pressed button: {}".format(pressed_button))
+    logger.info("pressed button: {}".format(pressed_button))
 
     watch_name = await api.get_watch_name()
-    logger.debug("got watch name: {}".format(watch_name))
+    logger.info("got watch name: {}".format(watch_name))
 
     await api.set_time()
     # await api.reset_hand_to_12()
 
     alarms = await api.get_alarms()
-    logger.debug("alarms: {}".format(alarms))
+    logger.info("alarms: {}".format(alarms))
 
     alarms[3]["enabled"] = True
     alarms[3]["hour"] = 7
@@ -40,17 +47,17 @@ async def run_api_tests(args):
     await api.set_alarms(alarms)
 
     seconds = await api.get_timer()
-    logger.debug("timer: {} seconds".format(seconds))
+    logger.info("timer: {} seconds".format(seconds))
 
     await api.set_timer(seconds + 10)
     time_adjstment = await api.get_time_adjustment()
-    logger.debug("time_adjstment: {}".format(time_adjstment))
+    logger.info("time_adjstment: {}".format(time_adjstment))
 
     settings.timeAdjustment = True
     await api.set_time_adjustment(settings)
 
     settings_local = await api.get_basic_settings()
-    logger.debug("settings: {}".format(settings_local))
+    logger.info("settings: {}".format(settings_local))
 
     settings_local["button_tone"] = True
     settings_local["language"] = "Engish"
@@ -83,11 +90,11 @@ async def run_api_tests(args):
 
     reminders = await api.get_reminders()
     for reminder in reminders:
-        logger.debug("reminder: {}".format(reminder.__str__()))
+        logger.info("reminder: {}".format(reminder.__str__()))
 
     await api.set_reminders(reminders)
 
     # input("Hit any key to disconnect")
 
     await connection.disconnect()
-    logger.debug("--- END OF TESTS ---")
+    logger.info("--- END OF TESTS ---")

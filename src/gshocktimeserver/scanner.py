@@ -9,7 +9,7 @@ from logger import logger
 class Scanner:
     CASIO_SERVICE_UUID = "00001804-0000-1000-8000-00805f9b34fb"
 
-    async def scan(self, device_address):
+    async def scan(self, device_address = None):
         scanner = BleakScanner()
         logger.info("Scanning for devices...")
 
