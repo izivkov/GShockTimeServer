@@ -76,7 +76,14 @@ class Event:
         self.selected = False
 
     def __str__(self):
-        return f"Title: {self.title}, startDate: {self.start_date.__str__()}, endDate: {self.end_date.__str__()}, repeatPeriod: {self.repeat_period}, daysOfWeek: {self.days_of_week}, enabled: {self.enabled}, incompatible: {self.incompatible}, selected: {self.selected}"
+        return f"""Title: {self.title}, 
+        startDate: {self.start_date.__str__()}, 
+        endDate: {self.end_date.__str__()}, 
+        repeatPeriod: {self.repeat_period}, 
+        daysOfWeek: {self.days_of_week}, 
+        enabled: {self.enabled}, 
+        incompatible: {self.incompatible}, 
+        selected: {self.selected}"""
 
     def create_event(self, event_jsn: dict):
         def get_array_list_from_json_array(json_array: list):

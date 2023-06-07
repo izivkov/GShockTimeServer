@@ -12,7 +12,7 @@ class Configurator:
 
         try:
             value = self.config.get("main", key)
-        except Exception as e:
+        except Exception:
             return None
         else:
             return value
