@@ -1,5 +1,6 @@
 import asyncio
 import sys
+from datetime import datetime
 
 from connection import Connection
 from gshock_api import GshockAPI
@@ -9,6 +10,7 @@ from configurator import conf
 from logger import logger
 from args import args
 from api_tests import run_api_tests
+from watch_info import watch_info
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
@@ -40,7 +42,7 @@ async def run_time_server():
                 address = conf.get("device.address")
 
             device = await scanner.scan(address)
-            logger.info("Found: {}".format(device))
+            logger.debug("Found: {}".format(device))
 
             connection = Connection(device)
             await connection.connect()
@@ -56,6 +58,7 @@ async def run_time_server():
 
             await api.get_app_info()
             await api.set_time()
+            print (f"Time set at {datetime.now()} on {watch_info.name}")
 
             # You can add mail notification here if you run your mail server.
             # send_mail_notification(args.mailto)

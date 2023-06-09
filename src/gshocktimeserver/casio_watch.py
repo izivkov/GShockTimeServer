@@ -474,7 +474,7 @@ async def callWriter(connection, message: str):
                 elif repeat_period == "YEARLY":
                     encode_date(time_detail, start_date, end_date)
                 else:
-                    logger.info(
+                    logger.debug(
                         "Cannot handle Repeat Period: {}".format(repeat_period)
                     )
 
@@ -532,7 +532,7 @@ async def callWriter(connection, message: str):
             reminder_time_byte_arr_to_send = to_compact_string(
                 to_hex_string(bytearray(reminder_time_byte_arr))
             )
-            logger.info(reminder_time_byte_arr_to_send)
+            logger.debug(reminder_time_byte_arr_to_send)
             await connection.write(0x000E, reminder_time_byte_arr_to_send)
 
     elif action == "GET_SETTINGS":
