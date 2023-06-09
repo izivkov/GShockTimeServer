@@ -38,13 +38,13 @@ class Connection:
         await self.client.disconnect()
 
     async def write(self, handle, data):
-        logger.info("write: {}".format(data))
+        logger.debug("write: {}".format(data))
         try:
             await self.client.write_gatt_char(
                 self.handles_map[handle], to_casio_cmd(data)
             )
         except Exception as e:
-            logger.info("write failed with exception: {}".format(e))
+            logger.debug("write failed with exception: {}".format(e))
 
     async def request(self, request):
         await self.write(0xC, request)

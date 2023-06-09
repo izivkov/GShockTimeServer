@@ -20,7 +20,7 @@ class Logger:
         _logger.error(args)
 
     def info(self, *args):
-        _logger.info(args)
+        _logger.debug(args)
 
     def debug(self, *args):
         _logger.debug(args)

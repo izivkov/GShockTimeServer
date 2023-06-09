@@ -11,7 +11,7 @@ class Scanner:
 
     async def scan(self, device_address = None):
         scanner = BleakScanner()
-        logger.info("Scanning for devices...")
+        logger.debug("Scanning for devices...")
 
         if device_address is None:
             while True:
@@ -30,7 +30,7 @@ class Scanner:
                 conf.put("device.name", device.name)
                 break
         else:
-            logger.info("Waiting for device by address...")
+            logger.debug("Waiting for device by address...")
             device = await scanner.find_device_by_address(
                 device_address, sys.float_info.max
             )
