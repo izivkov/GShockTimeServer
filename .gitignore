@@ -1,4 +1,5 @@
 # Temporary and binary files
+./build-and-install.sh
 *~
 *.py[cod]
 *.so

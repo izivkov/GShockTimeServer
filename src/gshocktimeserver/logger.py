@@ -8,7 +8,7 @@ class Logger:
     log_level = args.get().log_level
 
     logging.basicConfig(
-        encoding='utf-8',
+        # encoding='utf-8', (for pythonn 3.9 and higher)
         level=logging.INFO,  # log_level,
         handlers=[
             logging.StreamHandler()

@@ -24,7 +24,7 @@ async def main(argv):
 
 def prompt():
     print("==============================================================================================")
-    print("Short-press lower-right button on your watch for 3 seconds to start...")
+    print("Short-press lower-right button on your watch to set time...")
     print("")
     print("If Auto-time set on watch, the watch will connect and run automatically up to 4 times per day.")
     print("==============================================================================================")
