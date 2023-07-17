@@ -41,5 +41,5 @@ If your watch cannot connect, and the ``--multi-watch`` parameter is not used, r
 
 To Do:
 ======
-We are working on a professianal installition. 
+We are working on a professional installation. 
 
