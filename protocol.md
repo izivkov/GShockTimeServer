@@ -1,4 +1,4 @@
-JIS X 0201 with additions
+The Casio watch character table is a mix of [ASCII](https://en.wikipedia.org/wiki/ASCII) and [JIS X 0201](https://en.wikipedia.org/wiki/JIS_X_0201) with additions:
 
 
 |       | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | a | b | c | d | e | f |
@@ -19,3 +19,7 @@ JIS X 0201 with additions
 | **d** | ﾐ  | ﾑ  | ﾒ  | ﾓ  | ﾔ  | ﾕ  | ﾖ  | ﾗ  | ﾘ  | ﾙ  | ﾚ  | ﾛ  | ﾜ  | ﾝ  | ﾞ  | ﾟ |
 | **e** | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | **f** | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+
+To be completed :
+- empty cells are non used blocks
+- dots are fields to be completed.
