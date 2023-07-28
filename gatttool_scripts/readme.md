@@ -42,4 +42,17 @@ If you want to write a bash script to issue multiple commands to the watch, you 
 
 The script setTime.exp provided here is an expect-lite script which read the time from the computer and send it to a Casio GShock GA-B2100 whit gatttool interactive mode.
 
-# 
+## Dependencies
+
+$ sudo apt install bluez expect-lite
+
+## Usage
+
+setTime.exp and encodeTime scripts should be in the same directory. Make them executable with :
+
+```shell
+$ chmod +x setTime.exp encodeTime
+```
+
+Find the MAC address of your watch
+
