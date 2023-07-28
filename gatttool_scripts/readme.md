@@ -1,11 +1,12 @@
 # GATTTOOL Scripts
+## Overview
 
 gatttool is a bluez utility that can be used to easily interact with a Bluetooth Low Energy device.
 It is considered as deprecated and replaced by bluetoothctl, but the latter is (to my opinion) more difficult to use.
 
 gattool can be used as a shell command, for example :
 
-Long press the bottom left button of the watch to enter in connect mode, then type in a terminal :
+Long press the bottom left button of a GShock GA-B2100 to enter in connect mode, then type in a terminal :
 
 `$ gatttool -b <address> -t random --char-read -a 0x04`
 
@@ -36,3 +37,9 @@ Notification handle = 0x000e value: 10 29 33 9a 4f 60 d3 7f 04 03 0f ff ff ff ff
 [D3:60:4F:9A:33:29][LE]> quit
 $ 
 ```
+
+If you want to write a bash script to issue multiple commands to the watch, you will have to use a command line interaction tool like expect-lite.
+
+The script setTime.exp provided here is an expect-lite script which read the time from the computer and send it to a Casio GShock GA-B2100 whit gatttool interactive mode.
+
+# 
