@@ -1,7 +1,7 @@
 # GATTTOOL Scripts
 
 gatttool is a bluez utility that can be used to easily interact with a Bluetooth Low Energy device.
-Despite is considered as deprecated and replaced by bluetoothctl, but the latter is (to my opinion) more difficult to use.
+It is considered as deprecated and replaced by bluetoothctl, but the latter is (to my opinion) more difficult to use.
 
 gattool can be used as a shell command, for example :
 
@@ -32,4 +32,7 @@ Attempting to connect to D3:60:4F:9A:33:29
 Connection successful
 [D3:60:4F:9A:33:29][LE]> char-write-cmd 0xc 10
 Notification handle = 0x000e value: 10 29 33 9a 4f 60 d3 7f 04 03 0f ff ff ff ff 24 00 00 00
+[D3:60:4F:9A:33:29][LE]> disconnect
+[D3:60:4F:9A:33:29][LE]> quit
+$ 
 ```
