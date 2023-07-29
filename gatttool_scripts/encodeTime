@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Read computer time and convert it to Casio time bluetooth packet.
+
+y=$(date +%Y)
+m=$(date +%-m)
+d=$(date +%-d)
+j=$(($(date +%u)-1))
+H=$(date +%-H)
+#H=$((H-1))
+M=$(date +%-M)
+#M=$((M-5))
+S=$(date +%-S)
+printf "09%02x%02x%02x%02x%02x%02x%02x%02x0001\n" \
+	$((y >> 0 & 0xff)) $((y >> 8 & 0xff)) \
+	$m $d $H $M $S $j
+
