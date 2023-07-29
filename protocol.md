@@ -1,7 +1,7 @@
 # GShock GAB-2100 BLE protocol
 
 ## Overview
-Casio bluetooth watches protocol has not been published by the constructor. The following description come from experiment on the watch and analysis of the code of open source softwares dedicated to communicate with these watches :
+Casio bluetooth watches protocol has not been published by the constructor. The following description comes from experiments on the watch and analysis of the code of open source softwares dedicated to communicate with these watches :
 * [Ivo Zivkov's GShock API](https://github.com/izivkov/GShockAPI)
 * [Ivo Zivkov's GShock time server](https://github.com/izivkov/GShockTimeServer)
 * [Gadgetbridge](https://codeberg.org/Freeyourgadget/Gadgetbridge)
@@ -17,7 +17,7 @@ Syntax and examples come from [gatttool](http://tvaira.free.fr/flower-power/gatt
 
 ### Write command (char-write-cmd)
 #### 0xc
-* 10 : Get button pressed
+* 10 : Get button pressed (and other informations ?)
 * 22 : Get app info
 * 1D00 : Get time zones and DST state of watch
 * 1e00 : Get local time zone parameters
@@ -37,6 +37,14 @@ Syntax and examples come from [gatttool](http://tvaira.free.fr/flower-power/gatt
 * 100 : ?
 
 ## Data packets
+
+### 10 : button pressed
+```
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18
+10 29 33 9a 4f 60 d3 7f 04 03 0f ff ff ff ff 24 00 00 00
+```
+8 : 04 : RIGHT BUTTON, 01 : LEFT BUTTON
+
 
 ### 1D00 : time zones and DST state of watch
 
@@ -116,6 +124,21 @@ In non interactive mode, the syntax is :
 `gatttool -b <address> --char-write-req -a <handle> -n <data> --listen`
 
 Here handle value can be written either in hexadecimal with prefix or decimal, but data value should be in hexadecimal base **without** prefix.
+
+### Examples
+
+```shell
+$ gatttool -b D3:60:4F:9A:33:29 -I -t random
+[D3:60:4F:9A:33:29]      connect
+Attempting to connect to D3:60:4F:9A:33:29
+Connection successful
+[D3:60:4F:9A:33:29][LE]> char-write-cmd 0xc 10
+Notification handle = 0x000e value: 10 29 33 9a 4f 60 d3 7f 04 03 0f ff ff ff ff 24 00 00 00
+[D3:60:4F:9A:33:29][LE]> char-read-hnd 0x04
+Characteristic value/descriptor: 43 41 53 49 4f 20 47 41 2d 42 32 31 30 30 00 00 
+[D3:60:4F:9A:33:29][LE]> disconnect
+[D3:60:4F:9A:33:29][LE]> quit
+```
 
 ## Character table
 
