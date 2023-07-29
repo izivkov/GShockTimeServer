@@ -1,4 +1,5 @@
 # GATTTOOL Scripts
+
 ## Overview
 Here we will see how to send and script commands to a Casio GShock GA-B2100 from the command line, using gatttool.
 
@@ -8,7 +9,6 @@ All the procedures given here work on GNU-Linux operating systems.
 
 gatttool is a bluez utility that can be used to easily interact with a Bluetooth Low Energy device.
 It is considered deprecated and replaced by bluetoothctl, but the latter lack of documentation and is (to my opinion) more difficult to use.
-
 gattool can be used as a shell command, for example :
 
 Long press the bottom left button of the watch to enter in connect mode, then type in a terminal :
@@ -28,8 +28,7 @@ CASIO GA-B2100
 
 If you want to set the time of the watch, you will have to issue multiple write requests and commands while the device is connected.
 gatttool in command line will not work because when invoked it does three actions : connect to the device, issue the command then disconnect.
-
-gatttool can be used interactively. The latter example could be done this way :
+To send multiple commands between connect and disconnect, gatttool has to be used interactively. The latter example could be done this way :
 
 ```shell
 $ gatttool -b D3:60:4F:9A:33:29 -I -t random
@@ -44,7 +43,7 @@ $
 ```
 If you want to automate the process in a script, you will have to use a command line interaction tool like expect-lite.
 
-The script `setTime.exp` provided here is an expect-lite script which read the time from the computer and send it to a Casio GShock GA-B2100 with gatttool interactive mode.
+The script `setTime.exp` provided here is an expect-lite script which read the time from the computer and send it to a Casio GShock GA-B2100, using gatttool interactive mode.
 
 ## Dependencies
 
