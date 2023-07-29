@@ -42,26 +42,9 @@ Characteristic value/descriptor: 43 41 53 49 4f 20 47 41 2d 42 32 31 30 30 00 00
 [D3:60:4F:9A:33:29][LE]> quit
 $ 
 ```
-Beware of handle and data values, gatttool documentation is confusing. Write command syntax in interactive mode is :
-
-`char-write-cmd <handle> <data>`
-
-* Handle value should be writen in hexadecimal base with 0x prefix.
-* Data value should be writen in hexadecimal base **without** 0x prefix.
-
-Example : `char-write-cmd 0xc 1d00`
-
-In non interactive mode, the syntax is :
-
-`gatttool -b <address> --char-write-req -a <handle> -n <data> --listen`
-
-Here handle value can be written either in hexadecimal with prefix or decimal, but data value should be in hexadecimal base **without** 0x prefix.
-
-
-If you want to write a bash script to issue multiple commands to the watch, you will have to use a command line interaction tool like expect-lite.
+If you want to automate the process in a script, you will have to use a command line interaction tool like expect-lite.
 
 The script `setTime.exp` provided here is an expect-lite script which read the time from the computer and send it to a Casio GShock GA-B2100 with gatttool interactive mode.
-
 
 ## Dependencies
 
@@ -84,5 +67,6 @@ Launch the script with the command :
 `$ .\setTime.exp`
 
 then press bottom right key of the watch.
+
 
 
