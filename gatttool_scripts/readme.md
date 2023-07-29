@@ -1,13 +1,17 @@
 # GATTTOOL Scripts
 ## Overview
+Here we will see how to send and script commands to a Casio GShock GA-B2100 from the command line, using gatttool.
+
+As an example, the script setTime.exp provided here read the time from the computer and send it to the watch.
+
+All the procedures given here works on GNU-Linux operating systems.
 
 gatttool is a bluez utility that can be used to easily interact with a Bluetooth Low Energy device.
-It is considered as deprecated and replaced by bluetoothctl, but the latter is (to my opinion) more difficult to use
-and less documentation is available.
+It is considered deprecated and replaced by bluetoothctl, but the latter lack of documentation and is (to my opinion) more difficult to use.
 
 gattool can be used as a shell command, for example :
 
-Long press the bottom left button of a GShock GA-B2100 to enter in connect mode, then type in a terminal :
+Long press the bottom left button of the watch to enter in connect mode, then type in a terminal :
 
 `$ gatttool -b <address> -t random --char-read -a 0x04`
 
@@ -32,16 +36,32 @@ $ gatttool -b D3:60:4F:9A:33:29 -I -t random
 [D3:60:4F:9A:33:29] connect
 Attempting to connect to D3:60:4F:9A:33:29
 Connection successful
-[D3:60:4F:9A:33:29][LE]> char-write-cmd 0xc 10
-Notification handle = 0x000e value: 10 29 33 9a 4f 60 d3 7f 04 03 0f ff ff ff ff 24 00 00 00
+[D3:60:4F:9A:33:29][LE]> char-read-hnd 0x04
+Characteristic value/descriptor: 43 41 53 49 4f 20 47 41 2d 42 32 31 30 30 00 00 
 [D3:60:4F:9A:33:29][LE]> disconnect
 [D3:60:4F:9A:33:29][LE]> quit
 $ 
 ```
+Beware of handle and data values, gatttool documentation is confusing. Write command syntax in interactive mode is :
+
+`char-write-cmd <handle> <data>`
+
+* Handle value should be writen in hexadecimal base with 0x prefix.
+* Data value should be writen in hexadecimal base **without** 0x prefix.
+
+Example : `char-write-cmd 0xc 1d00`
+
+In non interactive mode, the syntax is :
+
+`gatttool -b <address> --char-write-req -a <handle> -n <data> --listen`
+
+Here handle value can be written either in hexadecimal with prefix or decimal, but data value should be in hexadecimal base **without** 0x prefix.
+
 
 If you want to write a bash script to issue multiple commands to the watch, you will have to use a command line interaction tool like expect-lite.
 
-The script setTime.exp provided here is an expect-lite script which read the time from the computer and send it to a Casio GShock GA-B2100 whit gatttool interactive mode.
+The script `setTime.exp` provided here is an expect-lite script which read the time from the computer and send it to a Casio GShock GA-B2100 with gatttool interactive mode.
+
 
 ## Dependencies
 
@@ -51,9 +71,18 @@ $ sudo apt install bluez expect-lite
 
 setTime.exp and encodeTime scripts should be in the same directory. Make them executable with :
 
-```shell
-$ chmod +x setTime.exp encodeTime
-```
+`$ chmod +x setTime.exp encodeTime`
 
-Find the MAC address of your watch
+Find the MAC address of your watch with `bluetoothctl scan on` and press bottom right key of the watch. You should have an answer like :
+
+`[NEW] Device D3:60:4F:9A:33:29 CASIO GA-B2100`
+
+Stop the discovery with <kbd>Ctrl</kbd><kbd>C</kbd>, then open `setTime.exp` and copy the MAC address in the line beginning with `$MAC=`
+
+Launch the script with the command :
+
+`$ .\setTime.exp`
+
+then press bottom right key of the watch.
+
 
