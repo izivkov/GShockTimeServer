@@ -70,5 +70,12 @@ Launch the script with the command :
 
 then press bottom right key of the watch.
 
+## References
 
-
+* [Casio GA-B2100 protocol](/protocol.md)
+* [gatttool Syntax and examples](http://tvaira.free.fr/flower-power/gatttool.txt)
+* [Reading Values From a BLE Device](https://www.instructables.com/Reading-Values-From-a-BLE-Device-Using-CSR1010-and/)
+* [Ivo Zivkov's GShock API](https://github.com/izivkov/GShockAPI)
+* [Ivo Zivkov's GShock time server](https://github.com/izivkov/GShockTimeServer)
+* [Gadgetbridge](https://codeberg.org/Freeyourgadget/Gadgetbridge)
+ 
