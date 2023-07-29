@@ -4,7 +4,7 @@ Here we will see how to send and script commands to a Casio GShock GA-B2100 from
 
 As an example, the script setTime.exp provided here read the time from the computer and send it to the watch.
 
-All the procedures given here works on GNU-Linux operating systems.
+All the procedures given here work on GNU-Linux operating systems.
 
 gatttool is a bluez utility that can be used to easily interact with a Bluetooth Low Energy device.
 It is considered deprecated and replaced by bluetoothctl, but the latter lack of documentation and is (to my opinion) more difficult to use.
@@ -47,6 +47,8 @@ If you want to automate the process in a script, you will have to use a command 
 The script `setTime.exp` provided here is an expect-lite script which read the time from the computer and send it to a Casio GShock GA-B2100 with gatttool interactive mode.
 
 ## Dependencies
+
+You will need to install bluez and expect-lite packages. On Debian and derivatives (Ubuntu, Linux Mint,...), type :
 
 $ sudo apt install bluez expect-lite
 
