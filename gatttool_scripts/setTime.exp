@@ -1,0 +1,81 @@
+#!/usr/bin/env expect-lite
+
+# This script read time from computer clock
+# and send it to a Casio GShock GA-B2100 watch.
+# (c) Pierre Brial 2023
+# GNU General Public License version 3
+
+*NOINFO
+
+# Put here the MAC address of the watch (use 'bluetoothctl scan on' to find it)
+$MAC=D3:60:4F:9A:33:29
+
+>gatttool -b $MAC -I -t random
+>connect
+<.+successful
+
+# Get DST state of watch
+>char-write-cmd 0xc 1d00
+<Notification
++$a=(1d 00 [a-f,\d,\s]{38})
+? $a == __NO_STRING_CAPTURED__ ? *FAIL
+=$a /\s//
+
+# Set DST state of watch
+>char-write-req 0xe $a
+<.+successfully
+
+# Get and set Local DST and time zone
+>char-write-cmd 0xc 1e00
+<Notification
++$a=(1e 00 [a-f,\d,\s]{14})
+? $a == __NO_STRING_CAPTURED__ ? *FAIL
+=$a /\s//
+
+>char-write-req 0xe $a
+<.+successfully
+
+# Get and set World Time DST and time zone
+>char-write-cmd 0xc 1e01
+<Notification
++$a=(1e 01 [a-f,\d,\s]{14})
+? $a == __NO_STRING_CAPTURED__ ? *FAIL
+=$a /\s//
+
+>char-write-req 0xe $a
+<.+successfully
+
+# Get and set time zone name :
+
+# local :
+>char-write-cmd 0xc 1f00
+<Notification
++$a=(1f 00 [a-f,\d,\s]{53})
+? $a == __NO_STRING_CAPTURED__ ? *FAIL
+=$a /\s//
+
+>char-write-req 0xe $a
+<.+successfully
+
+# World time :
+>char-write-cmd 0xc 1f01
+<Notification
++$a=(1f 01 [a-f,\d,\s]{53})
+? $a == __NO_STRING_CAPTURED__ ? *FAIL
+=$a /\s//
+
+>char-write-req 0xe $a
+<.+successfully
+
+# Read computer time from script encodeTime :
+*FORK getTime
+>./encodeTime
++$timef=([a-f,\d]{18}0001)
+? $timef == __NO_STRING_CAPTURED__ ? *FAIL
+*FORK default
+
+# Set watch time :
+>char-write-req 0xe $timef
+<.+successfully
+
+>disconnect
