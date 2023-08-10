@@ -12,7 +12,7 @@ but you can take a look at the ``api_tests.py`` file on how to use the API.
 For those wishing to tinker with the watch from the command line and undestand how it communicates, check theses pages :
 
 * `Gatttool scripts <gatttool_scripts/readme.md>`_
-* `G-Shock GAB-2100 BLE communication protocol <protocol.md>`_
+* `G-Shock GAB-2100 BLE protocol <protocol.md>`_
 
 
 Usage:
