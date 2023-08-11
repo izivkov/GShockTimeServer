@@ -39,8 +39,8 @@ Troubleshooting:
 ================
 If your watch cannot connect, and the ``--multi-watch`` parameter is not used, remove the "config.ini" file and try again.
 
-Shell Script Option
-===================
+Shell Script Option:
+====================
 For those wishing to tinker with the watch from the command line and undestand how it communicates, check these pages :
 
 * `Gatttool scripts <gatttool_scripts/readme.md>`_
