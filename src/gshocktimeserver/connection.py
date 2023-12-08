@@ -31,14 +31,13 @@ class Connection:
             )
             return True
         except Exception as e:
-            self.logger.warning(f"Cannot connect: {e}")
+            logger.warning(f"Cannot connect: {e}")
             return False
 
     async def disconnect(self):
         await self.client.disconnect()
 
     async def write(self, handle, data):
-        logger.debug("write: {}".format(data))
         try:
             await self.client.write_gatt_char(
                 self.handles_map[handle], to_casio_cmd(data)
@@ -47,6 +46,7 @@ class Connection:
             logger.debug("write failed with exception: {}".format(e))
 
     async def request(self, request):
+        print("write: {}".format(request))
         await self.write(0xC, request)
 
     def init_handles_map(self):
@@ -55,7 +55,9 @@ class Connection:
         handles_map[0x04] = CasioConstants.CASIO_GET_DEVICE_NAME
         handles_map[0x06] = CasioConstants.CASIO_APPEARANCE
         handles_map[0x09] = CasioConstants.TX_POWER_LEVEL_CHARACTERISTIC_UUID
-        handles_map[0x0C] = CasioConstants.CASIO_READ_REQUEST_FOR_ALL_FEATURES_CHARACTERISTIC_UUID
+        handles_map[
+            0x0C
+        ] = CasioConstants.CASIO_READ_REQUEST_FOR_ALL_FEATURES_CHARACTERISTIC_UUID
         handles_map[0x0E] = CasioConstants.CASIO_ALL_FEATURES_CHARACTERISTIC_UUID
         handles_map[0x11] = CasioConstants.CASIO_DATA_REQUEST_SP_CHARACTERISTIC_UUID
         handles_map[0x14] = CasioConstants.CASIO_CONVOY_CHARACTERISTIC_UUID

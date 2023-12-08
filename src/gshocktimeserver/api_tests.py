@@ -1,5 +1,6 @@
 import json
 import pytz
+import time
 from datetime import datetime, timezone
 
 from connection import Connection
@@ -32,10 +33,9 @@ async def run_api_tests():
     logger.debug("pressed button: {}".format(pressed_button))
 
     watch_name = await api.get_watch_name()
-    logger.debug("got watch name: {}".format(watch_name))
+    logger.info("got watch name: {}".format(watch_name))
 
     await api.set_time()
-    # await api.reset_hand_to_12()
 
     alarms = await api.get_alarms()
     logger.debug("alarms: {}".format(alarms))
@@ -94,7 +94,7 @@ async def run_api_tests():
 
     await api.set_reminders(reminders)
 
-    # input("Hit any key to disconnect")
+    input("Hit any key to disconnect")
 
     await connection.disconnect()
     logger.debug("--- END OF TESTS ---")
