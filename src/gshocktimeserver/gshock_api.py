@@ -78,12 +78,12 @@ class GshockAPI:
 
         The return values are interpreted as follows:
 
-        - `LOWER_LEFT` - this connection is initiated by a long-press of the lower-left 
-            button on the watch.The app receiving this type of connection can now send and 
+        - `LOWER_LEFT` - this connection is initiated by a long-press of the lower-left
+            button on the watch.The app receiving this type of connection can now send and
             receive commands to the watch.
 
         - `LOWER_RIGHT` - this connection is initiated by a short-press of the lower-right button,
-            which is usually used to set time. But the app can use this signal to perform other 
+            which is usually used to set time. But the app can use this signal to perform other
             arbitrary functions. Therefore, this button is also referred as `ACTION BUTTON`.
             The connection will automatically disconnect in about 20 seconds.
 
@@ -449,6 +449,21 @@ class GshockAPI:
         """
         await self.connection.sendMessage(
             """{"action": "SET_TIMER", "value": """ + str(timerValue) + """ }"""
+        )
+
+    async def set_my_location(self):
+        """Set my long/lat.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        await self.connection.sendMessage(
+            """{"action": "SET_MY_LOCATION", "value": "" }"""
         )
 
     async def get_time_adjustment(self):

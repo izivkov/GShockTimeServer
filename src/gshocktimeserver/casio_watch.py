@@ -1,5 +1,6 @@
 import json
 import datetime
+import geocoder
 from settings import settings
 from utils import (
     to_int_array,
@@ -14,6 +15,7 @@ from casio_constants import CasioConstants
 from enum import IntEnum
 from alarms import alarms_inst, alarm_decoder
 from logger import logger
+from struct import pack
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
@@ -273,7 +275,7 @@ def to_json(_data):
             if int_arr[3] == 0xFF:
                 # 0XFF indicates end of reminders
                 return json.dumps({"end": ""})
-                    
+
             reminder_all = to_int_array(reminder_str)
             # Remove the first 2 chars:
             # 0x31 05 <--- 00 23 02 21 23 02 21 00 00
@@ -354,9 +356,7 @@ async def callWriter(connection, message: str):
     elif action == "SET_ALARMS":
         alarms_json_arr = json.loads(message).get("value")
         alarm_casio0 = to_compact_string(
-            to_hex_string(
-                alarms_inst.from_json_alarm_first_alarm(alarms_json_arr[0])
-            )
+            to_hex_string(alarms_inst.from_json_alarm_first_alarm(alarms_json_arr[0]))
         )
         await connection.write(0x000E, alarm_casio0)
         alarm_casio = to_compact_string(
@@ -371,9 +371,7 @@ async def callWriter(connection, message: str):
             return to_byte_array(title_str, 18)
 
         def reminder_time_from_json(reminder_json):
-            def create_time_detail(
-                repeat_period, start_date, end_date, days_of_week
-            ):
+            def create_time_detail(repeat_period, start_date, end_date, days_of_week):
                 def encode_date(time_detail, start_date, end_date):
                     class Month:
                         JANUARY = 1
@@ -414,9 +412,7 @@ async def callWriter(connection, message: str):
 
                     # take the last 2 digits only
                     time_detail[0] = hex_to_dec(start_date["year"] % 2000)
-                    time_detail[1] = hex_to_dec(
-                        string_to_month(start_date["month"])
-                    )
+                    time_detail[1] = hex_to_dec(string_to_month(start_date["month"]))
                     time_detail[2] = hex_to_dec(start_date["day"])
                     time_detail[3] = hex_to_dec(
                         end_date["year"] % 2000
@@ -437,33 +433,19 @@ async def callWriter(connection, message: str):
                     if days_of_week is not None:
                         for i in range(len(days_of_week)):
                             if days_of_week[i] == "SUNDAY":
-                                day_of_week = (
-                                    day_of_week | ReminderMasks.SUNDAY_MASK
-                                )
+                                day_of_week = day_of_week | ReminderMasks.SUNDAY_MASK
                             elif days_of_week[i] == "MONDAY":
-                                day_of_week = (
-                                    day_of_week | ReminderMasks.MONDAY_MASK
-                                )
+                                day_of_week = day_of_week | ReminderMasks.MONDAY_MASK
                             elif days_of_week[i] == "TUESDAY":
-                                day_of_week = (
-                                    day_of_week | ReminderMasks.TUESDAY_MASK
-                                )
+                                day_of_week = day_of_week | ReminderMasks.TUESDAY_MASK
                             elif days_of_week[i] == "WEDNESDAY":
-                                day_of_week = (
-                                    day_of_week | ReminderMasks.WEDNESDAY_MASK
-                                )
+                                day_of_week = day_of_week | ReminderMasks.WEDNESDAY_MASK
                             elif days_of_week[i] == "THURSDAY":
-                                day_of_week = (
-                                    day_of_week | ReminderMasks.THURSDAY_MASK
-                                )
+                                day_of_week = day_of_week | ReminderMasks.THURSDAY_MASK
                             elif days_of_week[i] == "FRIDAY":
-                                day_of_week = (
-                                    day_of_week | ReminderMasks.FRIDAY_MASK
-                                )
+                                day_of_week = day_of_week | ReminderMasks.FRIDAY_MASK
                             elif days_of_week[i] == "SATURDAY":
-                                day_of_week = (
-                                    day_of_week | ReminderMasks.SATURDAY_MASK
-                                )
+                                day_of_week = day_of_week | ReminderMasks.SATURDAY_MASK
 
                     time_detail[6] = day_of_week
                     time_detail[7] = 0
@@ -503,9 +485,7 @@ async def callWriter(connection, message: str):
 
             reminder_cmd += bytearray([create_time_period(enabled, repeat_period)])
             reminder_cmd += bytearray(
-                create_time_detail(
-                    repeat_period, start_date, end_date, days_of_week
-                )
+                create_time_detail(repeat_period, start_date, end_date, days_of_week)
             )
 
             return reminder_cmd
@@ -518,9 +498,7 @@ async def callWriter(connection, message: str):
             title_byte_arr = bytearray([CHARACTERISTICS["CASIO_REMINDER_TITLE"]])
             title_byte_arr += bytearray([index + 1])
             title_byte_arr += title
-            title_byte_arr_to_send = to_compact_string(
-                to_hex_string(title_byte_arr)
-            )
+            title_byte_arr_to_send = to_compact_string(to_hex_string(title_byte_arr))
             await connection.write(0x000E, title_byte_arr_to_send)
 
             reminder_time_byte_arr = bytearray([])
@@ -606,6 +584,30 @@ async def callWriter(connection, message: str):
     elif action == "GET_TIMER":
         connection.write(0x000C, bytearray([CHARACTERISTICS["CASIO_TIMER"]]))
 
+    elif action == "SET_MY_LOCATION":
+        g = geocoder.ip("me")
+        json_data = json.dumps({"lat": g.latlng[0], "lon": g.latlng[1]})
+        print(json_data)
+
+        latitude = g.latlng[0]
+        longitude = g.latlng[1]
+
+        casio_radio_and_location_to_send = [
+            bytearray([0x24]),  # CASIO_LOCATION_AND_RADIO_INFORMATION
+            bytearray([0x00]),  # home city
+            bytearray([0x01]),  # always 1
+            pack(">d", latitude) if latitude is not None else bytearray(8),
+            pack(">d", longitude) if longitude is not None else bytearray(8),
+            bytearray([0x04]),  # radio id
+        ]
+
+        location_send_array = bytearray(b"".join(casio_radio_and_location_to_send))
+
+        # Print the resulting bytearray if needed
+        print(location_send_array)
+
+        await connection.write(0x000C, location_send_array)
+
     elif action == "SET_TIMER":
         seconds = json.loads(message).get("value")
 
@@ -624,9 +626,7 @@ async def callWriter(connection, message: str):
             return arr
 
         seconds_as_byte_arr = encode(seconds)
-        seconds_as_compact_str = to_compact_string(
-            to_hex_string(seconds_as_byte_arr)
-        )
+        seconds_as_compact_str = to_compact_string(to_hex_string(seconds_as_byte_arr))
         await connection.write(0x000E, seconds_as_compact_str)
 
     elif action == "SET_TIME":
