@@ -31,7 +31,7 @@ class Connection:
             )
             return True
         except Exception as e:
-            logger.warning(f"Cannot connect: {e}")
+            logger.debug(f"Cannot connect: {e}")
             return False
 
     async def disconnect(self):
