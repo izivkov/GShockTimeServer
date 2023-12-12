@@ -28,5 +28,8 @@ class Logger:
     def warn(self, *args):
         _logger.warn(args)
 
+    def warning(self, *args):
+        _logger.warn(args)
+
 
 logger = Logger()
