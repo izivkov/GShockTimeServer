@@ -1,5 +1,6 @@
 import json
 import datetime
+import struct
 import geocoder
 from settings import settings
 from utils import (
@@ -593,20 +594,20 @@ async def callWriter(connection, message: str):
         longitude = g.latlng[1]
 
         casio_radio_and_location_to_send = [
-            bytearray([0x24]),  # CASIO_LOCATION_AND_RADIO_INFORMATION
-            bytearray([0x00]),  # home city
-            bytearray([0x01]),  # always 1
-            pack(">d", latitude) if latitude is not None else bytearray(8),
-            pack(">d", longitude) if longitude is not None else bytearray(8),
-            bytearray([0x04]),  # radio id
+            bytes([0x24]),  # CASIO_LOCATION_AND_RADIO_INFORMATION
+            bytes([0x00]),  # home city
+            bytes([0x01]),  # always 1
+            bytearray(struct.pack("<d", latitude)),
+            bytearray(struct.pack("<d", longitude)),
+            bytes([0x04]),  # radio id ?
         ]
 
-        location_send_array = bytearray(b"".join(casio_radio_and_location_to_send))
+        location_send_array = bytearray().join(casio_radio_and_location_to_send)
 
         # Print the resulting bytearray if needed
         print(location_send_array)
 
-        await connection.write(0x000C, location_send_array)
+        await connection.write(0xE, location_send_array)
 
     elif action == "SET_TIMER":
         seconds = json.loads(message).get("value")
