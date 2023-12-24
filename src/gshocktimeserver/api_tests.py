@@ -10,15 +10,17 @@ from event import Event, create_event_date, RepeatPeriod
 from scanner import scanner
 from logger import logger
 
+
 def prompt():
-    print ("========================================================================")
-    print ("Press and hold lower-left button on your watch for 3 seconds to start...")
-    print ("========================================================================")
-    print ("")
+    print("========================================================================")
+    print("Press and hold lower-left button on your watch for 3 seconds to start...")
+    print("========================================================================")
+    print("")
+
 
 async def run_api_tests():
     prompt()
-    
+
     device = await scanner.scan()
     logger.debug("Found: {}".format(device))
 
@@ -49,7 +51,7 @@ async def run_api_tests():
     seconds = await api.get_timer()
     logger.debug("timer: {} seconds".format(seconds))
 
-    await api.set_timer(seconds + 10)
+    # await api.set_timer(seconds + 10)
     time_adjstment = await api.get_time_adjustment()
     logger.debug("time_adjstment: {}".format(time_adjstment))
 

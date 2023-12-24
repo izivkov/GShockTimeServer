@@ -451,21 +451,6 @@ class GshockAPI:
             """{"action": "SET_TIMER", "value": """ + str(timerValue) + """ }"""
         )
 
-    async def set_my_location(self):
-        """Set my long/lat.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
-        """
-        await self.connection.sendMessage(
-            """{"action": "SET_MY_LOCATION", "value": "" }"""
-        )
-
     async def get_time_adjustment(self):
         """Determine if auto-tame adjustment is set or not
 

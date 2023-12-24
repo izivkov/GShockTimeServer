@@ -64,7 +64,6 @@ async def run_time_server():
                 continue
 
             await api.get_app_info()
-            await api.set_my_location()
             await api.set_time()
             print(f"Time set at {datetime.now()} on {watch_info.name}")
 
