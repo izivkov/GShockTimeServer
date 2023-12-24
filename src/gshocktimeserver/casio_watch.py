@@ -573,41 +573,18 @@ async def callWriter(connection, message: str):
 
         def encode_time_adjustment(time_adjustment):
             raw_string = settings.CasioIsAutoTimeOriginalValue
+            "0x11 0F 0F 0F 06 00 00 00 00 00 01 00 80 30 30"
             int_array = to_int_array(raw_string)
-
             int_array[12] = 0x80 if time_adjustment == "True" else 0x00
             return bytes(int_array)
 
         encoded_time_adj = encode_time_adjustment(value)
+
         write_cmd = to_compact_string(to_hex_string(encoded_time_adj))
         await connection.write(0x000E, write_cmd)
 
     elif action == "GET_TIMER":
         connection.write(0x000C, bytearray([CHARACTERISTICS["CASIO_TIMER"]]))
-
-    elif action == "SET_MY_LOCATION":
-        g = geocoder.ip("me")
-        json_data = json.dumps({"lat": g.latlng[0], "lon": g.latlng[1]})
-        print(json_data)
-
-        latitude = g.latlng[0]
-        longitude = g.latlng[1]
-
-        casio_radio_and_location_to_send = [
-            bytes([0x24]),  # CASIO_LOCATION_AND_RADIO_INFORMATION
-            bytes([0x00]),  # home city
-            bytes([0x01]),  # always 1
-            bytearray(struct.pack("<d", latitude)),
-            bytearray(struct.pack("<d", longitude)),
-            bytes([0x04]),  # radio id ?
-        ]
-
-        location_send_array = bytearray().join(casio_radio_and_location_to_send)
-
-        # Print the resulting bytearray if needed
-        print(location_send_array)
-
-        await connection.write(0xE, location_send_array)
 
     elif action == "SET_TIMER":
         seconds = json.loads(message).get("value")
