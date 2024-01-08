@@ -19,8 +19,8 @@ __license__ = "MIT"
 
 
 async def main(argv):
-    await run_time_server()
-    # await run_api_tests()
+    # await run_time_server()
+    await run_api_tests()
 
 
 def prompt():

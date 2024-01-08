@@ -29,72 +29,72 @@ async def run_api_tests():
 
     api = GshockAPI(connection)
 
-    await api.get_app_info()
+    # await api.get_app_info()
 
-    pressed_button = await api.get_pressed_button()
-    logger.debug("pressed button: {}".format(pressed_button))
+    # pressed_button = await api.get_pressed_button()
+    # logger.debug("pressed button: {}".format(pressed_button))
 
-    watch_name = await api.get_watch_name()
-    logger.info("got watch name: {}".format(watch_name))
+    # watch_name = await api.get_watch_name()
+    # logger.info("got watch name: {}".format(watch_name))
 
-    await api.set_time()
+    # await api.set_time()
 
-    alarms = await api.get_alarms()
-    logger.debug("alarms: {}".format(alarms))
+    # alarms = await api.get_alarms()
+    # logger.debug("alarms: {}".format(alarms))
 
-    alarms[3]["enabled"] = True
-    alarms[3]["hour"] = 7
-    alarms[3]["minute"] = 25
-    alarms[3]["enabled"] = False
-    await api.set_alarms(alarms)
+    # alarms[3]["enabled"] = True
+    # alarms[3]["hour"] = 7
+    # alarms[3]["minute"] = 25
+    # alarms[3]["enabled"] = False
+    # await api.set_alarms(alarms)
 
     seconds = await api.get_timer()
     logger.debug("timer: {} seconds".format(seconds))
 
-    # await api.set_timer(seconds + 10)
-    time_adjstment = await api.get_time_adjustment()
-    logger.debug("time_adjstment: {}".format(time_adjstment))
+    # # await api.set_timer(seconds + 10)
+    # time_adjstment = await api.get_time_adjustment()
+    # logger.debug("time_adjstment: {}".format(time_adjstment))
 
-    settings.timeAdjustment = True
-    await api.set_time_adjustment(settings)
+    # settings.timeAdjustment = True
+    # await api.set_time_adjustment(settings)
 
-    settings_local = await api.get_basic_settings()
-    logger.debug("settings: {}".format(settings_local))
+    # settings_local = await api.get_basic_settings()
+    # logger.debug("settings: {}".format(settings_local))
 
-    settings_local["button_tone"] = True
-    settings_local["language"] = "Engish"
-    settings_local["time_format"] = "12h"
+    # settings_local["button_tone"] = True
+    # settings_local["language"] = "Engish"
+    # settings_local["time_format"] = "12h"
 
-    await api.set_settings(settings_local)
+    # await api.set_settings(settings_local)
 
     # Create a single event
-    tz = pytz.timezone("America/Toronto")
-    dt = datetime.now(timezone.utc)
-    utc_timestamp = dt.timestamp()
-    event_date = create_event_date(utc_timestamp, tz)
-    event_date_str = json.dumps(event_date.__dict__)
-    event_json_str = (
-        """{"title":"Test Event", "time":{"selected":\""""
-        + str(False)
-        + """\", "enabled":\""""
-        + str(True)
-        + """\", "repeat_period":\""""
-        + RepeatPeriod.WEEKLY
-        + """\","days_of_week":\""""
-        + "MONDAY"
-        + """\", "start_date":"""
-        + event_date_str
-        + """, "end_date":"""
-        + event_date_str
-        + """}}"""
-    )
-    Event().create_event(json.loads(event_json_str))
+    # tz = pytz.timezone("America/Toronto")
+    # dt = datetime.now(timezone.utc)
+    # utc_timestamp = dt.timestamp()
+    # event_date = create_event_date(utc_timestamp, tz)
+    # event_date_str = json.dumps(event_date.__dict__)
+    # event_json_str = (
+    #     """{"title":"Test Event", "time":{"selected":\""""
+    #     + str(False)
+    #     + """\", "enabled":\""""
+    #     + str(True)
+    #     + """\", "repeat_period":\""""
+    #     + RepeatPeriod.WEEKLY
+    #     + """\","days_of_week":\""""
+    #     + "MONDAY"
+    #     + """\", "start_date":"""
+    #     + event_date_str
+    #     + """, "end_date":"""
+    #     + event_date_str
+    #     + """}}"""
+    # )
+    # Event().create_event(json.loads(event_json_str))
 
-    reminders = await api.get_reminders()
-    for reminder in reminders:
-        logger.debug("reminder: {}".format(reminder.__str__()))
+    # reminders = await api.get_reminders()
+    # for reminder in reminders:
+    #     logger.debug("reminder: {}".format(reminder.__str__()))
 
-    await api.set_reminders(reminders)
+    # await api.set_reminders(reminders)
 
     input("Hit any key to disconnect")
 
