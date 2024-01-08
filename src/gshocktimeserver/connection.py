@@ -1,6 +1,7 @@
 from bleak import BleakClient
 from bleak.backends.characteristic import BleakGATTCharacteristic
 from casio_constants import CasioConstants
+import message_dispatcher
 from utils import to_casio_cmd
 from data_watcher import data_watcher
 from casio_watch import to_json, callWriter
@@ -16,11 +17,7 @@ class Connection:
     def notification_handler(
         self, characteristic: BleakGATTCharacteristic, data: bytearray
     ):
-        """Simple notification handler which prints the data received."""
-        json = to_json(data)
-        name = list(dict(json).keys())[0]
-        value = list(dict(json).values())[0]
-        data_watcher.emit_event(name, value)
+        message_dispatcher.MessageDispatcher.on_received(data)
 
     async def connect(self):
         try:
@@ -67,3 +64,4 @@ class Connection:
 
     async def sendMessage(self, message):
         await callWriter(self, message)
+        # await message_dispatcher.send_to_watch(self, message)

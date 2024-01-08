@@ -4,6 +4,7 @@ import json
 import time
 
 from data_watcher import data_watcher
+import message_dispatcher
 from utils import (
     to_ascii_string,
     to_int_array,
@@ -406,34 +407,10 @@ class GshockAPI:
         -------
         timer_value: Integer, the timer number in seconds as an Int. E.g.: 180 means the timer is set for 3 minutes.
         """
-        return await self._get_timer("18")
+        return await self._get_timer()
 
-    async def _get_timer(self, key):
-        await self.connection.request(key)
-
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult(key, result))
-
-        def decode_value(data: str) -> str:
-            timer_int_array = to_int_array(data)
-
-            hours = timer_int_array[1]
-            minutes = timer_int_array[2]
-            seconds = timer_int_array[3]
-
-            in_seconds = hours * 3600 + minutes * 60 + seconds
-            return in_seconds
-
-        def get_timer(keyed_data):
-            value = keyed_data.get("value")
-            key = keyed_data.get("key")
-
-            seconds = decode_value(value)
-            res = result_queue.dequeue(key)
-            res.set_result(seconds)
-
-        self.subscribe("CASIO_TIMER", get_timer)
+    async def _get_timer(self):
+        result = await message_dispatcher.TimerIO.request(self.connection)
         return await result
 
     async def set_timer(self, timerValue):
