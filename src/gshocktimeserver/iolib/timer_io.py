@@ -1,7 +1,6 @@
 import asyncio
 from typing import Any
 
-import connection
 from utils import to_compact_string, to_hex_string
 from casio_constants import CasioConstants
 
@@ -10,10 +9,12 @@ CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
 class TimerIO:
     result: asyncio.Future[Any] = None
+    connection = None
 
     @staticmethod
     async def request(connection):
         print(f"TimerIO request")
+        TimerIO.connection = connection
         await connection.request("18")
 
         loop = asyncio.get_running_loop()
@@ -21,8 +22,7 @@ class TimerIO:
         return TimerIO.result
 
     @staticmethod
-    async def send_to_watch(message):
-        print(f"TimerIO sendToWatch: {message}")
+    async def send_to_watch(connection):
         connection.write(0x000C, bytearray([CHARACTERISTICS["CASIO_TIMER"]]))
 
     @staticmethod
@@ -45,7 +45,7 @@ class TimerIO:
 
         seconds_as_byte_arr = encode(data)
         seconds_as_compact_str = to_compact_string(to_hex_string(seconds_as_byte_arr))
-        await connection.write(0x000E, seconds_as_compact_str)
+        await TimerIO.connection.write(0x000E, seconds_as_compact_str)
 
     @staticmethod
     def on_received(data):

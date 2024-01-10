@@ -7,36 +7,11 @@ from casio_constants import CasioConstants
 
 from iolib.timer_io import TimerIO
 from iolib.watch_name_io import WatchNameIO
+from iolib.alarms_io import AlarmsIO
 
-from utils import to_compact_string, to_hex_string, to_int_array
-from alarms import alarms_inst, alarm_decoder
+# from utils import to_compact_string, to_hex_string, to_int_array
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
-
-
-class AlarmsIO:
-    @staticmethod
-    async def send_to_watch(message):
-        alarm_command = to_compact_string(
-            to_hex_string(bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_ALM"]]))
-        )
-        await connection.write(0x000C, alarm_command)
-
-    @staticmethod
-    async def send_to_watch_set(message):
-        alarms_json_arr = json.loads(message).get("value")
-        alarm_casio0 = to_compact_string(
-            to_hex_string(alarms_inst.from_json_alarm_first_alarm(alarms_json_arr[0]))
-        )
-        await connection.write(0x000E, alarm_casio0)
-        alarm_casio = to_compact_string(
-            to_hex_string(alarms_inst.from_json_alarm_secondary_alarms(alarms_json_arr))
-        )
-        await connection.write(0x000E, alarm_casio)
-
-    @staticmethod
-    def on_received(message):
-        print(f"AlarmsIO onReceived: {message}")
 
 
 class EventsIO:
@@ -173,9 +148,9 @@ class MessageDispatcher:
     }
 
     @staticmethod
-    def send_to_watch(message):
+    async def send_to_watch(message):
         action = json.loads(message).get("action")
-        MessageDispatcher.watch_senders[action](message)
+        await MessageDispatcher.watch_senders[action]()
 
     @staticmethod
     def on_received(data):
