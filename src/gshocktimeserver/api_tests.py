@@ -34,13 +34,13 @@ async def run_api_tests():
     # pressed_button = await api.get_pressed_button()
     # logger.debug("pressed button: {}".format(pressed_button))
 
-    watch_name = await api.get_watch_name()
-    print("got watch name: {}".format(watch_name))
+    # watch_name = await api.get_watch_name()
+    # print("got watch name: {}".format(watch_name))
 
     # await api.set_time()
 
-    # alarms = await api.get_alarms()
-    # logger.debug("alarms: {}".format(alarms))
+    alarms = await api.get_alarms()
+    print("alarms: {}".format(alarms))
 
     # alarms[3]["enabled"] = True
     # alarms[3]["hour"] = 7

@@ -314,49 +314,10 @@ class GshockAPI:
         """
         alarms_inst.clear()
         await self._get_alarms()
-        await self._get_alarms2()
         return alarms_inst.alarms
 
     async def _get_alarms(self):
-        await self.connection.sendMessage("""{ "action": "GET_ALARMS"}""")
-        key = "GET_ALARMS"
-
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult(key, result))
-
-        def alarms_received(keyed_data):
-            data = keyed_data.get("value")
-            key = "GET_ALARMS"
-
-            alarms_inst.add_alarms(data)
-
-            res = result_queue.dequeue(key)
-            res.set_result(data)
-
-        self.subscribe("ALARMS", alarms_received)
-        return await result
-
-    async def _get_alarms2(self):
-        await self.connection.sendMessage("""{ "action": "GET_ALARMS2"}""")
-        key = "GET_ALARMS2"
-
-        # Alarm.alarms.clear()
-
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult(key, result))
-
-        def alarms_received2(keyed_data):
-            data = keyed_data.get("value")
-            key = "GET_ALARMS2"
-
-            alarms_inst.add_alarms(data)
-
-            res = result_queue.dequeue(key)
-            res.set_result(data)
-
-        self.subscribe("ALARMS2", alarms_received2)
+        result = await message_dispatcher.AlarmsIO.request(self.connection)
         return await result
 
     async def set_alarms(self, alarms):
@@ -370,14 +331,14 @@ class GshockAPI:
         -------
         None
         """
-        if not alarms:
-            self.logger.debug("Alarm model not initialised! Cannot set alarm")
-            return
+        # if not alarms:
+        #     self.logger.debug("Alarm model not initialised! Cannot set alarm")
+        #     return
 
-        alarms_str = json.dumps(alarms)
-        set_action_cmd = '{{"action":"SET_ALARMS", "value":{} }}'.format(alarms_str)
-        await self.connection.sendMessage(set_action_cmd)
-        self.logger.debug("Returning from setAlarms")
+        # alarms_str = json.dumps(alarms)
+        # set_action_cmd = '{{"action":"SET_ALARMS", "value":{} }}'.format(alarms_str)
+        # await self.connection.sendMessage(set_action_cmd)
+        # self.logger.debug("Returning from setAlarms")
 
     async def get_timer(self):
         """Get Timer value in seconds.

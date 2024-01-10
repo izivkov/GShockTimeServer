@@ -64,4 +64,4 @@ class Connection:
 
     async def sendMessage(self, message):
         # await callWriter(self, message)
-        message_dispatcher.MessageDispatcher.send_to_watch(message)
+        await message_dispatcher.MessageDispatcher.send_to_watch(message)
