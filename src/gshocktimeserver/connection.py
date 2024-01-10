@@ -63,5 +63,5 @@ class Connection:
         return handles_map
 
     async def sendMessage(self, message):
-        await callWriter(self, message)
-        # await message_dispatcher.send_to_watch(self, message)
+        # await callWriter(self, message)
+        message_dispatcher.MessageDispatcher.send_to_watch(message)
