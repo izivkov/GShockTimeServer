@@ -49,27 +49,10 @@ class GshockAPI:
         -------
         name : String, i.e: "GW-B5600"
         """
-        return await self._get_watch_name("23")
+        return await self._get_watch_name()
 
-    async def _get_watch_name(self, key):
-        await self.connection.request(key)
-
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult(key, result))
-
-        def on_data_received(keyed_data):
-            _key = "23"
-
-            result_value = keyed_data.get("value")
-            result_key = keyed_data.get("key")
-
-            if result_key == _key:
-                result_str = clean_str(to_ascii_string(result_value, 1))
-                res = result_queue.dequeue(_key)
-                res.set_result(result_str)
-
-        self.subscribe("CASIO_WATCH_NAME", lambda data: on_data_received(data))
+    async def _get_watch_name(self):
+        result = await message_dispatcher.WatchNameIO.request(self.connection)
         return await result
 
     async def get_pressed_button(self) -> WatchButton:

@@ -10,9 +10,7 @@ class Logger:
     logging.basicConfig(
         # encoding='utf-8', (for pythonn 3.9 and higher)
         level=logging.INFO,  # log_level,
-        handlers=[
-            logging.StreamHandler()
-        ],
+        handlers=[logging.StreamHandler()],
         format="%(asctime)-15s %(name)-8s %(levelname)s: %(message)s",
     )
 
