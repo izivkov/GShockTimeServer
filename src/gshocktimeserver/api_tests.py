@@ -42,11 +42,15 @@ async def run_api_tests():
     alarms = await api.get_alarms()
     print("alarms: {}".format(alarms))
 
-    # alarms[3]["enabled"] = True
-    # alarms[3]["hour"] = 7
-    # alarms[3]["minute"] = 25
-    # alarms[3]["enabled"] = False
-    # await api.set_alarms(alarms)
+    alarms[3]["enabled"] = True
+    alarms[3]["hour"] = 7
+    alarms[3]["minute"] = 25
+    alarms[3]["enabled"] = False
+
+    await api.set_alarms(alarms)
+
+    alarms = await api.get_alarms()
+    print("After Setting: alarms: {}".format(alarms))
 
     # seconds = await api.get_timer()
     # print("timer: {} seconds".format(seconds))

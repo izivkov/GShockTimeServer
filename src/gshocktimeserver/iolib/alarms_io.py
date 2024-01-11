@@ -22,7 +22,7 @@ class AlarmsIO:
         alarms_inst.clear()
         await AlarmsIO._get_alarms(connection)
         # await AlarmsIO._get_alarms2(connection)
-        return alarms_inst.alarms
+        return AlarmsIO.result
 
     @staticmethod
     async def _get_alarms(connection):
@@ -33,26 +33,26 @@ class AlarmsIO:
         AlarmsIO.result = loop.create_future()
         return AlarmsIO.result
 
-    # @staticmethod
-    # async def _get_alarms2(connection):
-    #     await connection.sendMessage("""{ "action": "GET_ALARMS2"}""")
-    #     # await connection.request("GET_ALARMS2")
+    @staticmethod
+    async def _get_alarms2(connection):
+        await connection.sendMessage("""{ "action": "GET_ALARMS2"}""")
+        # await connection.request("GET_ALARMS2")
 
-    #     loop = asyncio.get_running_loop()
-    #     AlarmsIO.result2 = loop.create_future()
-    #     return AlarmsIO.result2
+        loop = asyncio.get_running_loop()
+        AlarmsIO.result2 = loop.create_future()
+        return AlarmsIO.result2
 
     @staticmethod
-    async def send_to_watch():
+    async def send_to_watch(message=""):
         alarm_command = to_compact_string(
             to_hex_string(bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_ALM"]]))
         )
         await AlarmsIO.connection.write(0x000C, alarm_command)
 
-        # alarm_command_2 = to_compact_string(
-        #     to_hex_string(bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]]))
-        # )
-        # AlarmsIO.connection.write(0x000C, alarm_command_2)
+        alarm_command_2 = to_compact_string(
+            to_hex_string(bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]]))
+        )
+        await AlarmsIO.connection.write(0x000C, alarm_command_2)
 
     @staticmethod
     async def send_to_watch_set(message):
@@ -68,5 +68,10 @@ class AlarmsIO:
 
     @staticmethod
     def on_received(data):
-        print(f"AlarmsIO onReceived: {data}")
-        alarms_inst.add_alarms(data)
+        decoded = alarm_decoder.to_json(to_hex_string(data))["ALARMS"]
+        print(f"AlarmsIO onReceived: {decoded}")
+        alarms_inst.add_alarms(decoded)
+        print("len: len(alarms_inst.alarms): ", len(alarms_inst.alarms))
+
+        if len(alarms_inst.alarms) == 5:
+            AlarmsIO.result.set_result(alarms_inst.alarms)
