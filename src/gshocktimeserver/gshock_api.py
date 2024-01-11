@@ -331,14 +331,14 @@ class GshockAPI:
         -------
         None
         """
-        # if not alarms:
-        #     self.logger.debug("Alarm model not initialised! Cannot set alarm")
-        #     return
+        if not alarms:
+            self.logger.debug("Alarm model not initialised! Cannot set alarm")
+            return
 
-        # alarms_str = json.dumps(alarms)
-        # set_action_cmd = '{{"action":"SET_ALARMS", "value":{} }}'.format(alarms_str)
-        # await self.connection.sendMessage(set_action_cmd)
-        # self.logger.debug("Returning from setAlarms")
+        alarms_str = json.dumps(alarms)
+        set_action_cmd = '{{"action":"SET_ALARMS", "value":{} }}'.format(alarms_str)
+        await self.connection.sendMessage(set_action_cmd)
+        self.logger.debug("Returning from setAlarms")
 
     async def get_timer(self):
         """Get Timer value in seconds.

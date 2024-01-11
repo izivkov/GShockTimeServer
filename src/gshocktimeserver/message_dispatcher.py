@@ -149,8 +149,9 @@ class MessageDispatcher:
 
     @staticmethod
     async def send_to_watch(message):
-        action = json.loads(message).get("action")
-        await MessageDispatcher.watch_senders[action]()
+        json_message = json.loads(message)
+        action = json_message.get("action")
+        await MessageDispatcher.watch_senders[action](message)
 
     @staticmethod
     def on_received(data):
