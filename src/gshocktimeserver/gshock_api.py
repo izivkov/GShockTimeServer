@@ -187,45 +187,50 @@ class GshockAPI:
         return await result
 
     async def initialize_for_setting_time(self):
-        # Before we can set time, we must read and write back these values.
-        # Why? Not sure, ask Casio
+        await self.read_write_dst_watch_states()
+        await self.read_write_dst_for_world_cities()
+        await self.read_write_world_cities()
 
-        async def read_and_write(function, param):
-            ret = await function(param)
-            short_str = to_compact_string(ret)
-            await self.connection.write(0xE, short_str)
+    async def read_and_write(self, function, param):
+        ret = await function(param)
+        short_str = to_compact_string(to_hex_string(ret))
+        await self.connection.write(0xE, short_str)
 
-        await read_and_write(self.get_dst_watch_state, DtsState.ZERO)
-        await read_and_write(self.get_dst_watch_state, DtsState.TWO)
-        await read_and_write(self.get_dst_watch_state, DtsState.FOUR)
+    async def read_write_dst_watch_states(self):
+        array_of_dst_watch_state = [
+            {"function": self.get_dst_watch_state, "state": DtsState.ZERO},
+            {"function": self.get_dst_watch_state, "state": DtsState.TWO},
+            {"function": self.get_dst_watch_state, "state": DtsState.FOUR},
+        ]
 
-        await read_and_write(self.get_dst_for_world_cities, 0)
-        await read_and_write(self.get_dst_for_world_cities, 1)
-        await read_and_write(self.get_dst_for_world_cities, 2)
-        await read_and_write(self.get_dst_for_world_cities, 3)
-        await read_and_write(self.get_dst_for_world_cities, 4)
-        await read_and_write(self.get_dst_for_world_cities, 5)
+        for item in array_of_dst_watch_state[: watch_info.dstCount]:
+            await self.read_and_write(item["function"], item["state"])
 
-        await read_and_write(self.get_world_cities, 0)
-        await read_and_write(self.get_world_cities, 1)
-        await read_and_write(self.get_world_cities, 2)
-        await read_and_write(self.get_world_cities, 3)
-        await read_and_write(self.get_world_cities, 4)
-        await read_and_write(self.get_world_cities, 5)
+    async def read_write_dst_for_world_cities(self):
+        array_of_get_dst_for_world_cities = [
+            {"function": self.get_dst_for_world_cities, "city_number": 0},
+            {"function": self.get_dst_for_world_cities, "city_number": 1},
+            {"function": self.get_dst_for_world_cities, "city_number": 2},
+            {"function": self.get_dst_for_world_cities, "city_number": 3},
+            {"function": self.get_dst_for_world_cities, "city_number": 4},
+            {"function": self.get_dst_for_world_cities, "city_number": 5},
+        ]
 
-    async def initialize_for_setting_time_b2100(self):
-        async def read_and_write(function, param):
-            ret = await function(param)
-            short_str = to_compact_string(to_hex_string(ret))
-            await self.connection.write(0xE, short_str)
+        for item in array_of_get_dst_for_world_cities[: watch_info.worldCitiesCount]:
+            await self.read_and_write(item["function"], item["city_number"])
 
-        await read_and_write(self.get_dst_watch_state, DtsState.ZERO)
+    async def read_write_world_cities(self):
+        array_of_world_cities = [
+            {"function": self.get_world_cities, "city_number": 0},
+            {"function": self.get_world_cities, "city_number": 1},
+            {"function": self.get_world_cities, "city_number": 2},
+            {"function": self.get_world_cities, "city_number": 3},
+            {"function": self.get_world_cities, "city_number": 4},
+            {"function": self.get_world_cities, "city_number": 5},
+        ]
 
-        await read_and_write(self.get_dst_for_world_cities, 0)
-        await read_and_write(self.get_dst_for_world_cities, 1)
-
-        await read_and_write(self.get_world_cities, 0)
-        await read_and_write(self.get_world_cities, 1)
+        for item in array_of_world_cities[: watch_info.worldCitiesCount]:
+            await self.read_and_write(item["function"], item["city_number"])
 
     async def set_time(self, current_time=time.time()):
         """Sets the current time on the watch from the time on the phone. In addition, it can optionally set the Home Time
@@ -242,7 +247,7 @@ class GshockAPI:
         """
 
         # if watch_info.model == watch_info.model.B2100:
-        await self.initialize_for_setting_time_b2100()
+        await self.initialize_for_setting_time()
         # else:
         #     await self.initialize_for_setting_time()
 
