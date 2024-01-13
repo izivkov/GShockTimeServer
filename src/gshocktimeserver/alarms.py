@@ -88,16 +88,13 @@ class AlarmDecoder:
         elif int_array[0] == CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]:
             int_array.pop(0)
 
-            # for item in np.array_split(int_array, 4):
-            #     alarms.append(self.create_json_alarm(item))
-
             # replacement to above 2 lines
             alarms = []
             # split int_array into 4 subarrays
-            subarr1 = int_array[:len(int_array) // 4]
-            subarr2 = int_array[len(int_array) // 4:len(int_array) // 2]
-            subarr3 = int_array[len(int_array) // 2:len(int_array) * 3 // 4]
-            subarr4 = int_array[len(int_array) * 3 // 4:]
+            subarr1 = int_array[: len(int_array) // 4]
+            subarr2 = int_array[len(int_array) // 4 : len(int_array) // 2]
+            subarr3 = int_array[len(int_array) // 2 : len(int_array) * 3 // 4]
+            subarr4 = int_array[len(int_array) * 3 // 4 :]
 
             # create json alarms for each subarray
             alarms.append(self.create_json_alarm(subarr1))
