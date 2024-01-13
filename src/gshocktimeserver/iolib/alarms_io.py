@@ -11,7 +11,6 @@ CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
 class AlarmsIO:
     result: asyncio.Future[Any] = None
-    # result2: asyncio.Future[Any] = None
     connection = None
 
     @staticmethod
@@ -21,26 +20,15 @@ class AlarmsIO:
 
         alarms_inst.clear()
         await AlarmsIO._get_alarms(connection)
-        # await AlarmsIO._get_alarms2(connection)
         return AlarmsIO.result
 
     @staticmethod
     async def _get_alarms(connection):
         await connection.sendMessage("""{ "action": "GET_ALARMS"}""")
-        # await connection.request("16")
 
         loop = asyncio.get_running_loop()
         AlarmsIO.result = loop.create_future()
         return AlarmsIO.result
-
-    @staticmethod
-    async def _get_alarms2(connection):
-        await connection.sendMessage("""{ "action": "GET_ALARMS2"}""")
-        # await connection.request("GET_ALARMS2")
-
-        loop = asyncio.get_running_loop()
-        AlarmsIO.result2 = loop.create_future()
-        return AlarmsIO.result2
 
     @staticmethod
     async def send_to_watch(message=""):
@@ -69,9 +57,7 @@ class AlarmsIO:
     @staticmethod
     def on_received(data):
         decoded = alarm_decoder.to_json(to_hex_string(data))["ALARMS"]
-        print(f"AlarmsIO onReceived: {decoded}")
         alarms_inst.add_alarms(decoded)
-        print("len: len(alarms_inst.alarms): ", len(alarms_inst.alarms))
 
         if len(alarms_inst.alarms) == 5:
             AlarmsIO.result.set_result(alarms_inst.alarms)

@@ -4,12 +4,14 @@ import json
 from typing import Any
 import connection
 from casio_constants import CasioConstants
+from iolib.dst_watch_state_io import DstWatchStateIO
+from iolib.world_cities_io import WorldCitiesIO
+from iolib.dst_for_world_cities_io import DstForWorldCitiesIO
 
+from iolib.time_io import TimeIO
 from iolib.timer_io import TimerIO
 from iolib.watch_name_io import WatchNameIO
 from iolib.alarms_io import AlarmsIO
-
-# from utils import to_compact_string, to_hex_string, to_int_array
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
@@ -54,34 +56,6 @@ class TimeAdjustmentIO:
     @staticmethod
     def on_received(message):
         print(f"TimeAdjustmentIO onReceived: {message}")
-
-
-class TimeIO:
-    @staticmethod
-    def send_to_watch_set(message):
-        print(f"TimeIO sendToWatchSet: {message}")
-
-    @staticmethod
-    def on_received(message):
-        print(f"TimeIO onReceived")
-
-
-class DstForWorldCitiesIO:
-    @staticmethod
-    def on_received(message):
-        print(f"DstForWorldCitiesIO onReceived: {message}")
-
-
-class WorldCitiesIO:
-    @staticmethod
-    def on_received(message):
-        print(f"WorldCitiesIO onReceived: {message}")
-
-
-class DstWatchStateIO:
-    @staticmethod
-    def on_received(message):
-        print(f"DstWatchStateIO onReceived: {message}")
 
 
 class WatchConditionIO:
@@ -131,13 +105,13 @@ class MessageDispatcher:
     data_received_messages = {
         CHARACTERISTICS["CASIO_SETTING_FOR_ALM"]: AlarmsIO.on_received,
         CHARACTERISTICS["CASIO_SETTING_FOR_ALM2"]: AlarmsIO.on_received,
+        CHARACTERISTICS["CASIO_TIMER"]: TimerIO.on_received,
+        CHARACTERISTICS["CASIO_WATCH_NAME"]: WatchNameIO.on_received,
         CHARACTERISTICS["CASIO_DST_SETTING"]: DstForWorldCitiesIO.on_received,
         CHARACTERISTICS["CASIO_REMINDER_TIME"]: EventsIO.on_received,
         CHARACTERISTICS["CASIO_REMINDER_TITLE"]: EventsIO.on_received_title,
-        CHARACTERISTICS["CASIO_TIMER"]: TimerIO.on_received,
         CHARACTERISTICS["CASIO_WORLD_CITIES"]: WorldCitiesIO.on_received,
         CHARACTERISTICS["CASIO_DST_WATCH_STATE"]: DstWatchStateIO.on_received,
-        CHARACTERISTICS["CASIO_WATCH_NAME"]: WatchNameIO.on_received,
         CHARACTERISTICS["CASIO_WATCH_CONDITION"]: WatchConditionIO.on_received,
         CHARACTERISTICS["CASIO_APP_INFORMATION"]: AppInfoIO.on_received,
         CHARACTERISTICS["CASIO_BLE_FEATURES"]: ButtonPressedIO.on_received,

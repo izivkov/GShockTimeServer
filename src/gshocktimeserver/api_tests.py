@@ -1,3 +1,4 @@
+import calendar
 import json
 import pytz
 import time
@@ -5,7 +6,7 @@ from datetime import datetime, timezone
 
 from connection import Connection
 from gshock_api import GshockAPI
-from casio_watch import settings
+from casio_watch import DtsState, settings
 from event import Event, create_event_date, RepeatPeriod
 from scanner import scanner
 from logger import logger
@@ -37,20 +38,37 @@ async def run_api_tests():
     # watch_name = await api.get_watch_name()
     # print("got watch name: {}".format(watch_name))
 
-    # await api.set_time()
+    # world_city = await api.get_dst_for_world_cities(0)
+    # print("world city: {}".format(world_city))
 
-    alarms = await api.get_alarms()
-    print("alarms: {}".format(alarms))
+    # world_city = await api.get_dst_for_world_cities(1)
+    # print("world city: {}".format(world_city))
 
-    alarms[3]["enabled"] = True
-    alarms[3]["hour"] = 7
-    alarms[3]["minute"] = 25
-    alarms[3]["enabled"] = False
+    # dst_state = await api.get_dst_watch_state(DtsState.ZERO)
+    # print("dst_state: {}".format(dst_state))
 
-    await api.set_alarms(alarms)
+    # dst_state = await api.get_dst_watch_state(DtsState.TWO)
+    # print("dst_state: {}".format(dst_state))
 
-    alarms = await api.get_alarms()
-    print("After Setting: alarms: {}".format(alarms))
+    time_string = "10:10:30"
+    seconds = convert_time_string_to_epoch(time_string)
+
+    await api.set_time(seconds)
+    time.sleep(10)
+    await api.set_time()
+
+    # alarms = await api.get_alarms()
+    # print("alarms: {}".format(alarms))
+
+    # alarms[3]["enabled"] = True
+    # alarms[3]["hour"] = 7
+    # alarms[3]["minute"] = 25
+    # alarms[3]["enabled"] = False
+
+    # await api.set_alarms(alarms)
+
+    # alarms = await api.get_alarms()
+    # print("After Setting: alarms: {}".format(alarms))
 
     # seconds = await api.get_timer()
     # print("timer: {} seconds".format(seconds))
@@ -108,3 +126,17 @@ async def run_api_tests():
 
     await connection.disconnect()
     logger.debug("--- END OF TESTS ---")
+
+
+def convert_time_string_to_epoch(time_string):
+    try:
+        # Create a datetime object with today's date and the provided time
+        time_object = datetime.strptime(time_string, "%H:%M:%S")
+
+        # Get the timestamp in seconds since the epoch
+        timestamp = time_object.timestamp()
+
+        return timestamp
+    except ValueError:
+        print("Invalid time format. Please use the format HH:MM:SS.")
+        return None

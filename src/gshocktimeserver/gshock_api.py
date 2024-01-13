@@ -7,6 +7,7 @@ from data_watcher import data_watcher
 import message_dispatcher
 from utils import (
     to_ascii_string,
+    to_hex_string,
     to_int_array,
     to_compact_string,
     clean_str,
@@ -139,29 +140,11 @@ class GshockAPI:
         -------
         name : String, The name of the requested World City as a String.
         """
-        key = "1f0{}".format(cityNumber)
-        city = await self._get_world_cities(key)
+        city = await self._get_world_cities(cityNumber)
         return city
 
     async def _get_world_cities(self, key: str):
-        await self.connection.request(key)
-
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult(key, result))
-
-        def casio_world_cities_callback(keyed_data):
-            value = keyed_data.get("value")
-            key = keyed_data.get("key")
-
-            res = result_queue.dequeue(key)
-            res.set_result(value)
-
-        def process_home_time(keyed_data):
-            pass
-
-        self.subscribe("CASIO_WORLD_CITIES", casio_world_cities_callback)
-        # self.subscribe("HOME_TIME", process_home_time)
+        result = await message_dispatcher.WorldCitiesIO.request(self.connection, key)
         return await result
 
     async def get_dst_for_world_cities(self, cityNumber: int) -> str:
@@ -176,25 +159,12 @@ class GshockAPI:
         -------
         name : String, Daylight Saving Time state of the requested World City as a String.
         """
-        key = "1e0{}".format(cityNumber)
-        return await self._get_dst_for_world_cities(key)
+        return await self._get_dst_for_world_cities(cityNumber)
 
     async def _get_dst_for_world_cities(self, key: str) -> str:
-        await self.connection.request(key)
-
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult(key, result))
-
-        def casio_dts_world_cities_callback(keyed_data):
-            value = keyed_data.get("value")
-            key = keyed_data.get("key")
-
-            res = result_queue.dequeue(key)
-            res.set_result(value)
-
-        self.subscribe("CASIO_DST_SETTING", casio_dts_world_cities_callback)
-
+        result = await message_dispatcher.DstForWorldCitiesIO.request(
+            self.connection, key
+        )
         return await result
 
     async def get_dst_watch_state(self, state: DtsState) -> str:
@@ -208,75 +178,56 @@ class GshockAPI:
         -------
         dst: String, the Daylight Saving Time state of the watch as a String.
         """
-        key = f"1d0{state.value}"
-        return await self._get_dst_watch_state(key)
+        return await self._get_dst_watch_state(state)
 
-    async def _get_dst_watch_state(self, key: str) -> str:
-        await self.connection.request(key)
-
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult(key, result))
-
-        def handle_message(keyed_data):
-            value = keyed_data.get("value")
-            key = keyed_data.get("key")
-
-            res = result_queue.dequeue(key)
-            res.set_result(value)
-
-        self.subscribe("CASIO_DST_WATCH_STATE", handle_message)
-
+    async def _get_dst_watch_state(self, state: DtsState) -> str:
+        result = await message_dispatcher.DstWatchStateIO.request(
+            self.connection, state
+        )
         return await result
-
-    # async def reset_hand_to_12 (self):
-    #     await self.connection.write(0xE, "1a0412000000")
-    #     await self.connection.write(0xE, "1a0418000000")
 
     async def initialize_for_setting_time(self):
         # Before we can set time, we must read and write back these values.
         # Why? Not sure, ask Casio
 
-        async def read_and_rite(function, param):
+        async def read_and_write(function, param):
             ret = await function(param)
             short_str = to_compact_string(ret)
             await self.connection.write(0xE, short_str)
 
-        await read_and_rite(self.get_dst_watch_state, DtsState.ZERO)
-        await read_and_rite(self.get_dst_watch_state, DtsState.TWO)
-        await read_and_rite(self.get_dst_watch_state, DtsState.FOUR)
+        await read_and_write(self.get_dst_watch_state, DtsState.ZERO)
+        await read_and_write(self.get_dst_watch_state, DtsState.TWO)
+        await read_and_write(self.get_dst_watch_state, DtsState.FOUR)
 
-        await read_and_rite(self.get_dst_for_world_cities, 0)
-        await read_and_rite(self.get_dst_for_world_cities, 1)
-        await read_and_rite(self.get_dst_for_world_cities, 2)
-        await read_and_rite(self.get_dst_for_world_cities, 3)
-        await read_and_rite(self.get_dst_for_world_cities, 4)
-        await read_and_rite(self.get_dst_for_world_cities, 5)
+        await read_and_write(self.get_dst_for_world_cities, 0)
+        await read_and_write(self.get_dst_for_world_cities, 1)
+        await read_and_write(self.get_dst_for_world_cities, 2)
+        await read_and_write(self.get_dst_for_world_cities, 3)
+        await read_and_write(self.get_dst_for_world_cities, 4)
+        await read_and_write(self.get_dst_for_world_cities, 5)
 
-        await read_and_rite(self.get_world_cities, 0)
-        await read_and_rite(self.get_world_cities, 1)
-        await read_and_rite(self.get_world_cities, 2)
-        await read_and_rite(self.get_world_cities, 3)
-        await read_and_rite(self.get_world_cities, 4)
-        await read_and_rite(self.get_world_cities, 5)
+        await read_and_write(self.get_world_cities, 0)
+        await read_and_write(self.get_world_cities, 1)
+        await read_and_write(self.get_world_cities, 2)
+        await read_and_write(self.get_world_cities, 3)
+        await read_and_write(self.get_world_cities, 4)
+        await read_and_write(self.get_world_cities, 5)
 
     async def initialize_for_setting_time_b2100(self):
-        # Before we can set time, we must read and write back these values.
-        # Why? Not sure, ask Casio
-
-        async def read_and_rite(function, param):
+        async def read_and_write(function, param):
             ret = await function(param)
-            short_str = to_compact_string(ret)
+            short_str = to_compact_string(to_hex_string(ret))
             await self.connection.write(0xE, short_str)
 
-        await read_and_rite(self.get_dst_watch_state, DtsState.ZERO)
-        await read_and_rite(self.get_dst_for_world_cities, 0)
-        await read_and_rite(self.get_dst_for_world_cities, 1)
+        await read_and_write(self.get_dst_watch_state, DtsState.ZERO)
 
-        await read_and_rite(self.get_world_cities, 0)
-        await read_and_rite(self.get_world_cities, 1)
+        await read_and_write(self.get_dst_for_world_cities, 0)
+        await read_and_write(self.get_dst_for_world_cities, 1)
 
-    async def set_time(self):
+        await read_and_write(self.get_world_cities, 0)
+        await read_and_write(self.get_world_cities, 1)
+
+    async def set_time(self, current_time=time.time()):
         """Sets the current time on the watch from the time on the phone. In addition, it can optionally set the Home Time
         to the current time zone. If timezone changes during travel, the watch will automatically be set to the
         correct time and timezone after running this function.
@@ -290,16 +241,15 @@ class GshockAPI:
         None
         """
 
-        if watch_info.model == watch_info.model.B2100:
-            await self.initialize_for_setting_time_b2100()
-        else:
-            await self.initialize_for_setting_time()
+        # if watch_info.model == watch_info.model.B2100:
+        await self.initialize_for_setting_time_b2100()
+        # else:
+        #     await self.initialize_for_setting_time()
 
-        message = {
-            "action": "SET_TIME",
-            "value": "{}".format(round(time.time() * 1000)),
-        }
-        await self.connection.sendMessage(json.dumps(message))
+        await self._set_time(current_time)
+
+    async def _set_time(self, current_time):
+        await message_dispatcher.TimeIO.request(self.connection, current_time)
 
     async def get_alarms(self):
         """Gets the current alarms from the watch. Up to 5 alarms are supported on the watch.
@@ -338,7 +288,6 @@ class GshockAPI:
         alarms_str = json.dumps(alarms)
         set_action_cmd = '{{"action":"SET_ALARMS", "value":{} }}'.format(alarms_str)
         await self.connection.sendMessage(set_action_cmd)
-        self.logger.debug("Returning from setAlarms")
 
     async def get_timer(self):
         """Get Timer value in seconds.
