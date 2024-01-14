@@ -50,7 +50,7 @@ async def run_api_tests():
     # dst_state = await api.get_dst_watch_state(DtsState.TWO)
     # print("dst_state: {}".format(dst_state))
 
-    await api.set_time()
+    # await api.set_time()
     # You can also set arbitrasy time like this:
     # time_string = "10:10:30"
     # seconds = convert_time_string_to_epoch(time_string)
@@ -115,9 +115,9 @@ async def run_api_tests():
     # )
     # Event().create_event(json.loads(event_json_str))
 
-    # reminders = await api.get_reminders()
-    # for reminder in reminders:
-    #     logger.debug("reminder: {}".format(reminder.__str__()))
+    reminders = await api.get_reminders()
+    for reminder in reminders:
+        logger.debug("reminder: {}".format(reminder.__str__()))
 
     # await api.set_reminders(reminders)
 

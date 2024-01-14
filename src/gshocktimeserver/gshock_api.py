@@ -452,7 +452,7 @@ class GshockAPI:
 
         return reminders
 
-    async def get_event_from_watch(self, eventNumber: int):
+    async def get_event_from_watch(self, event_number: int):
         """Gets a single event (reminder) from the watch.
 
         Parameters
@@ -463,33 +463,38 @@ class GshockAPI:
         -------
         event: `Event`
         """
-        await self.connection.request("30{}".format(eventNumber))  # reminder title
-        await self.connection.request("31{}".format(eventNumber))  # reminder time
-
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult("310{}".format(eventNumber), result))
-
-        def get_reminders(keyed_data):
-            value = keyed_data.get("value")
-            key = keyed_data.get("key")
-
-            for obj_key in value:
-                if obj_key == "title":
-                    self.title = value[obj_key]
-
-                elif obj_key == "time":
-                    json_obj = json.loads("{}")
-                    json_obj["title"] = self.title
-                    json_obj["time"] = value.get("time")
-                    event_obj = Event()
-                    event = event_obj.create_event(json_obj)
-
-                    res = result_queue.dequeue(key)
-                    res.set_result(event)
-
-        self.subscribe("REMINDERS", get_reminders)
+        result = await message_dispatcher.EventsIO.request(
+            self.connection, event_number
+        )
         return await result
+
+        # await self.connection.request("30{}".format(eventNumber))  # reminder title
+        # await self.connection.request("31{}".format(eventNumber))  # reminder time
+
+        # loop = asyncio.get_running_loop()
+        # result = loop.create_future()
+        # result_queue.enqueue(KeyedResult("310{}".format(eventNumber), result))
+
+        # def get_reminders(keyed_data):
+        #     value = keyed_data.get("value")
+        #     key = keyed_data.get("key")
+
+        #     for obj_key in value:
+        #         if obj_key == "title":
+        #             self.title = value[obj_key]
+
+        #         elif obj_key == "time":
+        #             json_obj = json.loads("{}")
+        #             json_obj["title"] = self.title
+        #             json_obj["time"] = value.get("time")
+        #             event_obj = Event()
+        #             event = event_obj.create_event(json_obj)
+
+        #             res = result_queue.dequeue(key)
+        #             res.set_result(event)
+
+        # self.subscribe("REMINDERS", get_reminders)
+        # return await result
 
     async def set_reminders(self, events: list):
         """Sets events (reminders) to the watch. Up to 5 events are supported.
