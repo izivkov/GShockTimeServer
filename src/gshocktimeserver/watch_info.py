@@ -1,27 +1,6 @@
 from enum import Enum
 
 
-# class WatchInfo:
-
-#     class model(Enum):
-#         B5600 = 1
-#         B2100 = 2
-#         UNKNOWN = 3
-
-#     def __init__(self) -> None:
-#         self.name = ""
-#         self.address = ""
-
-#     def set_name(self, name):
-#         self.name = name
-#         self.model = self.model.B5600 if "5600" in name else self.model.B2100
-
-#     def set_address(self, address):
-#         self.address = address
-
-from enum import Enum
-
-
 class WATCH_MODEL(Enum):
     GA = 1
     GW = 2
@@ -31,7 +10,8 @@ class WATCH_MODEL(Enum):
     GST = 6
     MSG = 7
     GB001 = 8
-    UNKNOWN = 9
+    GBD = 9
+    UNKNOWN = 10
 
 
 class WatchInfo:
@@ -48,6 +28,8 @@ class WatchInfo:
         self.shortLightDuration = ""
         self.longLightDuration = ""
         self.weekLanguageSupported = True
+        self.worldCities: True
+        self.temperature: True
 
         self.models = [
             {
@@ -162,6 +144,18 @@ class WatchInfo:
                 "longLightDuration": "3s",
             },
             {
+                "model": WATCH_MODEL.GBD,
+                "worldCitiesCount": 2,
+                "dstCount": 1,
+                "alarmCount": 5,
+                "hasAutoLight": True,
+                "hasReminders": False,
+                "shortLightDuration": "1.5s",
+                "longLightDuration": "3s",
+                "worldCities": False,
+                "temperature": False,
+            },
+            {
                 "model": WATCH_MODEL.UNKNOWN,
                 "worldCitiesCount": 2,
                 "dstCount": 1,
@@ -182,7 +176,20 @@ class WatchInfo:
         if len(parts) > 1:
             self.shortName = parts[1]
 
-        if self.shortName.startswith("GA"):
+        # *** Order matters. Start with the longest shortName first. ***
+        if self.shortName.startswith("MSG"):
+            self.model = WATCH_MODEL.MSG
+        elif self.shortName.startswith("GPR"):
+            self.model = WATCH_MODEL.GPR
+        elif self.shortName.startswith("GST"):
+            self.model = WATCH_MODEL.GST
+        elif self.shortName.startswith("GBD"):
+            self.model = WATCH_MODEL.GBD
+        elif self.shortName.startswith("GMW"):
+            self.model = WATCH_MODEL.GMW
+        elif self.shortName.startswith("DW"):
+            self.model = WATCH_MODEL.DW
+        elif self.shortName.startswith("GA"):
             self.model = WATCH_MODEL.GA
         elif self.shortName.startswith("GB"):
             self.model = WATCH_MODEL.GB
@@ -190,16 +197,6 @@ class WatchInfo:
             self.model = WATCH_MODEL.GM
         elif self.shortName.startswith("GW"):
             self.model = WATCH_MODEL.GW
-        elif self.shortName.startswith("MSG"):
-            self.model = WATCH_MODEL.MSG
-        elif self.shortName.startswith("GPR"):
-            self.model = WATCH_MODEL.GPR
-        elif self.shortName.startswith("DW"):
-            self.model = WATCH_MODEL.DW
-        elif self.shortName.startswith("GST"):
-            self.model = WATCH_MODEL.GST
-        elif self.shortName.startswith("GMW"):
-            self.model = WATCH_MODEL.GMW
         else:
             self.model = WATCH_MODEL.UNKNOWN
 
@@ -213,6 +210,8 @@ class WatchInfo:
             self.shortLightDuration = model_info["shortLightDuration"]
             self.longLightDuration = model_info["longLightDuration"]
             self.weekLanguageSupported = model_info.get("weekLanguageSupported", True)
+            self.worldCities = model_info.get("worldCities", True)
+            self.temperature = model_info.get("temperature", True)
 
     def set_address(self, address):
         self.address = address

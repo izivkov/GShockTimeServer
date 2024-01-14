@@ -12,22 +12,9 @@ from iolib.time_io import TimeIO
 from iolib.timer_io import TimerIO
 from iolib.watch_name_io import WatchNameIO
 from iolib.alarms_io import AlarmsIO
+from iolib.events_io import EventsIO
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
-
-
-class EventsIO:
-    @staticmethod
-    def send_to_watch_set(message):
-        print(f"EventsIO sendToWatchSet: {message}")
-
-    @staticmethod
-    def on_received(message):
-        print(f"EventsIO onReceived: {message}")
-
-    @staticmethod
-    def on_received_title(message):
-        print(f"EventsIO onReceivedTitle: {message}")
 
 
 class SettingsIO:
