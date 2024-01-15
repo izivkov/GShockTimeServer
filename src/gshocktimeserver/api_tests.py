@@ -36,45 +36,21 @@ async def run_api_tests():
     # logger.debug("pressed button: {}".format(pressed_button))
 
     # watch_name = await api.get_watch_name()
-    # print("got watch name: {}".format(watch_name))
-
-    # world_city = await api.get_dst_for_world_cities(0)
-    # print("world city: {}".format(world_city))
-
-    # world_city = await api.get_dst_for_world_cities(1)
-    # print("world city: {}".format(world_city))
-
-    # dst_state = await api.get_dst_watch_state(DtsState.ZERO)
-    # print("dst_state: {}".format(dst_state))
-
-    # dst_state = await api.get_dst_watch_state(DtsState.TWO)
-    # print("dst_state: {}".format(dst_state))
+    # logger.info("got watch name: {}".format(watch_name))
 
     # await api.set_time()
-    # You can also set arbitrasy time like this:
-    # time_string = "10:10:30"
-    # seconds = convert_time_string_to_epoch(time_string)
-    # await api.set_time(seconds)
 
     # alarms = await api.get_alarms()
-    # print("alarms: {}".format(alarms))
+    # logger.debug("alarms: {}".format(alarms))
 
     # alarms[3]["enabled"] = True
     # alarms[3]["hour"] = 7
     # alarms[3]["minute"] = 25
     # alarms[3]["enabled"] = False
-
     # await api.set_alarms(alarms)
 
-    # alarms = await api.get_alarms()
-    # print("After Setting: alarms: {}".format(alarms))
-
     # seconds = await api.get_timer()
-    # print("timer: {} seconds".format(seconds))
-
-    # await api.set_timer(235)
-    # seconds = await api.get_timer()
-    # print("timer: {} after setting seconds".format(seconds))
+    # logger.debug("timer: {} seconds".format(seconds))
 
     # # await api.set_timer(seconds + 10)
     # time_adjstment = await api.get_time_adjustment()

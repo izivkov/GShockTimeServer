@@ -55,6 +55,7 @@ class EventsIO:
     @staticmethod
     def on_received(message):
         print(f"EventsIO onReceived: {message}")
+        data = to_hex_string(message)
 
         def reminder_time_to_json(reminder_str):
             def convert_array_list_to_json_array(array_list):
@@ -167,13 +168,12 @@ class EventsIO:
                 result["days_of_week"] = days_of_week
                 return result
 
-            reminder_str_hex = to_hex_string(reminder_str)
-            int_arr = to_int_array(reminder_str_hex)
+            int_arr = to_int_array(reminder_str)
             if int_arr[3] == 0xFF:
                 # 0XFF indicates end of reminders
                 return json.dumps({"end": ""})
 
-            reminder_all = to_int_array(reminder_str_hex)
+            reminder_all = to_int_array(reminder_str)
             # Remove the first 2 chars:
             # 0x31 05 <--- 00 23 02 21 23 02 21 00 00
             reminder = reminder_all[2:]
@@ -193,8 +193,9 @@ class EventsIO:
             return json.dumps({"time": reminder_json})
 
         reminder_json = {}
-        value = reminder_time_to_json(message[2:])
-        return reminder_json
+        value = reminder_time_to_json(data[2:])
+        EventsIO.result.set_result(value)
+        # return reminder_json
 
     @staticmethod
     def on_received_title(message):
