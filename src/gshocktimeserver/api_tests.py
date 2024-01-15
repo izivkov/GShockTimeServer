@@ -95,7 +95,13 @@ async def run_api_tests():
     for reminder in reminders:
         logger.debug("reminder: {}".format(reminder.__str__()))
 
-    # await api.set_reminders(reminders)
+    reminders[3]["title"] = "Test Event"
+
+    await api.set_reminders(reminders)
+
+    reminders = await api.get_reminders()
+    for reminder in reminders:
+        print("After setting, reminder: {}".format(reminder.__str__()))
 
     input("Hit any key to disconnect")
 

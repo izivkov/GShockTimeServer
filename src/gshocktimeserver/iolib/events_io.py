@@ -1,11 +1,13 @@
 import asyncio
 import json
 from typing import Any
+from logger import logger
 
 from utils import (
     clean_str,
     dec_to_hex,
     to_ascii_string,
+    to_byte_array,
     to_compact_string,
     to_hex_string,
     to_int_array,
@@ -49,12 +51,157 @@ class EventsIO:
         return EventsIO.result
 
     @staticmethod
-    def send_to_watch_set(message):
+    async def send_to_watch_set(message):
         print(f"EventsIO sendToWatchSet: {message}")
+
+        def reminder_title_from_json(reminder_json):
+            title_str = reminder_json.get("title")
+            return to_byte_array(title_str, 18)
+
+        def reminder_time_from_json(reminder_json):
+            def create_time_detail(repeat_period, start_date, end_date, days_of_week):
+                def encode_date(time_detail, start_date, end_date):
+                    class Month:
+                        JANUARY = 1
+                        FEBRUARY = 2
+                        MARCH = 3
+                        APRIL = 4
+                        MAY = 5
+                        JUNE = 6
+                        JULY = 7
+                        AUGUST = 8
+                        SEPTEMBER = 9
+                        OCTOBER = 10
+                        NOVEMBER = 11
+                        DECEMBER = 12
+
+                        def __init__(self):
+                            pass
+
+                    def string_to_month(month_str):
+                        months = {
+                            "january": Month.JANUARY,
+                            "february": Month.FEBRUARY,
+                            "march": Month.MARCH,
+                            "april": Month.APRIL,
+                            "may": Month.MAY,
+                            "june": Month.JUNE,
+                            "july": Month.JULY,
+                            "august": Month.AUGUST,
+                            "september": Month.SEPTEMBER,
+                            "october": Month.OCTOBER,
+                            "november": Month.NOVEMBER,
+                            "december": Month.DECEMBER,
+                        }
+                        return months.get(month_str.lower(), Month.JANUARY)
+
+                    def hex_to_dec(hex):
+                        return int(str(hex), 16)
+
+                    # take the last 2 digits only
+                    time_detail[0] = hex_to_dec(start_date["year"] % 2000)
+                    time_detail[1] = hex_to_dec(string_to_month(start_date["month"]))
+                    time_detail[2] = hex_to_dec(start_date["day"])
+                    time_detail[3] = hex_to_dec(
+                        end_date["year"] % 2000
+                    )  # get the last 2 gits only
+                    time_detail[4] = hex_to_dec(string_to_month(end_date["month"]))
+                    time_detail[5] = hex_to_dec(end_date["day"])
+                    time_detail[6], time_detail[7] = 0, 0
+
+                time_detail = [0] * 8
+
+                if repeat_period == "NEVER":
+                    encode_date(time_detail, start_date, end_date)
+
+                elif repeat_period == "WEEKLY":
+                    encode_date(time_detail, start_date, end_date)
+
+                    day_of_week = 0
+                    if days_of_week is not None:
+                        for i in range(len(days_of_week)):
+                            if days_of_week[i] == "SUNDAY":
+                                day_of_week = day_of_week | ReminderMasks.SUNDAY_MASK
+                            elif days_of_week[i] == "MONDAY":
+                                day_of_week = day_of_week | ReminderMasks.MONDAY_MASK
+                            elif days_of_week[i] == "TUESDAY":
+                                day_of_week = day_of_week | ReminderMasks.TUESDAY_MASK
+                            elif days_of_week[i] == "WEDNESDAY":
+                                day_of_week = day_of_week | ReminderMasks.WEDNESDAY_MASK
+                            elif days_of_week[i] == "THURSDAY":
+                                day_of_week = day_of_week | ReminderMasks.THURSDAY_MASK
+                            elif days_of_week[i] == "FRIDAY":
+                                day_of_week = day_of_week | ReminderMasks.FRIDAY_MASK
+                            elif days_of_week[i] == "SATURDAY":
+                                day_of_week = day_of_week | ReminderMasks.SATURDAY_MASK
+
+                    time_detail[6] = day_of_week
+                    time_detail[7] = 0
+
+                elif repeat_period == "MONTHLY":
+                    encode_date(time_detail, start_date, end_date)
+
+                elif repeat_period == "YEARLY":
+                    encode_date(time_detail, start_date, end_date)
+                else:
+                    logger.debug(
+                        "Cannot handle Repeat Period: {}".format(repeat_period)
+                    )
+
+                return time_detail
+
+            def create_time_period(enabled: bool, repeat_period: str) -> int:
+                time_period = 0
+
+                if enabled:
+                    time_period = time_period | ReminderMasks.ENABLED_MASK
+                if repeat_period == "WEEKLY":
+                    time_period = time_period | ReminderMasks.WEEKLY_MASK
+                elif repeat_period == "MONTHLY":
+                    time_period = time_period | ReminderMasks.MONTHLY_MASK
+                elif repeat_period == "YEARLY":
+                    time_period = time_period | ReminderMasks.YEARLY_MASK
+                return time_period
+
+            enabled = reminder_json.get("enabled")
+            repeat_period = reminder_json.get("repeat_period")
+            start_date = reminder_json.get("start_date")
+            end_date = reminder_json.get("end_date")
+            days_of_week = reminder_json.get("days_of_week")
+
+            reminder_cmd = bytearray()
+
+            reminder_cmd += bytearray([create_time_period(enabled, repeat_period)])
+            reminder_cmd += bytearray(
+                create_time_detail(repeat_period, start_date, end_date, days_of_week)
+            )
+
+            return reminder_cmd
+
+        reminders_json_arr = json.loads(message).get("value")
+        for index, element in enumerate(reminders_json_arr):
+            reminder_json = element
+            title = reminder_title_from_json(reminder_json)
+
+            title_byte_arr = bytearray([CHARACTERISTICS["CASIO_REMINDER_TITLE"]])
+            title_byte_arr += bytearray([index + 1])
+            title_byte_arr += title
+            title_byte_arr_to_send = to_compact_string(to_hex_string(title_byte_arr))
+            await EventsIO.connection.write(0x000E, title_byte_arr_to_send)
+
+            reminder_time_byte_arr = bytearray([])
+            reminder_time_byte_arr += bytearray(
+                [CHARACTERISTICS["CASIO_REMINDER_TIME"]]
+            )
+            reminder_time_byte_arr += bytearray([index + 1])
+            reminder_time_byte_arr += reminder_time_from_json(reminder_json)
+            reminder_time_byte_arr_to_send = to_compact_string(
+                to_hex_string(bytearray(reminder_time_byte_arr))
+            )
+            await EventsIO.connection.write(0x000E, reminder_time_byte_arr_to_send)
 
     @staticmethod
     def on_received(message):
-        print(f"EventsIO onReceived: {message}")
         data = to_hex_string(message)
 
         def reminder_time_to_json(reminder_str):
@@ -192,16 +339,14 @@ class EventsIO:
 
             return json.dumps({"time": reminder_json})
 
-        reminder_json = {}
-        value = reminder_time_to_json(data[2:])
-        EventsIO.result.set_result(value)
-        # return reminder_json
+        reminder_json = json.loads(reminder_time_to_json(data[2:]))
+        reminder_json.update(EventsIO.title)
+        print(reminder_json)
+        EventsIO.result.set_result(reminder_json)
 
     @staticmethod
     def on_received_title(message):
-        print(f"EventsIO onReceivedTitle: {message}")
         EventsIO.title = ReminderDecoder.reminder_title_to_json(message)
-        print(f"EventsIO title: {EventsIO.title}")
 
 
 class ReminderDecoder:
