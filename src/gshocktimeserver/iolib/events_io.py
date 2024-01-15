@@ -194,7 +194,7 @@ class EventsIO:
                 [CHARACTERISTICS["CASIO_REMINDER_TIME"]]
             )
             reminder_time_byte_arr += bytearray([index + 1])
-            reminder_time_byte_arr += reminder_time_from_json(reminder_json)
+            reminder_time_byte_arr += reminder_time_from_json(reminder_json.get("time"))
             reminder_time_byte_arr_to_send = to_compact_string(
                 to_hex_string(bytearray(reminder_time_byte_arr))
             )
