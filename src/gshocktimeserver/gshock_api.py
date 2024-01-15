@@ -468,34 +468,6 @@ class GshockAPI:
         )
         return await result
 
-        # await self.connection.request("30{}".format(eventNumber))  # reminder title
-        # await self.connection.request("31{}".format(eventNumber))  # reminder time
-
-        # loop = asyncio.get_running_loop()
-        # result = loop.create_future()
-        # result_queue.enqueue(KeyedResult("310{}".format(eventNumber), result))
-
-        # def get_reminders(keyed_data):
-        #     value = keyed_data.get("value")
-        #     key = keyed_data.get("key")
-
-        #     for obj_key in value:
-        #         if obj_key == "title":
-        #             self.title = value[obj_key]
-
-        #         elif obj_key == "time":
-        #             json_obj = json.loads("{}")
-        #             json_obj["title"] = self.title
-        #             json_obj["time"] = value.get("time")
-        #             event_obj = Event()
-        #             event = event_obj.create_event(json_obj)
-
-        #             res = result_queue.dequeue(key)
-        #             res.set_result(event)
-
-        # self.subscribe("REMINDERS", get_reminders)
-        # return await result
-
     async def set_reminders(self, events: list):
         """Sets events (reminders) to the watch. Up to 5 events are supported.
 
@@ -513,20 +485,20 @@ class GshockAPI:
         def to_json(events: list):
             events_json = json.loads("[]")
             for event in events:
-                event_json = json.loads(json.dumps(event.__dict__))
+                event_json = event  # json.loads(json.dumps(event.__dict__))
                 events_json.append(event_json)
 
             return events_json
 
-        def get_selected_events(events: list):
-            selected_events = [event for event in events if event.selected]
-            return to_json(selected_events)
+        def get_enabled_events(events: list):
+            enabled_events = [event for event in events if event["time"]["enabled"]]
+            return enabled_events  # to_json(enabled_events)
 
-        selected = get_selected_events(events)
+        enabled = get_enabled_events(events)
 
         await self.connection.sendMessage(
             """{{\"action\": \"SET_REMINDERS\", \"value\": {}}}""".format(
-                json.dumps(selected)
+                json.dumps(enabled)
             )
         )
 
