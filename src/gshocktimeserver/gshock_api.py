@@ -389,22 +389,8 @@ class GshockAPI:
         -------
         settings: a list of `Settings`
         """
-        key = "13"
-        await self.connection.request(key)
 
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult(key, result))
-
-        def _get_settings(keyed_data):
-            value = keyed_data.get("value")
-            key = keyed_data.get("key")
-
-            settings = json.loads(value)
-            res = result_queue.dequeue(key)
-            res.set_result(settings)
-
-        self.subscribe("SETTINGS", _get_settings)
+        result = await message_dispatcher.SettingsIO.request(self.connection)
         return await result
 
     async def set_settings(self, settings):

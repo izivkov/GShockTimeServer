@@ -59,14 +59,17 @@ async def run_api_tests():
     # settings.timeAdjustment = True
     # await api.set_time_adjustment(settings)
 
-    # settings_local = await api.get_basic_settings()
-    # logger.debug("settings: {}".format(settings_local))
+    settings_local = await api.get_basic_settings()
+    print("settings: {}".format(settings_local))
 
-    # settings_local["button_tone"] = True
-    # settings_local["language"] = "Engish"
-    # settings_local["time_format"] = "12h"
+    settings_local["button_tone"] = True
+    settings_local["language"] = "Engish"
+    settings_local["time_format"] = "12h"
 
-    # await api.set_settings(settings_local)
+    await api.set_settings(settings_local)
+
+    settings_local = await api.get_basic_settings()
+    print("After update: settings: {}".format(settings_local))
 
     # Create a single event
     # tz = pytz.timezone("America/Toronto")
@@ -91,13 +94,13 @@ async def run_api_tests():
     # )
     # Event().create_event(json.loads(event_json_str))
 
-    reminders = await api.get_reminders()
-    for reminder in reminders:
-        logger.debug("reminder: {}".format(reminder.__str__()))
+    # reminders = await api.get_reminders()
+    # for reminder in reminders:
+    #     logger.debug("reminder: {}".format(reminder.__str__()))
 
-    reminders[3]["title"] = "Test Event"
+    # reminders[3]["title"] = "Test Event"
 
-    await api.set_reminders(reminders)
+    # await api.set_reminders(reminders)
 
     input("Hit any key to disconnect")
 

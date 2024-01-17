@@ -13,22 +13,9 @@ from iolib.timer_io import TimerIO
 from iolib.watch_name_io import WatchNameIO
 from iolib.alarms_io import AlarmsIO
 from iolib.events_io import EventsIO
+from iolib.settings_io import SettingsIO
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
-
-
-class SettingsIO:
-    @staticmethod
-    def send_to_watch(message):
-        print(f"SettingsIO sendToWatch: {message}")
-
-    @staticmethod
-    def send_to_watch_set(message):
-        print(f"SettingsIO sendToWatchSet: {message}")
-
-    @staticmethod
-    def on_received(message):
-        print(f"SettingsIO onReceived: {message}")
 
 
 class TimeAdjustmentIO:
