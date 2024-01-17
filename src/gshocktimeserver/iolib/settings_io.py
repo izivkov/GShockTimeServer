@@ -1,0 +1,123 @@
+import asyncio
+import json
+from typing import Any
+from settings import settings
+
+from utils import to_compact_string, to_hex_string, to_int_array
+from casio_constants import CasioConstants
+
+CHARACTERISTICS = CasioConstants.CHARACTERISTICS
+
+
+class SettingsIO:
+    result: asyncio.Future[Any] = None
+    connection = None
+
+    @staticmethod
+    async def request(connection):
+        print(f"TimerIO request")
+        SettingsIO.connection = connection
+        await connection.request("13")
+
+        loop = asyncio.get_running_loop()
+        SettingsIO.result = loop.create_future()
+        return SettingsIO.result
+
+    @staticmethod
+    def send_to_watch(message):
+        print(f"SettingsIO sendToWatch: {message}")
+        SettingsIO.connection.write(
+            0x000C, bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_BASIC"]])
+        )
+
+    @staticmethod
+    async def send_to_watch_set(message):
+        print(f"SettingsIO sendToWatchSet: {message}")
+
+        def encode(settings: dict):
+            mask_24_hours = 0b00000001
+            MASK_BUTTON_TONE_OFF = 0b00000010
+            MASK_LIGHT_OFF = 0b00000100
+            POWER_SAVING_MODE = 0b00010000
+
+            arr = bytearray(12)
+            arr[0] = CHARACTERISTICS["CASIO_SETTING_FOR_BASIC"]
+            if settings.time_format == "24h":
+                arr[1] = arr[1] | mask_24_hours
+            if not settings.button_tone:
+                arr[1] = arr[1] | MASK_BUTTON_TONE_OFF
+            if not settings.auto_light:
+                arr[1] = arr[1] | MASK_LIGHT_OFF
+            if not settings.power_saving_mode:
+                arr[1] = arr[1] | POWER_SAVING_MODE
+
+            if settings.light_duration == "4s":
+                arr[2] = 1
+            if settings.date_format == "DD:MM":
+                arr[4] = 1
+
+            language_index = {
+                "English": 0,
+                "Spanish": 1,
+                "French": 2,
+                "German": 3,
+                "Italian": 4,
+                "Russian": 5,
+            }
+            arr[5] = language_index.get(settings.language, 0)
+
+            return arr
+
+        encoded_settings = encode(settings)
+        await SettingsIO.connection.write(
+            0x000E, to_compact_string(to_hex_string(encoded_settings))
+        )
+
+    @staticmethod
+    def on_received(message):
+        print(f"SettingsIO onReceived: {message}")
+
+        def create_json_settings(setting_string):
+            mask_24_hours = 0b00000001
+            MASK_BUTTON_TONE_OFF = 0b00000010
+            MASK_LIGHT_OFF = 0b00000100
+            POWER_SAVING_MODE = 0b00010000
+
+            setting_array = to_int_array(setting_string)
+
+            if setting_array[1] & mask_24_hours != 0:
+                settings.time_format = "24h"
+            else:
+                settings.time_format = "12h"
+            settings.button_tone = setting_array[1] & MASK_BUTTON_TONE_OFF == 0
+            settings.auto_light = setting_array[1] & MASK_LIGHT_OFF == 0
+            settings.power_saving_mode = setting_array[1] & POWER_SAVING_MODE == 0
+
+            if setting_array[4] == 1:
+                settings.date_format = "DD:MM"
+            else:
+                settings.date_format = "MM:DD"
+
+            if setting_array[5] == 0:
+                settings.language = "English"
+            if setting_array[5] == 1:
+                settings.language = "Spanish"
+            if setting_array[5] == 2:
+                settings.language = "French"
+            if setting_array[5] == 3:
+                settings.language = "German"
+            if setting_array[5] == 4:
+                settings.language = "Italian"
+            if setting_array[5] == 5:
+                settings.language = "Russian"
+
+            if setting_array[2] == 1:
+                settings.light_duration = "4s"
+            else:
+                settings.light_duration = "2s"
+
+            return json.dumps(settings.__dict__)
+
+        data = to_hex_string(message)
+        json_data = create_json_settings(data)
+        SettingsIO.result.set_result(json_data)
