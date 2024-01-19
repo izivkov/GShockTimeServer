@@ -337,25 +337,20 @@ class GshockAPI:
         -------
         is_time_adjustement_set: Boolean, True if time-adjustement is set.
         """
-        key = "11"
-        await self.connection.request(key)
-
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult(key, result))
-
-        def get_time_adjustment(keyed_data):
-            value = keyed_data.get("value")
-            key = keyed_data.get("key")
-            if key != "11":
-                return
-
-            res = result_queue.dequeue(key)
-            time_adjustment = value.get("timeAdjustment", False)
-            res.set_result(time_adjustment)
-
-        self.subscribe("TIME_ADJUSTMENT", get_time_adjustment)
+        result = await message_dispatcher.TimeAdjustmentIO.request(self.connection)
         return await result
+
+        # def get_time_adjustment(keyed_data):
+        #     value = keyed_data.get("value")
+        #     key = keyed_data.get("key")
+        #     if key != "11":
+        #         return
+
+        #     res = result_queue.dequeue(key)
+        #     time_adjustment = value.get("timeAdjustment", False)
+        #     res.set_result(time_adjustment)
+
+        # self.subscribe("TIME_ADJUSTMENT", get_time_adjustment)
 
     async def set_time_adjustment(self, settings):
         """Sets auto-tame adjustment for the watch
@@ -368,11 +363,11 @@ class GshockAPI:
         -------
         None
         """
-        await self.connection.sendMessage(
-            """{"action": "SET_TIME_ADJUSTMENT", "value": \""""
-            + str(settings.timeAdjustment)
-            + """\" }"""
-        )
+        # await self.connection.sendMessage(
+        #     """{"action": "SET_TIME_ADJUSTMENT", "value": \""""
+        #     + str(settings.timeAdjustment)
+        #     + """\" }"""
+        # )
 
     async def get_basic_settings(self):
         """Get settings from the watch. Example:

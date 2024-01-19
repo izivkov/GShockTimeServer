@@ -53,23 +53,23 @@ async def run_api_tests():
     # logger.debug("timer: {} seconds".format(seconds))
 
     # # await api.set_timer(seconds + 10)
-    # time_adjstment = await api.get_time_adjustment()
-    # logger.debug("time_adjstment: {}".format(time_adjstment))
+    time_adjstment = await api.get_time_adjustment()
+    print("time_adjstment: {}".format(time_adjstment))
 
     # settings.timeAdjustment = True
     # await api.set_time_adjustment(settings)
 
-    settings_local = await api.get_basic_settings()
-    print("settings: {}".format(settings_local))
+    # settings_local = await api.get_basic_settings()
+    # print("settings: {}".format(settings_local))
 
-    settings_local["button_tone"] = True
-    settings_local["language"] = "Russian"
-    settings_local["time_format"] = "24h"
+    # settings_local["button_tone"] = True
+    # settings_local["language"] = "Russian"
+    # settings_local["time_format"] = "24h"
 
-    await api.set_settings(settings_local)
+    # await api.set_settings(settings_local)
 
-    settings_local = await api.get_basic_settings()
-    print("After update: settings: {}".format(settings_local))
+    # settings_local = await api.get_basic_settings()
+    # print("After update: settings: {}".format(settings_local))
 
     # Create a single event
     # tz = pytz.timezone("America/Toronto")
