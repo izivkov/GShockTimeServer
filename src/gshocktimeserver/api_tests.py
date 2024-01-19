@@ -54,10 +54,10 @@ async def run_api_tests():
 
     # # await api.set_timer(seconds + 10)
     time_adjstment = await api.get_time_adjustment()
-    print("time_adjstment: {}".format(time_adjstment))
+    # print("time_adjstment: {}".format(time_adjstment))
 
     # settings.timeAdjustment = True
-    # await api.set_time_adjustment(settings)
+    await api.set_time_adjustment(time_adjustement=True, minutes_after_hour=10)
 
     # settings_local = await api.get_basic_settings()
     # print("settings: {}".format(settings_local))
