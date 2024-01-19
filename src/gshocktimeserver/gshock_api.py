@@ -340,34 +340,22 @@ class GshockAPI:
         result = await message_dispatcher.TimeAdjustmentIO.request(self.connection)
         return await result
 
-        # def get_time_adjustment(keyed_data):
-        #     value = keyed_data.get("value")
-        #     key = keyed_data.get("key")
-        #     if key != "11":
-        #         return
-
-        #     res = result_queue.dequeue(key)
-        #     time_adjustment = value.get("timeAdjustment", False)
-        #     res.set_result(time_adjustment)
-
-        # self.subscribe("TIME_ADJUSTMENT", get_time_adjustment)
-
-    async def set_time_adjustment(self, settings):
+    async def set_time_adjustment(
+        self, time_adjustement: bool, minutes_after_hour: int
+    ):
         """Sets auto-tame adjustment for the watch
 
         Parameters
         ----------
-        settings: Settings
+        time_adjustement: bool, True if time-adjustement is set
+        minutes_after_hour: int, minutes after hour
 
         Returns
         -------
         None
         """
-        # await self.connection.sendMessage(
-        #     """{"action": "SET_TIME_ADJUSTMENT", "value": \""""
-        #     + str(settings.timeAdjustment)
-        #     + """\" }"""
-        # )
+        message = f"""{{"action": "SET_TIME_ADJUSTMENT", "timeAdjustment": "{time_adjustement}", "minutesAfterHour": "{minutes_after_hour}" }}"""
+        await self.connection.sendMessage(message)
 
     async def get_basic_settings(self):
         """Get settings from the watch. Example:
