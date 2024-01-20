@@ -15,14 +15,9 @@ from iolib.alarms_io import AlarmsIO
 from iolib.events_io import EventsIO
 from iolib.settings_io import SettingsIO
 from iolib.time_adjustement_io import TimeAdjustmentIO
+from iolib.watch_condition_io import WatchConditionIO
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
-
-
-class WatchConditionIO:
-    @staticmethod
-    def on_received(message):
-        print(f"WatchConditionIO onReceived: {message}")
 
 
 class AppInfoIO:
