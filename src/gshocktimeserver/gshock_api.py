@@ -326,6 +326,10 @@ class GshockAPI:
             """{"action": "SET_TIMER", "value": """ + str(timerValue) + """ }"""
         )
 
+    async def get_watch_condition(self):
+        result = await message_dispatcher.WatchConditionIO.request(self.connection)
+        return await result
+
     async def get_time_adjustment(self):
         """Determine if auto-tame adjustment is set or not
 

@@ -219,6 +219,9 @@ class WatchInfo:
     def get_address(self):
         return self.address
 
+    def get_model(self):
+        return self.model
+
     def reset(self):
         self.address = ""
         self.name = ""
