@@ -5,6 +5,7 @@ from datetime import datetime
 
 from connection import Connection
 from gshock_api import GshockAPI
+from iolib.button_pressed_io import WatchButton
 from scanner import scanner
 from configurator import conf
 from logger import logger
