@@ -1,4 +1,5 @@
 import asyncio
+import json
 from typing import Any
 
 from utils import to_compact_string, to_hex_string
@@ -43,7 +44,8 @@ class TimerIO:
             arr[3] = seconds
             return arr
 
-        seconds_as_byte_arr = encode(data)
+        data_obj = json.loads(data)
+        seconds_as_byte_arr = encode(data_obj.get("value"))
         seconds_as_compact_str = to_compact_string(to_hex_string(seconds_as_byte_arr))
         await TimerIO.connection.write(0x000E, seconds_as_compact_str)
 

@@ -1,8 +1,5 @@
 import asyncio
 from typing import Any
-from casio_watch import DtsState
-
-from utils import to_compact_string, to_hex_string
 from casio_constants import CasioConstants
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
