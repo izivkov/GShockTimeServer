@@ -5,6 +5,8 @@ from typing import Any
 from settings import settings
 from utils import to_compact_string, to_hex_string, to_int_array
 from casio_constants import CasioConstants
+from iolib.error_io import ErrorIO
+
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
@@ -12,7 +14,7 @@ CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 class TimeAdjustmentIO:
     result: asyncio.Future[Any] = None
     connection = None
-    original_value = ""
+    original_value = None
 
     @staticmethod
     async def request(connection):
@@ -35,9 +37,9 @@ class TimeAdjustmentIO:
     async def send_to_watch_set(message):
         print(f"TimeAdjustmentIO sendToWatchSet: {message}")
 
-        if TimeAdjustmentIO.original_value == "":
-            logging.error("TimeAdjustmentIO original value not set")
-            return None
+        if TimeAdjustmentIO.original_value == None:
+            logging.error("Error: Must call get before set")
+            return ErrorIO.request("Error: Must call get before set")
 
         time_adjustment = json.loads(message).get("timeAdjustment") == "True"
         minutes_after_hour = int(json.loads(message).get("minutesAfterHour"))

@@ -16,6 +16,7 @@ from iolib.events_io import EventsIO
 from iolib.settings_io import SettingsIO
 from iolib.time_adjustement_io import TimeAdjustmentIO
 from iolib.watch_condition_io import WatchConditionIO
+from iolib.error_io import ErrorIO
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
@@ -30,12 +31,6 @@ class ButtonPressedIO:
     @staticmethod
     def on_received(message):
         print(f"ButtonPressedIO onReceived: {message}")
-
-
-class ErrorIO:
-    @staticmethod
-    def on_received(message):
-        print(f"ErrorIO onReceived: {message}")
 
 
 class UnknownIO:
