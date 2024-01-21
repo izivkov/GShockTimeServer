@@ -57,10 +57,10 @@ async def run_api_tests():
     # print("time_adjstment: {}".format(time_adjstment))
 
     # settings.timeAdjustment = True
-    # await api.set_time_adjustment(time_adjustement=True, minutes_after_hour=10)
+    await api.set_time_adjustment(time_adjustement=True, minutes_after_hour=10)
 
-    condition = await api.get_watch_condition()
-    print(f"condition: {condition.__dict__}")
+    # condition = await api.get_watch_condition()
+    # print(f"condition: {condition.__dict__}")
 
     # settings_local = await api.get_basic_settings()
     # print("settings: {}".format(settings_local))
