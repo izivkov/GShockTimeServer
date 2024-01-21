@@ -83,50 +83,7 @@ class GshockAPI:
         -------
         button: WATCH_BUTTON
         """
-        return await self._get_pressed_button("10")
-
-    async def _get_pressed_button(self, key: str) -> WatchButton:
-        await self.connection.request(key)
-
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult(key, result))
-
-        def button_pressed_callback(keyed_data):
-            """
-            RIGHT BUTTON: 0x10 17 62 07 38 85 CD 7F ->04<- 03 0F FF FF FF FF 24 00 00 00
-            LEFT BUTTON:  0x10 17 62 07 38 85 CD 7F ->01<- 03 0F FF FF FF FF 24 00 00 00
-            RESET:        0x10 17 62 16 05 85 dd 7f ->00<- 03 0f ff ff ff ff 24 00 00 00 // after watch reset
-            AUTO-TIME:    0x10 17 62 16 05 85 dd 7f ->03<- 03 0f ff ff ff ff 24 00 00 00 // no button pressed
-            """
-
-            result_value = keyed_data.get("value")
-            result_key = keyed_data.get("key")
-
-            ret = WatchButton.INVALID
-
-            if (
-                result_key == "10"
-                and result_value != ""
-                and len(to_int_array(result_value)) >= 19
-            ):
-                ble_int_arr = to_int_array(result_value)
-                button_indicator = ble_int_arr[8]
-                ret = (
-                    WatchButton.LOWER_LEFT
-                    if (button_indicator == 0 or button_indicator == 1)
-                    else WatchButton.LOWER_RIGHT
-                    if button_indicator == 4
-                    else WatchButton.NO_BUTTON
-                    if button_indicator == 3
-                    else WatchButton.INVALID
-                )
-
-                res = result_queue.dequeue("10")
-                res.set_result(ret)
-
-        self.subscribe("BUTTON_PRESSED", button_pressed_callback)
-
+        result = await message_dispatcher.ButtonPressedIO.request(self.connection)
         return await result
 
     async def get_world_cities(self, cityNumber: int):
@@ -488,35 +445,8 @@ class GshockAPI:
         -------
         app_info: String
         """
-        key = "22"
-        await self.connection.request(key)
 
-        def set_app_info(data: str):
-            # App info:
-            # This is needed to re-enable button D (Lower-right) after the watch has been reset or BLE has been cleared.
-            # It is a hard-coded value, which is what the official app does as well.
-
-            # If watch was reset, the app info will come as:
-            # 0x22 FF FF FF FF FF FF FF FF FF FF 00
-            # In this case, set it to the hardcoded value bellow, so 'D' button will
-            # work again.
-            app_info_compact_str = to_compact_string(data)
-            if app_info_compact_str == "22FFFFFFFFFFFFFFFFFFFF00":
-                self.connection.write(0xE, "223488F4E5D5AFC829E06D02")
-
-        loop = asyncio.get_running_loop()
-        result = loop.create_future()
-        result_queue.enqueue(KeyedResult(key, result))
-
-        def subscribe_casio_app_information(keyed_data):
-            data = keyed_data.get("value")
-            key = keyed_data.get("key")
-
-            set_app_info(data)
-            res = result_queue.dequeue(key)
-            res.set_result("")
-
-        self.subscribe("CASIO_APP_INFORMATION", subscribe_casio_app_information)
+        result = await message_dispatcher.AppInfoIO.request(self.connection)
         return await result
 
     def subscribe(self, subject_name, on_next) -> None:

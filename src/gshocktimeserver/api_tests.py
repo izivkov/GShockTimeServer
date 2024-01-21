@@ -30,10 +30,11 @@ async def run_api_tests():
 
     api = GshockAPI(connection)
 
-    # await api.get_app_info()
+    # app_info = await api.get_app_info()
+    # print("app info: {}".format(app_info))
 
-    # pressed_button = await api.get_pressed_button()
-    # logger.debug("pressed button: {}".format(pressed_button))
+    pressed_button = await api.get_pressed_button()
+    print("pressed button: {}".format(pressed_button))
 
     # watch_name = await api.get_watch_name()
     # logger.info("got watch name: {}".format(watch_name))
@@ -57,7 +58,7 @@ async def run_api_tests():
     # print("time_adjstment: {}".format(time_adjstment))
 
     # settings.timeAdjustment = True
-    await api.set_time_adjustment(time_adjustement=True, minutes_after_hour=10)
+    # await api.set_time_adjustment(time_adjustement=True, minutes_after_hour=10)
 
     # condition = await api.get_watch_condition()
     # print(f"condition: {condition.__dict__}")
