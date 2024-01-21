@@ -6,7 +6,6 @@ from datetime import datetime, timezone
 
 from connection import Connection
 from gshock_api import GshockAPI
-from casio_watch import DtsState, settings
 from event import Event, create_event_date, RepeatPeriod
 from scanner import scanner
 from logger import logger
@@ -30,81 +29,80 @@ async def run_api_tests():
 
     api = GshockAPI(connection)
 
-    # app_info = await api.get_app_info()
-    # print("app info: {}".format(app_info))
+    app_info = await api.get_app_info()
+    print("app info: {}".format(app_info))
 
     pressed_button = await api.get_pressed_button()
     print("pressed button: {}".format(pressed_button))
 
-    # watch_name = await api.get_watch_name()
-    # logger.info("got watch name: {}".format(watch_name))
+    watch_name = await api.get_watch_name()
+    logger.info("got watch name: {}".format(watch_name))
 
-    # await api.set_time()
+    await api.set_time()
 
-    # alarms = await api.get_alarms()
-    # logger.debug("alarms: {}".format(alarms))
+    alarms = await api.get_alarms()
+    logger.debug("alarms: {}".format(alarms))
 
-    # alarms[3]["enabled"] = True
-    # alarms[3]["hour"] = 7
-    # alarms[3]["minute"] = 25
-    # alarms[3]["enabled"] = False
-    # await api.set_alarms(alarms)
+    alarms[3]["enabled"] = True
+    alarms[3]["hour"] = 7
+    alarms[3]["minute"] = 25
+    alarms[3]["enabled"] = False
+    await api.set_alarms(alarms)
 
-    # seconds = await api.get_timer()
-    # logger.debug("timer: {} seconds".format(seconds))
+    seconds = await api.get_timer()
+    logger.debug("timer: {} seconds".format(seconds))
 
-    # # await api.set_timer(seconds + 10)
-    # time_adjstment = await api.get_time_adjustment()
-    # print("time_adjstment: {}".format(time_adjstment))
+    await api.set_timer(seconds + 10)
+    time_adjstment = await api.get_time_adjustment()
+    print("time_adjstment: {}".format(time_adjstment))
 
-    # settings.timeAdjustment = True
-    # await api.set_time_adjustment(time_adjustement=True, minutes_after_hour=10)
+    await api.set_time_adjustment(time_adjustement=True, minutes_after_hour=10)
 
-    # condition = await api.get_watch_condition()
-    # print(f"condition: {condition.__dict__}")
+    condition = await api.get_watch_condition()
+    print(f"condition: {condition.__dict__}")
 
-    # settings_local = await api.get_basic_settings()
-    # print("settings: {}".format(settings_local))
+    settings_local = await api.get_basic_settings()
+    print("settings: {}".format(settings_local))
 
-    # settings_local["button_tone"] = True
-    # settings_local["language"] = "Russian"
-    # settings_local["time_format"] = "24h"
+    settings_local["button_tone"] = True
+    settings_local["language"] = "Russian"
+    settings_local["time_format"] = "24h"
 
-    # await api.set_settings(settings_local)
+    await api.set_settings(settings_local)
 
-    # settings_local = await api.get_basic_settings()
-    # print("After update: settings: {}".format(settings_local))
+    settings_local = await api.get_basic_settings()
+    print("After update: settings: {}".format(settings_local))
 
     # Create a single event
-    # tz = pytz.timezone("America/Toronto")
-    # dt = datetime.now(timezone.utc)
-    # utc_timestamp = dt.timestamp()
-    # event_date = create_event_date(utc_timestamp, tz)
-    # event_date_str = json.dumps(event_date.__dict__)
-    # event_json_str = (
-    #     """{"title":"Test Event", "time":{"selected":\""""
-    #     + str(False)
-    #     + """\", "enabled":\""""
-    #     + str(True)
-    #     + """\", "repeat_period":\""""
-    #     + RepeatPeriod.WEEKLY
-    #     + """\","days_of_week":\""""
-    #     + "MONDAY"
-    #     + """\", "start_date":"""
-    #     + event_date_str
-    #     + """, "end_date":"""
-    #     + event_date_str
-    #     + """}}"""
-    # )
-    # Event().create_event(json.loads(event_json_str))
+    tz = pytz.timezone("America/Toronto")
+    dt = datetime.now(timezone.utc)
+    utc_timestamp = dt.timestamp()
+    event_date = create_event_date(utc_timestamp, tz)
+    event_date_str = json.dumps(event_date.__dict__)
+    event_json_str = (
+        """{"title":"Test Event", "time":{"selected":\""""
+        + str(False)
+        + """\", "enabled":\""""
+        + str(True)
+        + """\", "repeat_period":\""""
+        + RepeatPeriod.WEEKLY
+        + """\","days_of_week":\""""
+        + "MONDAY"
+        + """\", "start_date":"""
+        + event_date_str
+        + """, "end_date":"""
+        + event_date_str
+        + """}}"""
+    )
+    Event().create_event(json.loads(event_json_str))
 
-    # reminders = await api.get_reminders()
-    # for reminder in reminders:
-    #     logger.debug("reminder: {}".format(reminder.__str__()))
+    reminders = await api.get_reminders()
+    for reminder in reminders:
+        logger.debug("reminder: {}".format(reminder.__str__()))
 
-    # reminders[3]["title"] = "Test Event"
+    reminders[3]["title"] = "Test Event"
 
-    # await api.set_reminders(reminders)
+    await api.set_reminders(reminders)
 
     input("Hit any key to disconnect")
 

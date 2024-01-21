@@ -4,6 +4,8 @@ import json
 import time
 
 from data_watcher import data_watcher
+from iolib.dst_watch_state_io import DtsState
+from iolib.button_pressed_io import WatchButton
 import message_dispatcher
 from utils import (
     to_ascii_string,
@@ -12,8 +14,6 @@ from utils import (
     to_compact_string,
     clean_str,
 )
-from result_queue import result_queue, KeyedResult
-from casio_watch import WatchButton, DtsState
 from alarms import alarms_inst
 from event import Event
 from watch_info import watch_info

@@ -1,11 +1,33 @@
 import asyncio
+from enum import IntEnum
 from typing import Any
-from casio_watch import DtsState
 
 from utils import to_compact_string, to_hex_string
 from casio_constants import CasioConstants
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
+
+
+class DtsState(IntEnum):
+    ZERO = 0
+    TWO = 2
+    FOUR = 4
+
+
+# class ReminderMasks:
+#     YEARLY_MASK = 0b00001000
+#     MONTHLY_MASK = 0b00010000
+#     WEEKLY_MASK = 0b00000100
+
+#     SUNDAY_MASK = 0b00000001
+#     MONDAY_MASK = 0b00000010
+#     TUESDAY_MASK = 0b00000100
+#     WEDNESDAY_MASK = 0b00001000
+#     THURSDAY_MASK = 0b00010000
+#     FRIDAY_MASK = 0b00100000
+#     SATURDAY_MASK = 0b01000000
+
+#     ENABLED_MASK = 0b00000001
 
 
 class DstWatchStateIO:
