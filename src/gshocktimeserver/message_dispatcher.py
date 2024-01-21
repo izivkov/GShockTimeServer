@@ -4,6 +4,7 @@ import json
 from typing import Any
 import connection
 from casio_constants import CasioConstants
+from iolib.app_info_io import AppInfoIO
 from iolib.dst_watch_state_io import DstWatchStateIO
 from iolib.world_cities_io import WorldCitiesIO
 from iolib.dst_for_world_cities_io import DstForWorldCitiesIO
@@ -17,26 +18,10 @@ from iolib.settings_io import SettingsIO
 from iolib.time_adjustement_io import TimeAdjustmentIO
 from iolib.watch_condition_io import WatchConditionIO
 from iolib.error_io import ErrorIO
+from iolib.unknown_io import UnknownIO
+from iolib.button_pressed_io import ButtonPressedIO
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
-
-
-class AppInfoIO:
-    @staticmethod
-    def on_received(message):
-        print(f"AppInfoIO onReceived: {message}")
-
-
-class ButtonPressedIO:
-    @staticmethod
-    def on_received(message):
-        print(f"ButtonPressedIO onReceived: {message}")
-
-
-class UnknownIO:
-    @staticmethod
-    def on_received(message):
-        print(f"UnknownIO onReceived: {message}")
 
 
 class MessageDispatcher:
