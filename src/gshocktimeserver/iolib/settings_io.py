@@ -4,6 +4,7 @@ from typing import Any
 from settings import settings
 from utils import to_compact_string, to_hex_string, to_int_array
 from casio_constants import CasioConstants
+from logger import logger
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
@@ -14,7 +15,7 @@ class SettingsIO:
 
     @staticmethod
     async def request(connection):
-        print(f"TimerIO request")
+        logger.info(f"TimerIO request")
         SettingsIO.connection = connection
         await connection.request("13")
 
@@ -24,14 +25,14 @@ class SettingsIO:
 
     @staticmethod
     def send_to_watch(message):
-        print(f"SettingsIO sendToWatch: {message}")
+        logger.info(f"SettingsIO sendToWatch: {message}")
         SettingsIO.connection.write(
             0x000C, bytearray([CHARACTERISTICS["CASIO_SETTING_FOR_BASIC"]])
         )
 
     @staticmethod
     async def send_to_watch_set(message):
-        print(f"SettingsIO sendToWatchSet: {message}")
+        logger.info(f"SettingsIO sendToWatchSet: {message}")
 
         def encode(settings):
             mask_24_hours = 0b00000001
@@ -86,7 +87,7 @@ class SettingsIO:
 
     @staticmethod
     def on_received(message):
-        print(f"SettingsIO onReceived: {message}")
+        logger.info(f"SettingsIO onReceived: {message}")
 
         def create_json_settings(setting_string):
             mask_24_hours = 0b00000001

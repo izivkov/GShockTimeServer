@@ -1,4 +1,4 @@
 class UnknownIO:
     @staticmethod
     def on_received(message):
-        print(f"UnknownIO onReceived: {message}")
+        logger.info(f"UnknownIO onReceived: {message}")

@@ -1,5 +1,6 @@
 import asyncio
 from typing import Any
+from logger import logger
 
 from utils import to_compact_string, to_hex_string
 from casio_constants import CasioConstants
@@ -13,7 +14,7 @@ class AppInfoIO:
 
     @staticmethod
     async def request(connection):
-        print(f"AppInfoIO request")
+        logger.info(f"AppInfoIO request")
         AppInfoIO.connection = connection
         await connection.request("22")
 
@@ -27,7 +28,7 @@ class AppInfoIO:
 
     @staticmethod
     def on_received(data):
-        print(f"AppInfoIO onReceived")
+        logger.info(f"AppInfoIO onReceived")
 
         def set_app_info(data: str):
             # App info:

@@ -12,17 +12,23 @@ from logger import logger
 
 
 def prompt():
-    print("========================================================================")
-    print("Press and hold lower-left button on your watch for 3 seconds to start...")
-    print("========================================================================")
-    print("")
+    logger.info(
+        "========================================================================"
+    )
+    logger.info(
+        "Press and hold lower-left button on your watch for 3 seconds to start..."
+    )
+    logger.info(
+        "========================================================================"
+    )
+    logger.info("")
 
 
 async def run_api_tests():
     prompt()
 
     device = await scanner.scan()
-    logger.debug("Found: {}".format(device))
+    logger.info("Found: {}".format(device))
 
     connection = Connection(device)
     await connection.connect()
@@ -30,10 +36,10 @@ async def run_api_tests():
     api = GshockAPI(connection)
 
     app_info = await api.get_app_info()
-    print("app info: {}".format(app_info))
+    logger.info("app info: {}".format(app_info))
 
     pressed_button = await api.get_pressed_button()
-    print("pressed button: {}".format(pressed_button))
+    logger.info("pressed button: {}".format(pressed_button))
 
     watch_name = await api.get_watch_name()
     logger.info("got watch name: {}".format(watch_name))
@@ -41,7 +47,7 @@ async def run_api_tests():
     await api.set_time()
 
     alarms = await api.get_alarms()
-    logger.debug("alarms: {}".format(alarms))
+    logger.info("alarms: {}".format(alarms))
 
     alarms[3]["enabled"] = True
     alarms[3]["hour"] = 7
@@ -50,19 +56,19 @@ async def run_api_tests():
     await api.set_alarms(alarms)
 
     seconds = await api.get_timer()
-    logger.debug("timer: {} seconds".format(seconds))
+    logger.info("timer: {} seconds".format(seconds))
 
     await api.set_timer(seconds + 10)
     time_adjstment = await api.get_time_adjustment()
-    print("time_adjstment: {}".format(time_adjstment))
+    logger.info("time_adjstment: {}".format(time_adjstment))
 
     await api.set_time_adjustment(time_adjustement=True, minutes_after_hour=10)
 
     condition = await api.get_watch_condition()
-    print(f"condition: {condition.__dict__}")
+    logger.info(f"condition: {condition}")
 
     settings_local = await api.get_basic_settings()
-    print("settings: {}".format(settings_local))
+    logger.info("settings: {}".format(settings_local))
 
     settings_local["button_tone"] = True
     settings_local["language"] = "Russian"
@@ -71,7 +77,7 @@ async def run_api_tests():
     await api.set_settings(settings_local)
 
     settings_local = await api.get_basic_settings()
-    print("After update: settings: {}".format(settings_local))
+    logger.info("After update: settings: {}".format(settings_local))
 
     # Create a single event
     tz = pytz.timezone("America/Toronto")
@@ -95,10 +101,11 @@ async def run_api_tests():
         + """}}"""
     )
     Event().create_event(json.loads(event_json_str))
+    logger.info("Created event: {}".format(event_json_str))
 
     reminders = await api.get_reminders()
     for reminder in reminders:
-        logger.debug("reminder: {}".format(reminder.__str__()))
+        logger.info("reminder: {}".format(reminder.__str__()))
 
     reminders[3]["title"] = "Test Event"
 
@@ -107,7 +114,7 @@ async def run_api_tests():
     input("Hit any key to disconnect")
 
     await connection.disconnect()
-    logger.debug("--- END OF TESTS ---")
+    logger.info("--- END OF TESTS ---")
 
 
 def convert_time_string_to_epoch(time_string):
@@ -120,5 +127,5 @@ def convert_time_string_to_epoch(time_string):
 
         return timestamp
     except ValueError:
-        print("Invalid time format. Please use the format HH:MM:SS.")
+        logger.info("Invalid time format. Please use the format HH:MM:SS.")
         return None

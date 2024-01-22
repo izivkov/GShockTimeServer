@@ -1,6 +1,7 @@
 import asyncio
 import json
 from typing import Any
+from logger import logger
 
 from utils import to_compact_string, to_hex_string
 from casio_constants import CasioConstants
@@ -14,7 +15,7 @@ class TimerIO:
 
     @staticmethod
     async def request(connection):
-        print(f"TimerIO request")
+        logger.info(f"TimerIO request")
         TimerIO.connection = connection
         await connection.request("18")
 
@@ -28,7 +29,7 @@ class TimerIO:
 
     @staticmethod
     async def send_to_watch_set(data):
-        print(f"TimerIO sendToWatchSet: {data}")
+        logger.info(f"TimerIO sendToWatchSet: {data}")
 
         def encode(seconds_str):
             in_seconds = int(seconds_str)
@@ -51,7 +52,7 @@ class TimerIO:
 
     @staticmethod
     def on_received(data):
-        print(f"TimerIO onReceived")
+        logger.info(f"TimerIO onReceived")
 
         def decode_value(data: str) -> str:
             timer_int_array = data

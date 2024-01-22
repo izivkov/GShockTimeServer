@@ -40,7 +40,7 @@ class EventsIO:
 
     @staticmethod
     async def request(connection, event_number):
-        print(f"EventsIO request")
+        logger.info(f"EventsIO request")
         EventsIO.connection = connection
 
         await connection.request("30{}".format(event_number))  # reminder title
@@ -52,7 +52,7 @@ class EventsIO:
 
     @staticmethod
     async def send_to_watch_set(message):
-        print(f"EventsIO sendToWatchSet: {message}")
+        logger.info(f"EventsIO sendToWatchSet: {message}")
 
         def reminder_title_from_json(reminder_json):
             title_str = reminder_json.get("title")
@@ -341,7 +341,7 @@ class EventsIO:
 
         reminder_json = json.loads(reminder_time_to_json(data[2:]))
         reminder_json.update(EventsIO.title)
-        print(reminder_json)
+        logger.info(reminder_json)
         EventsIO.result.set_result(reminder_json)
 
     @staticmethod

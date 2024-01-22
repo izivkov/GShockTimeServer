@@ -1,5 +1,6 @@
 import asyncio
 from typing import Any
+from logger import logger
 
 from utils import to_compact_string, to_hex_string
 from casio_constants import CasioConstants
@@ -13,7 +14,7 @@ class DstForWorldCitiesIO:
 
     @staticmethod
     async def request(connection, city_number: int):
-        print(f"DstForWorldCitiesIO request")
+        logger.info(f"DstForWorldCitiesIO request")
         DstForWorldCitiesIO.connection = connection
         key = "1e0{}".format(city_number)
         await connection.request(key)
@@ -28,5 +29,5 @@ class DstForWorldCitiesIO:
 
     @staticmethod
     def on_received(data):
-        print(f"DstForWorldCitiesIO onReceived")
+        logger.info(f"DstForWorldCitiesIO onReceived")
         DstForWorldCitiesIO.result.set_result(data)

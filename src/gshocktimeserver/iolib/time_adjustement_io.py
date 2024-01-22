@@ -6,6 +6,7 @@ from settings import settings
 from utils import to_compact_string, to_hex_string, to_int_array
 from casio_constants import CasioConstants
 from iolib.error_io import ErrorIO
+from logger import logger
 
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
@@ -18,7 +19,7 @@ class TimeAdjustmentIO:
 
     @staticmethod
     async def request(connection):
-        print(f"TimerIO request")
+        logger.info(f"TimerIO request")
         TimeAdjustmentIO.connection = connection
         await connection.request("11")
 
@@ -28,14 +29,14 @@ class TimeAdjustmentIO:
 
     @staticmethod
     def send_to_watch(message):
-        print(f"TimeAdjustmentIO sendToWatch: {message}")
+        logger.info(f"TimeAdjustmentIO sendToWatch: {message}")
         TimeAdjustmentIO.connection.write(
             0x000C, bytearray([CHARACTERISTICS["TIME_ADJUSTMENT"]])
         )
 
     @staticmethod
     async def send_to_watch_set(message):
-        print(f"TimeAdjustmentIO sendToWatchSet: {message}")
+        logger.info(f"TimeAdjustmentIO sendToWatchSet: {message}")
 
         if TimeAdjustmentIO.original_value == None:
             logging.error("Error: Must call get before set")
@@ -59,7 +60,7 @@ class TimeAdjustmentIO:
 
     @staticmethod
     def on_received(message):
-        print(f"TimeAdjustmentIO onReceived: {message}")
+        logger.info(f"TimeAdjustmentIO onReceived: {message}")
         TimeAdjustmentIO.original_value = to_hex_string(
             message
         )  # save original message
@@ -87,4 +88,4 @@ class TimeAdjustmentIO:
 
     @staticmethod
     async def on_received_set(message):
-        print(f"TimeAdjustmentIO onReceivedSet: {message}")
+        logger.info(f"TimeAdjustmentIO onReceivedSet: {message}")
