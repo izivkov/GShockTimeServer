@@ -1,3 +1,6 @@
+from logger import logger
+
+
 class UnknownIO:
     @staticmethod
     def on_received(message):
