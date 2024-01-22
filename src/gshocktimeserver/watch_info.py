@@ -30,6 +30,8 @@ class WatchInfo:
         self.weekLanguageSupported = True
         self.worldCities: True
         self.temperature: True
+        self.batteryLevelLowerLimit: 15
+        self.batteryLevelUpperLimit: 20
 
         self.models = [
             {
@@ -41,6 +43,8 @@ class WatchInfo:
                 "hasReminders": True,
                 "shortLightDuration": "2s",
                 "longLightDuration": "4s",
+                "batteryLevelLowerLimit": 9,
+                "batteryLevelUpperLimit": 19,
             },
             {
                 "model": WATCH_MODEL.GST,
@@ -212,6 +216,8 @@ class WatchInfo:
             self.weekLanguageSupported = model_info.get("weekLanguageSupported", True)
             self.worldCities = model_info.get("worldCities", True)
             self.temperature = model_info.get("temperature", True)
+            self.batteryLevelLowerLimit = model_info.get("batteryLevelLowerLimit", 15)
+            self.batteryLevelUpperLimit = model_info.get("batteryLevelUpperLimit", 20)
 
     def set_address(self, address):
         self.address = address
