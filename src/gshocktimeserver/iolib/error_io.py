@@ -1,3 +1,6 @@
+from logger import logger
+
+
 class ErrorIO:
     @staticmethod
     async def on_received(message):
