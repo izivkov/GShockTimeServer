@@ -24,18 +24,18 @@ async def main(argv):
 
 
 def prompt():
-    print(
+    logger.info(
         "=============================================================================================="
     )
-    print("Short-press lower-right button on your watch to set time...")
-    print("")
-    print(
+    logger.info("Short-press lower-right button on your watch to set time...")
+    logger.info("")
+    logger.info(
         "If Auto-time set on watch, the watch will connect and run automatically up to 4 times per day."
     )
-    print(
+    logger.info(
         "=============================================================================================="
     )
-    print("")
+    logger.info("")
 
 
 async def run_time_server():
@@ -65,7 +65,7 @@ async def run_time_server():
 
             await api.get_app_info()
             await api.set_time()
-            print(f"Time set at {datetime.now()} on {watch_info.name}")
+            logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
 
             # You can add mail notification here if you run your mail server.
             # send_mail_notification(args.mailto)

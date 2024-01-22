@@ -8,17 +8,18 @@ class Logger:
     log_level = args.get().log_level
 
     logging.basicConfig(
-        # encoding='utf-8', (for pythonn 3.9 and higher)
         level=logging.INFO,  # log_level,
         handlers=[logging.StreamHandler()],
         format="%(asctime)-15s %(name)-8s %(levelname)s: %(message)s",
     )
 
+    logging.basicConfig(level=logging.INFO)
+
     def error(self, *args):
         _logger.error(args)
 
     def info(self, *args):
-        _logger.debug(args)
+        _logger.info(args)
 
     def debug(self, *args):
         _logger.debug(args)

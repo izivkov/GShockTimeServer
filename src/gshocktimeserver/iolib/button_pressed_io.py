@@ -1,7 +1,7 @@
 import asyncio
 from enum import IntEnum
 from typing import Any
-
+from logger import logger
 from utils import to_compact_string, to_hex_string, to_int_array
 from casio_constants import CasioConstants
 
@@ -23,7 +23,7 @@ class ButtonPressedIO:
 
     @staticmethod
     async def request(connection):
-        print(f"ButtonPressedIO request")
+        logger.info(f"ButtonPressedIO request")
         ButtonPressedIO.connection = connection
         await connection.request("10")
 
@@ -37,13 +37,13 @@ class ButtonPressedIO:
 
     @staticmethod
     async def send_to_watch_set(data):
-        print(f"TimerIO sendToWatchSet: {data}")
+        logger.info(f"TimerIO sendToWatchSet: {data}")
 
         await ButtonPressedIO.connection.write(0x000E, data)
 
     @staticmethod
     def on_received(data):
-        print(f"ButtonPressedIO onReceived")
+        logger.info(f"ButtonPressedIO onReceived")
 
         def button_pressed_callback(data):
             """

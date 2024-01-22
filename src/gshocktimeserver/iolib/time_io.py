@@ -3,6 +3,7 @@ import datetime
 import json
 import time
 from typing import Any
+from logger import logger
 
 from utils import to_compact_string, to_hex_string
 from casio_constants import CasioConstants
@@ -30,7 +31,7 @@ class TimeIO:
     @staticmethod
     async def send_to_watch_set(message):
         date_time_ms = int(json.loads(message).get("value"))
-        print("date_time_ms: {}".format(date_time_ms))
+        logger.info("date_time_ms: {}".format(date_time_ms))
         date_time = datetime.datetime.fromtimestamp(date_time_ms / 1000.0)
         time_data = TimeEncoder.prepare_current_time(date_time)
         time_command = to_hex_string(

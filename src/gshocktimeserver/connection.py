@@ -41,7 +41,7 @@ class Connection:
             logger.debug("write failed with exception: {}".format(e))
 
     async def request(self, request):
-        print("write: {}".format(request))
+        logger.info("write: {}".format(request))
         await self.write(0xC, request)
 
     def init_handles_map(self):

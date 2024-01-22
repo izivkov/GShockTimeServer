@@ -1,6 +1,7 @@
 import asyncio
 from typing import Any
 from casio_constants import CasioConstants
+from logger import logger
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
@@ -11,7 +12,7 @@ class WorldCitiesIO:
 
     @staticmethod
     async def request(connection, cityNumber: int):
-        print(f"DstWatchStateIO request")
+        logger.info(f"DstWatchStateIO request")
         WorldCitiesIO.connection = connection
         key = "1f0{}".format(cityNumber)
 
@@ -27,5 +28,5 @@ class WorldCitiesIO:
 
     @staticmethod
     def on_received(data):
-        print(f"WorldCitiesIO onReceived")
+        logger.info(f"WorldCitiesIO onReceived")
         WorldCitiesIO.result.set_result(data)

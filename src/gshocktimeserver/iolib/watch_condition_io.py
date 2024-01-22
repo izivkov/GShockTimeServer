@@ -2,6 +2,7 @@ import asyncio
 from typing import Any
 from watch_info import WatchInfo
 from casio_constants import CasioConstants
+from logger import logger
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
@@ -17,7 +18,7 @@ class WatchConditionIO:
 
     @staticmethod
     async def request(connection):
-        print(f"WatchConditionIO request")
+        logger.info(f"WatchConditionIO request")
         WatchConditionIO.connection = connection
         await connection.request("28")
 
@@ -31,7 +32,7 @@ class WatchConditionIO:
 
     @staticmethod
     def on_received(data):
-        print(f"WatchConditionIO onReceived")
+        logger.info(f"WatchConditionIO onReceived")
 
         def decode_value(data: str) -> WatchConditionIO.WatchConditionValue:
             int_arr = list(map(int, data))
@@ -39,7 +40,7 @@ class WatchConditionIO:
 
             if len(bytes_data) >= 2:
                 # Battery level between 15 and 20 for B2100 and between 12 and 19 for B5600. Scale accordingly to %
-                print(f"battery level row value: {int(bytes_data[0])}")
+                logger.info(f"battery level row value: {int(bytes_data[0])}")
 
                 battery_level_lower_limit = (15 + 9) / 2
                 battery_level_upper_limit = 19.5
@@ -57,4 +58,4 @@ class WatchConditionIO:
 
             return WatchConditionIO.WatchConditionValue(0, 0)
 
-        WatchConditionIO.result.set_result(decode_value(data))
+        WatchConditionIO.result.set_result(decode_value(data).__dict__)

@@ -3,6 +3,7 @@ import asyncio
 import json
 from typing import Any
 import connection
+from logger import logger
 from casio_constants import CasioConstants
 from iolib.app_info_io import AppInfoIO
 from iolib.dst_watch_state_io import DstWatchStateIO
@@ -67,9 +68,9 @@ class MessageDispatcher:
     def on_received(data):
         key = data[0]
         if key not in MessageDispatcher.data_received_messages:
-            print(f"Unknown key: {key}")
+            logger.info(f"Unknown key: {key}")
         else:
-            print(f"Found key: {MessageDispatcher.data_received_messages[key]}")
+            logger.info(f"Found key: {MessageDispatcher.data_received_messages[key]}")
             MessageDispatcher.data_received_messages[key](data)
 
 
