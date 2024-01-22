@@ -1,6 +1,6 @@
 import asyncio
 from typing import Any
-from watch_info import WatchInfo
+from watch_info import watch_info
 from casio_constants import CasioConstants
 from logger import logger
 
@@ -42,8 +42,8 @@ class WatchConditionIO:
                 # Battery level between 15 and 20 for B2100 and between 12 and 19 for B5600. Scale accordingly to %
                 logger.info(f"battery level row value: {int(bytes_data[0])}")
 
-                battery_level_lower_limit = (15 + 9) / 2
-                battery_level_upper_limit = 19.5
+                battery_level_lower_limit = watch_info.batteryLevelLowerLimit
+                battery_level_upper_limit = watch_info.batteryLevelUpperLimit
 
                 multiplier = round(
                     100.0 / (battery_level_upper_limit - battery_level_lower_limit)
