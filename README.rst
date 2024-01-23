@@ -35,8 +35,6 @@ Install the following dependencies:
     
     pip3 install reactivex
 
-    sudo pip3 install geocoder
-
 Troubleshooting:
 ================
 If your watch cannot connect, and the ``--multi-watch`` parameter is not used, remove the "config.ini" file and try again.

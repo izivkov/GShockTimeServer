@@ -16,7 +16,6 @@ class WatchButton(IntEnum):
     NO_BUTTON = 5
     INVALID = 6
 
-
 class ButtonPressedIO:
     result: asyncio.Future[Any] = None
     connection = None
