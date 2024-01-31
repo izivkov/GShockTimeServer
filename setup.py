@@ -6,16 +6,30 @@
     PyScaffold helps you to put up the scaffold of your new Python project.
     Learn more under: https://pyscaffold.org/
 """
-from setuptools import setup
+from setuptools import setup, find_packages
 
-if __name__ == "__main__":
-    try:
-        setup(use_scm_version={"version_scheme": "no-guess-dev"})
-    except:  # noqa
-        print(
-            "\n\nAn error occurred while building the project, "
-            "please ensure you have the most updated version of setuptools, "
-            "setuptools_scm and wheel with:\n"
-            "   pip install -U setuptools setuptools_scm wheel\n\n"
-        )
-        raise
+setup(
+    name='gshock_api',
+    version='0.1',
+    use_scm_version=True,
+    packages=find_packages(),
+    install_requires=[
+        'pytz', 'bleak', 'reactivex'
+    ],
+
+    author='Ivo Zivkov',
+        author_email='izivkov@gmail.com',
+        description='This library allows you to interact with your G-Shock watch from Python',
+        long_description='This library allows you to interact with your G-Shock watch from Python...',
+        url='https://github.com/izivkov/GShockTimeServer',
+        license='MIT',  # Choose an appropriate license
+        classifiers=[
+            'Development Status :: 3 - Alpha',
+            'Intended Audience :: Developers',
+            'License :: OSI Approved :: MIT License',
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
+        ],
+)
