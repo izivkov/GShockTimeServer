@@ -11,7 +11,8 @@ class WATCH_MODEL(Enum):
     MSG = 7
     GB001 = 8
     GBD = 9
-    UNKNOWN = 10
+    GB = 10
+    UNKNOWN = 11
 
 
 class WatchInfo:
@@ -189,6 +190,8 @@ class WatchInfo:
             self.model = WATCH_MODEL.GST
         elif self.shortName.startswith("GBD"):
             self.model = WATCH_MODEL.GBD
+        elif self.shortName.startswith("GB"):
+            self.model = WATCH_MODEL.GB
         elif self.shortName.startswith("GMW"):
             self.model = WATCH_MODEL.GMW
         elif self.shortName.startswith("DW"):
