@@ -1,25 +1,37 @@
-name: gshock-time-server
+name: GShockTimeServer
 channels:
-  - defaults
   - conda-forge
-  - pytorch
+  - defaults
 dependencies:
-  - python>=3.6
-  - pip
-  # BASICS
-  - pip:
-     - -e .  # install git checkout of demo-dsproject in editable mode
-     - pytz
-     - bleak
-     - reactivex
-
-  # DEVELOPMENT ONLY PACKAGES (could also be kept in a separate environment file)
-  - jupyterlab
-  - pytest
-  - pytest-cov
-  - tox
-  - pre_commit
-  - nbdime
-  - nbstripout
-  - sphinx
-  - recommonmark
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=2_gnu
+  - async-timeout=4.0.3=pyhd8ed1ab_0
+  - bleak=0.22.1=py39hf3d152e_0
+  - bzip2=1.0.8=hd590300_5
+  - ca-certificates=2024.2.2=hbcca054_0
+  - dbus-fast=2.21.2=py39hd1e30aa_0
+  - ld_impl_linux-64=2.40=h55db66e_0
+  - libffi=3.4.2=h7f98852_5
+  - libgcc-ng=13.2.0=h77fa898_7
+  - libgomp=13.2.0=h77fa898_7
+  - libnsl=2.0.1=hd590300_0
+  - libsqlite=3.45.3=h2797004_0
+  - libuuid=2.38.1=h0b41bf4_0
+  - libxcrypt=4.4.36=hd590300_1
+  - libzlib=1.2.13=hd590300_5
+  - ncurses=6.5=h59595ed_0
+  - openssl=3.3.0=h4ab18f5_2
+  - pip=24.0=pyhd8ed1ab_0
+  - python=3.9.19=h0755675_0_cpython
+  - python_abi=3.9=4_cp39
+  - pytz=2024.1=pyhd8ed1ab_0
+  - reactivex=4.0.4=pyhd8ed1ab_0
+  - readline=8.2=h8228510_1
+  - setuptools=70.0.0=pyhd8ed1ab_0
+  - tk=8.6.13=noxft_h4845f30_101
+  - typing-extensions=4.11.0=hd8ed1ab_0
+  - typing_extensions=4.11.0=pyha770c72_0
+  - tzdata=2024a=h0c530f3_0
+  - wheel=0.43.0=pyhd8ed1ab_1
+  - xz=5.2.6=h166bdaf_0
+prefix: /home/ivo/anaconda3/envs/GShockTimeServer
