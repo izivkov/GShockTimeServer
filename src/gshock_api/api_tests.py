@@ -35,14 +35,14 @@ async def run_api_tests():
 
     api = GshockAPI(connection)
 
-    app_info = await api.get_app_info()
-    logger.info("app info: {}".format(app_info))
+    # app_info = await api.get_app_info()
+    # logger.info("app info: {}".format(app_info))
 
-    pressed_button = await api.get_pressed_button()
-    logger.info("pressed button: {}".format(pressed_button))
+    # pressed_button = await api.get_pressed_button()
+    # logger.info("pressed button: {}".format(pressed_button))
 
-    watch_name = await api.get_watch_name()
-    logger.info("got watch name: {}".format(watch_name))
+    # watch_name = await api.get_watch_name()
+    # logger.info("got watch name: {}".format(watch_name))
 
     await api.set_time()
 

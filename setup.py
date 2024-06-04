@@ -9,12 +9,12 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='gshock_api',
-    version='0.1',
+    name='gshock-api',
+    version='0.9',
     use_scm_version=True,
     packages=find_packages(),
     install_requires=[
-        'pytz', 'bleak', 'reactivex'
+        'pytz', 'bleak', 'reactivex', 'args'
     ],
 
     author='Ivo Zivkov',
