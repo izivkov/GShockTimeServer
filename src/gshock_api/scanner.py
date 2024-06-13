@@ -14,6 +14,8 @@ class Scanner:
         scanner = BleakScanner()
         logger.debug("Scanning for devices...")
 
+        await scanner.discover()
+
         if device_address is None:
             while True:
                 device = await scanner.find_device_by_filter(
