@@ -9,7 +9,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='gshock_api',
+    name='gshocktimeserver',
     version='0.1',
     use_scm_version=True,
     packages=find_packages(),
