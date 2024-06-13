@@ -5,7 +5,6 @@ import message_dispatcher
 from utils import to_casio_cmd
 from logger import logger
 
-
 class Connection:
     def __init__(self, device):
         self.handles_map = self.init_handles_map()
@@ -36,6 +35,18 @@ class Connection:
         try:
             await self.client.write_gatt_char(
                 self.handles_map[handle], to_casio_cmd(data)
+            )
+        except Exception as e:
+            logger.debug("write failed with exception: {}".format(e))
+
+    async def request(self, request):
+        logger.info("write: {}".format(request))
+        await self.write(0xC, request)
+
+    async def write_with_characteristic(self, characteristic, data):
+        try:
+            await self.client.write_gatt_char(
+                characteristic, to_casio_cmd(data)
             )
         except Exception as e:
             logger.debug("write failed with exception: {}".format(e))
