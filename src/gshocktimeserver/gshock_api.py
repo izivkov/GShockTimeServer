@@ -189,7 +189,7 @@ class GshockAPI:
         for item in array_of_world_cities[: watch_info.worldCitiesCount]:
             await self.read_and_write(item["function"], item["city_number"])
 
-    async def set_time(self, current_time=time.time()):
+    async def set_time(self, current_time=None):
         """Sets the current time on the watch from the time on the phone. In addition, it can optionally set the Home Time
         to the current time zone. If timezone changes during travel, the watch will automatically be set to the
         correct time and timezone after running this function.
@@ -203,12 +203,14 @@ class GshockAPI:
         None
         """
 
-        # if watch_info.model == watch_info.model.B2100:
-        await self.initialize_for_setting_time()
-        # else:
-        #     await self.initialize_for_setting_time()
+        if current_time == None:
+            current_time = time.time()
 
+        self.logger.info(f"=======> passed: ${current_time}, ${time.time()}")
+
+        await self.initialize_for_setting_time()
         await self._set_time(current_time)
+        current_time = None
 
     async def _set_time(self, current_time):
         await message_dispatcher.TimeIO.request(self.connection, current_time)
