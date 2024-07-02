@@ -70,7 +70,8 @@ async def run_time_server():
             # You can add mail notification here if you run your mail server.
             # send_mail_notification(args.mailto)
 
-            await connection.disconnect()
+            if watch_info.alwaysConnected == False:
+                await connection.disconnect()
 
         except Exception as e:
             logger.error(f"Got error: {e}")

@@ -24,7 +24,6 @@ from iolib.button_pressed_io import ButtonPressedIO
 
 CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
-
 class MessageDispatcher:
     watch_senders = {
         "GET_ALARMS": AlarmsIO.send_to_watch,
@@ -56,6 +55,10 @@ class MessageDispatcher:
         CHARACTERISTICS["CASIO_SETTING_FOR_BLE"]: TimeAdjustmentIO.on_received,
         CHARACTERISTICS["ERROR"]: ErrorIO.on_received,
         CHARACTERISTICS["UNKNOWN"]: UnknownIO.on_received,
+
+        #  ECB-30
+        CHARACTERISTICS["CMD_SET_TIMEMODE"]: UnknownIO.on_received,
+        CHARACTERISTICS["FIND_PHONE"]: UnknownIO.on_received,
     }
 
     @staticmethod
