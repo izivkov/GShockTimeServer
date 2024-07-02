@@ -22,7 +22,6 @@ class ButtonPressedIO:
 
     @staticmethod
     async def request(connection):
-        logger.info(f"ButtonPressedIO request")
         ButtonPressedIO.connection = connection
         await connection.request("10")
 
@@ -57,6 +56,7 @@ class ButtonPressedIO:
             if len(data) >= 19:
                 ble_int_arr = to_int_array(to_hex_string(data))
                 button_indicator = ble_int_arr[8]
+                logger.info(f"Buttom code pressed: ${button_indicator}")
                 ret = (
                     WatchButton.LOWER_LEFT
                     if (button_indicator == 0 or button_indicator == 1)
@@ -64,7 +64,8 @@ class ButtonPressedIO:
                     if button_indicator == 4
                     else WatchButton.NO_BUTTON
                     if button_indicator == 3
-                    else WatchButton.INVALID
+                    # assime that all other buttons from watches such as the ECB-30 are for time set
+                    else WatchButton.LOWER_RIGHT
                 )
 
             return ret

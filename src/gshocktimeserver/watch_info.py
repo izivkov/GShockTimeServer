@@ -1,5 +1,5 @@
 from enum import Enum
-
+from logger import logger
 
 class WATCH_MODEL(Enum):
     GA = 1
@@ -11,8 +11,8 @@ class WATCH_MODEL(Enum):
     MSG = 7
     GB001 = 8
     GBD = 9
-    UNKNOWN = 10
-
+    ECB = 10
+    UNKNOWN = 11
 
 class WatchInfo:
     def __init__(self):
@@ -32,6 +32,11 @@ class WatchInfo:
         self.temperature: True
         self.batteryLevelLowerLimit: 15
         self.batteryLevelUpperLimit: 20
+
+        self.alwaysConnected = False,
+        self.findButtonUserDefined = False,
+        self.hasPowerSavingMode = True,
+        self.hasDnD = False,
 
         self.models = [
             {
@@ -160,6 +165,23 @@ class WatchInfo:
                 "temperature": False,
             },
             {
+                "model": WATCH_MODEL.ECB,
+                "worldCitiesCount": 2,
+                "dstCount": 1,
+                "alarmCount": 5,
+                "hasAutoLight": True,
+                "hasReminders": False,
+                "shortLightDuration": "1.5s",
+                "longLightDuration": "3s",
+                "worldCities": True,
+                "hasTemperature": False,
+                "hasBatteryLevel": False,
+                "alwaysConnected": True,
+                "findButtonUserDefined": True,
+                "hasPowerSavingMode": False,
+                "hasDnD": True
+            },
+            {
                 "model": WATCH_MODEL.UNKNOWN,
                 "worldCitiesCount": 2,
                 "dstCount": 1,
@@ -179,6 +201,8 @@ class WatchInfo:
         parts = self.name.split(" ")
         if len(parts) > 1:
             self.shortName = parts[1]
+
+        logger.info(f"============> self.shortName: ${self.shortName}")
 
         # *** Order matters. Start with the longest shortName first. ***
         if self.shortName.startswith("MSG"):
@@ -201,6 +225,8 @@ class WatchInfo:
             self.model = WATCH_MODEL.GM
         elif self.shortName.startswith("GW"):
             self.model = WATCH_MODEL.GW
+        elif self.shortName == "ECB-10" or self.shortName == "ECB-20" or self.shortName == "ECB-30":
+            self.model = WATCH_MODEL.ECB
         else:
             self.model = WATCH_MODEL.UNKNOWN
 
@@ -218,6 +244,12 @@ class WatchInfo:
             self.temperature = model_info.get("temperature", True)
             self.batteryLevelLowerLimit = model_info.get("batteryLevelLowerLimit", 15)
             self.batteryLevelUpperLimit = model_info.get("batteryLevelUpperLimit", 20)
+
+            self.alwaysConnected = model_info.get("alwaysConnected", False)
+            self.findButtonUserDefined = model_info.get("findButtonUserDefined", False)
+            self.hasPowerSavingMode = model_info.get("hasPowerSavingMode", False)
+            self.hasDnD = model_info.get("hasDnD", False)
+            self.hasBatteryLevel = model_info.get("hasBatteryLevel", False)
 
     def set_address(self, address):
         self.address = address
