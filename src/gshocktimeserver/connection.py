@@ -1,3 +1,4 @@
+import asyncio
 from bleak import BleakClient
 from bleak.backends.characteristic import BleakGATTCharacteristic
 from casio_constants import CasioConstants

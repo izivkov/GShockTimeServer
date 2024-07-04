@@ -1,6 +1,7 @@
 import asyncio
 import json
 from typing import Any
+from cancelable_result import CancelableResult
 from logger import logger
 
 from utils import (
@@ -34,7 +35,7 @@ class ReminderMasks:
 
 
 class EventsIO:
-    result: asyncio.Future[Any] = None
+    result: CancelableResult = None
     connection = None
     title = None
 

@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 from typing import Any
+from cancelable_result import CancelableResult
 from settings import settings
 from utils import to_compact_string, to_hex_string, to_int_array
 from casio_constants import CasioConstants
@@ -13,7 +14,7 @@ CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
 
 class TimeAdjustmentIO:
-    result: asyncio.Future[Any] = None
+    result: CancelableResult = None
     connection = None
     original_value = None
 
