@@ -1,5 +1,6 @@
 import asyncio
 from typing import Any
+from cancelable_result import CancelableResult
 from watch_info import watch_info
 from casio_constants import CasioConstants
 from logger import logger
@@ -8,7 +9,7 @@ CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
 
 class WatchConditionIO:
-    result: asyncio.Future[Any] = None
+    result: CancelableResult = None
     connection = None
 
     class WatchConditionValue:

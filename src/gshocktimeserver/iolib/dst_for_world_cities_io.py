@@ -1,5 +1,6 @@
 import asyncio
 from typing import Any
+from cancelable_result import CancelableResult
 from logger import logger
 
 from utils import to_compact_string, to_hex_string
@@ -9,7 +10,7 @@ CHARACTERISTICS = CasioConstants.CHARACTERISTICS
 
 
 class DstForWorldCitiesIO:
-    result: asyncio.Future[Any] = None
+    result: CancelableResult = None
     connection = None
 
     @staticmethod

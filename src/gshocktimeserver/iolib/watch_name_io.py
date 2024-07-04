@@ -3,10 +3,11 @@ from typing import Any
 
 from casio_constants import CasioConstants
 from utils import clean_str, to_ascii_string, to_hex_string
+from cancelable_result import CancelableResult
 
 
 class WatchNameIO:
-    result: asyncio.Future[Any] = None
+    result: CancelableResult = None
     connection = None
 
     @staticmethod
