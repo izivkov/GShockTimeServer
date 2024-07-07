@@ -20,7 +20,7 @@ It has been tested on Linux OS only, but should be compatible with Windows as we
      width=240
      style="margin: 10px;" />
 
-   The server running on a Pi Zero.
+The server running on a Pi Zero.
 
 
 1. Go to /src/gshocktimeserver directory.
