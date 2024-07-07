@@ -14,16 +14,10 @@ Usage:
 This app can run on any device with Python and Bluetooth capabilities - from a desktop to a Raspberry Pi Zero. 
 It has been tested on Linux OS only, but should be compatible with Windows as well.
 
-.. <img src="images/pizero.jpg"
-..      align="left"
-..      alt="Pi Zero"
-..      width=240
-..      style="margin: 10px;" />
-
 .. image:: images/pizero.jpg
-   :alt: Pi Zero
-   :align: center
-   :width: 200px
+    :alt: Pi Zero
+    :align: center
+    :width: 200px
 
     The server running on a Pi Zero.
 
