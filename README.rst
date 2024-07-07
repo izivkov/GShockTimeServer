@@ -20,7 +20,7 @@ It has been tested on Linux OS only, but should be compatible with Windows as we
 ..      width=240
 ..      style="margin: 10px;" />
 
-..image:: images/pizero.jpg
+.. image:: images/pizero.jpg
    :alt: Pi Zero
    :align: center
    :width: 200px
