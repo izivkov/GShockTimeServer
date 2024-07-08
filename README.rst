@@ -9,6 +9,11 @@ This project allows you to set the correct time to your Casio G-Shock `B5600 <ht
 In addition, this repository provides an API for developing application for the above watches. This is WIP,
 but you can take a look at the ``api_tests.py`` file on how to use the API.
 
+Usage:
+======
+This app can run on any device with Python and Bluetooth capabilities - from a desktop to a Raspberry Pi Zero. 
+It has been tested on Linux OS only, but should be compatible with Windows as well.
+
 .. figure:: images/pizero.jpg
     :alt: Pi Zero
     :align: center
@@ -16,10 +21,7 @@ but you can take a look at the ``api_tests.py`` file on how to use the API.
 
     The server running on a Pi Zero.
 
-Usage:
-======
-This app can run on any device with Python and Bluetooth capabilities - from a desktop to a Raspberry Pi Zero. 
-It has been tested on Linux OS only, but should be compatible with Windows as well.
+Here is how to use it:
 
 1. Go to /src/gshocktimeserver directory.
 
