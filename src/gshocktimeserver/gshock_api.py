@@ -3,7 +3,7 @@ import logging
 import json
 import time
 
-from data_watcher import data_watcher
+# from data_watcher import data_watcher
 from iolib.dst_watch_state_io import DtsState
 from iolib.button_pressed_io import WatchButton
 import message_dispatcher
@@ -451,6 +451,6 @@ class GshockAPI:
         result = await message_dispatcher.AppInfoIO.request(self.connection)
         return await result
 
-    def subscribe(self, subject_name, on_next) -> None:
-        data_watcher.add_subject(subject_name)
-        data_watcher.subscribe("GshockAPI", subject_name, on_next)
+    # def subscribe(self, subject_name, on_next) -> None:
+    #     data_watcher.add_subject(subject_name)
+    #     data_watcher.subscribe("GshockAPI", subject_name, on_next)
