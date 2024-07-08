@@ -14,7 +14,7 @@ Usage:
 This app can run on any device with Python and Bluetooth capabilities - from a desktop to a Raspberry Pi Zero. 
 It has been tested on Linux OS only, but should be compatible with Windows as well.
 
-.. image:: images/pizero.jpg
+.. figure:: images/pizero.jpg
     :alt: Pi Zero
     :align: center
     :width: 200px
