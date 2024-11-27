@@ -16,6 +16,7 @@ class WatchButton(IntEnum):
     LOWER_RIGHT = 4
     NO_BUTTON = 5
     INVALID = 6
+    FIND = 7
 
 class ButtonPressedIO:
     result: CancelableResult = None
@@ -65,6 +66,8 @@ class ButtonPressedIO:
                     if button_indicator == 4
                     else WatchButton.NO_BUTTON
                     if button_indicator == 3
+                    else WatchButton.FIND
+                    if button_indicator == 2
                     # assime that all other buttons from watches such as the ECB-30 are for time set
                     else WatchButton.LOWER_RIGHT
                 )
