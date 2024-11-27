@@ -213,6 +213,8 @@ class WatchInfo:
             self.model = WATCH_MODEL.GST
         elif self.shortName.startswith("GBD"):
             self.model = WATCH_MODEL.GBD
+        elif self.shortName.startswith("GBM"):
+            self.model = WATCH_MODEL.GA
         elif self.shortName.startswith("GMW"):
             self.model = WATCH_MODEL.GMW
         elif self.shortName.startswith("DW"):
