@@ -422,17 +422,33 @@ class GshockAPI:
 
             return events_json
 
+        await self.connection.sendMessage(
+            """{{\"action\": \"SET_REMINDERS\", \"value\": {}}}""".format(
+                json.dumps(events)
+            )
+        )
+
+    async def set_enabled_reminders(self, events: list):
+        """Sets events (reminders) to the watch. Up to 5 events are supported.
+
+        Only sends enabled events
+
+        Parameters
+        ----------
+        events: list of `Event`
+
+        Returns
+        -------
+        None
+        """
         def get_enabled_events(events: list):
             enabled_events = [event for event in events if event["time"]["enabled"]]
             return enabled_events  # to_json(enabled_events)
 
         enabled = get_enabled_events(events)
 
-        await self.connection.sendMessage(
-            """{{\"action\": \"SET_REMINDERS\", \"value\": {}}}""".format(
-                json.dumps(enabled)
-            )
-        )
+        await set_reminders(enabled)
+        
 
     async def get_app_info(self):
         """Gets and internally sets app info to the watch.
