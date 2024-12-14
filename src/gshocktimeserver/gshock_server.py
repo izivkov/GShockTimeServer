@@ -3,6 +3,8 @@ import sys
 
 from datetime import datetime
 
+from bleak import BleakScanner
+
 from connection import Connection
 from gshock_api import GshockAPI
 from iolib.button_pressed_io import WatchButton
@@ -17,6 +19,7 @@ __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
 
+CONNECTION_TIMEOUT = 10
 
 async def main(argv):
     await run_time_server()
@@ -37,6 +40,12 @@ def prompt():
     )
     logger.info("")
 
+async def discard_pending_connections():
+    # Quick scan to remove unwanted connexion
+    await BleakScanner().find_device_by_filter(
+         lambda d, ad: d.name and d.name.lower().startswith("casio"),
+         timeout=2,
+    )
 
 async def run_time_server():
     prompt()
@@ -48,15 +57,21 @@ async def run_time_server():
             else:
                 address = conf.get("device.address")
 
+            await discard_pending_connections()
+
             device = await scanner.scan(address)
-            logger.debug("Found: {}".format(device))
+            logger.info("Found: {}".format(device))
 
-            connection = Connection(device)
-            await connection.connect()
+            pressed_button = 0
 
-            api = GshockAPI(connection)
+            async with asyncio.timeout(CONNECTION_TIMEOUT) as timeout :
+                connection = Connection(device)
+                await connection.connect()
 
-            pressed_button = await api.get_pressed_button()
+                api = GshockAPI(connection)
+
+                pressed_button = await api.get_pressed_button()
+
             if (
                 pressed_button != WatchButton.LOWER_RIGHT
                 and pressed_button != WatchButton.NO_BUTTON
@@ -73,6 +88,10 @@ async def run_time_server():
             if watch_info.alwaysConnected == False:
                 await connection.disconnect()
 
+        except EOFError:                    # job has normally been done ...
+            logger.error("EOF !")
+        except TimeoutError:                # too slow
+            logger.error("Timeout !")
         except Exception as e:
             logger.error(f"Got error: {e}")
             continue
