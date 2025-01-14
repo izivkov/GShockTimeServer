@@ -17,7 +17,7 @@ from utils import (
 from alarms import alarms_inst
 from event import Event
 from watch_info import watch_info
-
+from tz_helper import sys_tz, casio_city_name
 
 class GshockAPI:
     """
@@ -100,6 +100,12 @@ class GshockAPI:
         city = await self._get_world_cities(cityNumber)
         return city
 
+    async def get_world_cities_TZ(self, cityNumber: int):
+        city = await self.get_world_cities(cityNumber)
+        city = casio_city_name(city[0:2], sys_tz.get_name())
+        self.logger.info(f"Current city name : {city}")
+        return city
+
     async def _get_world_cities(self, key: str):
         result = await message_dispatcher.WorldCitiesIO.request(self.connection, key)
         return await result
@@ -117,6 +123,18 @@ class GshockAPI:
         name : String, Daylight Saving Time state of the requested World City as a String.
         """
         return await self._get_dst_for_world_cities(cityNumber)
+
+    async def get_dst_for_world_cities_TZ(self, cityNumber: int) -> str:
+        val = await self._get_dst_for_world_cities(cityNumber)
+
+        tz = sys_tz.casiotz
+        val[2] = tz["A"]
+        val[3] = tz["B"]
+        val[4] = tz["OFF"]
+        val[5] = tz["DOFF"]
+        val[6] = tz["DST"]
+
+        return val
 
     async def _get_dst_for_world_cities(self, key: str) -> str:
         result = await message_dispatcher.DstForWorldCitiesIO.request(
@@ -137,6 +155,16 @@ class GshockAPI:
         """
         return await self._get_dst_watch_state(state)
 
+    async def get_dst_watch_state_TZ(self, state: DtsState) -> str:
+        val = await self.get_dst_watch_state(state)
+
+        tz = sys_tz.casiotz
+        val[3] = tz["DST"]
+        val[5] = tz["A"]
+        val[6] = tz["B"]
+
+        return val
+
     async def _get_dst_watch_state(self, state: DtsState) -> str:
         result = await message_dispatcher.DstWatchStateIO.request(
             self.connection, state
@@ -155,7 +183,7 @@ class GshockAPI:
 
     async def read_write_dst_watch_states(self):
         array_of_dst_watch_state = [
-            {"function": self.get_dst_watch_state, "state": DtsState.ZERO},
+            {"function": self.get_dst_watch_state_TZ, "state": DtsState.ZERO},
             {"function": self.get_dst_watch_state, "state": DtsState.TWO},
             {"function": self.get_dst_watch_state, "state": DtsState.FOUR},
         ]
@@ -165,7 +193,7 @@ class GshockAPI:
 
     async def read_write_dst_for_world_cities(self):
         array_of_get_dst_for_world_cities = [
-            {"function": self.get_dst_for_world_cities, "city_number": 0},
+            {"function": self.get_dst_for_world_cities_TZ, "city_number": 0},
             {"function": self.get_dst_for_world_cities, "city_number": 1},
             {"function": self.get_dst_for_world_cities, "city_number": 2},
             {"function": self.get_dst_for_world_cities, "city_number": 3},
@@ -178,7 +206,7 @@ class GshockAPI:
 
     async def read_write_world_cities(self):
         array_of_world_cities = [
-            {"function": self.get_world_cities, "city_number": 0},
+            {"function": self.get_world_cities_TZ, "city_number": 0},
             {"function": self.get_world_cities, "city_number": 1},
             {"function": self.get_world_cities, "city_number": 2},
             {"function": self.get_world_cities, "city_number": 3},
@@ -202,14 +230,17 @@ class GshockAPI:
         -------
         None
         """
-
+        sys_tz.refresh ()
         if current_time == None:
             current_time = time.time()
+
+        time_diff = current_time - time.time()
 
         self.logger.info(f"=======> passed: ${current_time}, ${time.time()}")
 
         await self.initialize_for_setting_time()
-        await self._set_time(current_time)
+        self.logger.info(f"Time is now {time.time()}, diff : {time.time()-current_time}")
+        await self._set_time(time.time() + time_diff + 1) # 1s for xmit
         current_time = None
 
     async def _set_time(self, current_time):
@@ -422,17 +453,32 @@ class GshockAPI:
 
             return events_json
 
+        await self.connection.sendMessage(
+            """{{\"action\": \"SET_REMINDERS\", \"value\": {}}}""".format(
+                json.dumps(events)
+            )
+        )
+
+    async def set_enabled_reminders(self, events: list):
+        """Sets events (reminders) to the watch. Up to 5 events are supported.
+
+        Only sends enabled events
+
+        Parameters
+        ----------
+        events: list of `Event`
+
+        Returns
+        -------
+        None
+        """
         def get_enabled_events(events: list):
             enabled_events = [event for event in events if event["time"]["enabled"]]
             return enabled_events  # to_json(enabled_events)
 
         enabled = get_enabled_events(events)
 
-        await self.connection.sendMessage(
-            """{{\"action\": \"SET_REMINDERS\", \"value\": {}}}""".format(
-                json.dumps(enabled)
-            )
-        )
+        await set_reminders(enabled)
 
     async def get_app_info(self):
         """Gets and internally sets app info to the watch.
