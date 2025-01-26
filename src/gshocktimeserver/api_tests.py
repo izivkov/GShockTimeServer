@@ -71,7 +71,7 @@ async def run_api_tests():
     logger.info("settings: {}".format(settings_local))
 
     settings_local["button_tone"] = True
-    settings_local["language"] = "Russian"
+    settings_local["language"] = "French"
     settings_local["time_format"] = "24h"
 
     await api.set_settings(settings_local)
