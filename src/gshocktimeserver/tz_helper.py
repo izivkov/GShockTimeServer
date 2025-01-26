@@ -1,4 +1,5 @@
 import os
+import re
 import logging
 import time
 
@@ -99,7 +100,7 @@ class SysTZ:
         with os.popen("realpath /etc/localtime") as s:
             t = s.read()
 
-        self.name = t[len("/etc/zoneinfo/"):-1]
+        self.name = re.sub(r".*zoneinfo/","",t[:-1])
         self.zoneinfo = ZoneInfo(self.name)
         logging.info(f"We are in {self.name} TZ")
         self.casiotz = tz_from_name(self.name)
