@@ -40,6 +40,10 @@ class EventsIO:
     title = None
 
     @staticmethod
+    async def set_connection(connection):
+        EventsIO.connection = connection
+
+    @staticmethod
     async def request(connection, event_number):
         logger.info(f"EventsIO request")
         EventsIO.connection = connection
