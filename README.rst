@@ -60,4 +60,4 @@ To run the server in a virtual environment:
 Troubleshooting:
 ================
 If your watch cannot connect, and the 
-***`--multi-watch`*** parameter is not used, remove the ***`config.ini`*** file and try again.
+**`--multi-watch`** parameter is not used, remove the **`config.ini`** file and try again.
