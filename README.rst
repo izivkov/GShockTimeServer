@@ -56,3 +56,8 @@ To run the server in a virtual environment:
 .. code-block:: sh
 
    python3 src/examples/api_tests.py
+
+Troubleshooting:
+================
+If your watch cannot connect, and the 
+`--multi-watch` parameter is not used, remove the `config.ini` file and try again.
