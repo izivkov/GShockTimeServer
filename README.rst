@@ -45,19 +45,19 @@ To run the server in a virtual environment:
    # Install dependencies
    pip install -e .
 
-2. Run the server:
-
-.. code-block:: sh
-
-   python3 src/examples/gshock_server.py
-
-3. Run the tests:
+2. Run the tests:
 
 .. code-block:: sh
 
    python3 src/examples/api_tests.py
 
+3. Run the server:
+
+.. code-block:: sh
+
+   python3 src/examples/gshock_server.py
+
 Troubleshooting:
 ================
 If your watch cannot connect, and the 
-`--multi-watch` parameter is not used, remove the `config.ini` file and try again.
+***`--multi-watch`*** parameter is not used, remove the ***`config.ini`*** file and try again.
