@@ -37,13 +37,13 @@ To run the server in a virtual environment:
 .. code-block:: sh
 
    # Create a virtual environment
-   python -m venv myenv
+   python3 -m venv myenv
 
    # Activate it (Mac/Linux)
    source myenv/bin/activate
 
    # Install dependencies
-   pip install -e .
+   pip3 install -e .
 
 2. Run the tests:
 
