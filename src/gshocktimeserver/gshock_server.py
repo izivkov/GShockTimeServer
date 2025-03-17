@@ -3,15 +3,15 @@ import sys
 
 from datetime import datetime
 
-from connection import Connection
-from gshock_api import GshockAPI
-from iolib.button_pressed_io import WatchButton
-from scanner import scanner
-from configurator import conf
-from logger import logger
-from args import args
-from api_tests import run_api_tests
-from watch_info import watch_info
+from gshock_api.connection import Connection
+from gshock_api.gshock_api import GshockAPI
+from gshock_api.iolib.button_pressed_io import WatchButton
+from gshock_api.scanner import scanner
+from gshock_api.configurator import conf
+from gshock_api.logger import logger
+from gshocktimeserver.args import args
+from examples.api_tests import run_api_tests
+from gshock_api.watch_info import watch_info
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"

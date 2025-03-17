@@ -99,7 +99,7 @@ copyright = "2023, Ivo Zivkov"
 # If you don’t need the separation provided between version and release,
 # just set them both to the same value.
 try:
-    from gshocktimeserver import __version__ as version
+    from gshock_api import __version__ as version
 except ImportError:
     version = ""
 

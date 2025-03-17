@@ -1,52 +1,52 @@
-================
-GShockTimeServer
-================
+# GShockTimeServer
 
-Overview:
-=========
-This project allows you to set the correct time to your Casio G-Shock `B5600 <https://amzn.to/3Mt68Qb>`__ / `B5000 <https://amzn.to/4194M13>`_ / `B2100 <https://amzn.to/3MUDCGY>`__ watches.
+## Overview
+GShockTimeServer allows you to set the correct time on your Casio G-Shock watches, including:
+- [`B5600`](https://amzn.to/3Mt68Qb)
+- [`B5000`](https://amzn.to/4194M13)
+- [`B2100`](https://amzn.to/3MUDCGY)
 
-In addition, this repository provides an API for developing application for the above watches. This is WIP,
-but you can take a look at the ``api_tests.py`` file on how to use the API.
+Additionally, this repository provides an API for developing applications for these watches. While still a work in progress, you can refer to the `api_tests.py` file for usage examples.
 
-Usage:
-======
-This app can run on any device with Python and Bluetooth capabilities - from a desktop to a Raspberry Pi Zero. 
-It has been tested on Linux OS only, but should be compatible with Windows as well.
+## Usage
+This app can run on any device with Python and Bluetooth capabilities—from a desktop to a Raspberry Pi Zero.  
+It has been tested on Linux but should also work on Windows.
 
-.. figure:: images/pizero.jpg
-    :alt: Pi Zero
-    :align: center
-    :width: 200px
+![Pi Zero Running the Server](images/pizero.jpg)
 
-    The server running on a Pi Zero.
+### Setting the Time
+1. Ensure the app is running on your device.
+2. Short-press the **lower-right** button on your G-Shock watch to connect.
+3. Once connected, the app will automatically set the correct time on your watch.
+4. If **AUTO TIME ADJUSTMENT** is enabled, the watch will sync up to **four times daily**.
 
-Here is how to use it:
+## Virtual Environment Setup
+To run the server in a virtual environment:
 
-1. Go to /src/gshocktimeserver directory.
+### 1. Create a virtual environment.
+```sh
+# Create a virtual environment
+python -m venv myenv
 
-2. run:
+# Activate it (Mac/Linux)
+source myenv/bin/activate
 
-    **python3 gshock_server.py [--multi-watch]** (the --multi-watch parameter is used if you have multiple watches)
+# Install dependencies
+pip install -e .
+```
 
-3. To set the time on your G-Shock, short-press the ``lower-right`` button and the watch will connect to the app, allowing the app to set the watch's time.
+### 2. Run the server.
+```sh
+# Run the server
+python3 src/examples/gshock_server.py
+``` 
 
-4. If AUTO TIME ADJUSTEMENT is enabled on the watch, it will sync up to 4 times daily with the app and adjust its time accordingly.
+### 3. Run the tests.
+```sh
+# Run the tests
+python3 src/examples/api_tests.py
+```
 
 
-Installation:
-=============
-Install the following dependencies:
 
-    pip3 install pytz
-
-    pip3 install bleak
-    
-Troubleshooting:
-================
-If your watch cannot connect, and the ``--multi-watch`` parameter is not used, remove the "config.ini" file and try again.
-
-To Do:
-======
-We are working on a professional installation. 
 

@@ -1,0 +1,2 @@
+[console_scripts]
+gshock_server = examples.gshock_server:main
