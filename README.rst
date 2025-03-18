@@ -28,6 +28,20 @@ Setting the Time
 3. Once connected, the app will automatically set the correct time on your watch.
 4. If **AUTO TIME ADJUSTMENT** is enabled, the watch will sync up to **four times daily**.
 
+Dependencies
+============
+
+This project requires the following Python packages:
+```
+pytz
+bleak
+```
+
+So you can install them using the following command:
+```
+pip3 install -r requirements.txt
+```
+
 Virtual Environment Setup
 =========================
 To run the server in a virtual environment:
@@ -57,7 +71,7 @@ To run the server in a virtual environment:
 
    python3 src/examples/gshock_server.py [--multi-watch]
 
-The optional **`--multi-watch`** parameter allows you to serve multiple watches.
+The optional **`--multi-watch`** parameter allows you to connect if you have multiple watches.
 
 Troubleshooting:
 ================
