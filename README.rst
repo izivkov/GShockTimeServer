@@ -49,13 +49,15 @@ To run the server in a virtual environment:
 
 .. code-block:: sh
 
-   python3 src/examples/api_tests.py
+   python3 src/examples/api_tests.py [--multi-watch]
 
 3. Run the server:
 
 .. code-block:: sh
 
-   python3 src/examples/gshock_server.py
+   python3 src/examples/gshock_server.py [--multi-watch]
+
+The optional **`--multi-watch`** parameter allows you to serve multiple watches.
 
 Troubleshooting:
 ================
