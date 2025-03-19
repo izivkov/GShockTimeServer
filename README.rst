@@ -41,6 +41,7 @@ gashock-api
 So you can install them using the following command:
 ```
 pip3 install -r requirements.txt
+```
 
 Then run:
 ```
