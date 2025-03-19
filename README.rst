@@ -41,21 +41,10 @@ gashock-api
 So you can install them using the following command:
 ```
 pip3 install -r requirements.txt
-```
 
+Then run:
+```
    python3 src/gshock_server.py [--multi-watch]
+```   
 
 The optional **`--multi-watch`** parameter allows you to connect if you have multiple watches.
-
-
-Installing the library for your project:
-========================================
-
-```
-pip3 install gshock-api
-```
-
-Troubleshooting:
-================
-If your watch cannot connect, and the 
-**`--multi-watch`** parameter is not used, remove the **`config.ini`** file and try again.
