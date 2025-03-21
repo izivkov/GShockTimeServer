@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "gshock_time_server"  # Change to your project name
+name = "GShockTimeServer" 
 version = "1.0.0"
 description = "Pythgon script to updqte time on GShock Watches using BLE"
 readme = "README.rst"
