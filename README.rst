@@ -1,21 +1,24 @@
 GShockTimeServer
 ================
 
-Anouncement
-===========
+Announcement
+============
+
 This project is now split into two separate repositories:
 
-- `GShockTimeServer`
-- `gashock_api`
+- **GShockTimeServer**
+- **gashock_api**
 
-The `GShockTimeServer` repository contains the server-side code for setting the time on your G-Shock watch.
-The `gashock_api` repository can be found `here <https://github.com/izivkov/gshock_api`_, and contains the API for developing applications for these watches. 
-Please refer to the `gashock_api` repository for the latest updates and documentation. 
+The **GShockTimeServer** repository contains the server-side code for setting the time on your G-Shock watch.  
 
-If you just like to include the API in your project, you can install it using pip:
+The **gashock_api** repository can be found `here <https://github.com/izivkov/gshock_api>`_, and contains the API for developing applications for these watches. Please refer to the **gashock_api** repository for the latest updates and documentation.
 
-code-block:: bash
+If you just want to include the API in your project, you can install it using pip:
+
+.. code-block:: bash
+
    pip install gashock-api
+
 
 Overview
 ========
