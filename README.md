@@ -67,5 +67,5 @@ python3 src/gshock_server.py [--multi-watch]
 The optional `--multi-watch` parameter allows you to connect if you have multiple watches.
 
 ## Troubleshooting
-If you watch is not connecting, remove config.ini file and try again.
+If your watch is not connecting, remove `config.ini` file and try again.
 
