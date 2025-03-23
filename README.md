@@ -9,7 +9,7 @@ This project is now split into two separate repositories:
 
 The **GShockTimeServer** repository contains the server-side code for setting the time on your G-Shock watch.
 
-The **gashock_api** repository can be found [here](https://github.com/izivkov/gshock_api), and contains a Python API libraqry for developing applications for these watches. Please refer to the **gashock_api** repository for the latest updates and documentation.
+The **gashock_api** repository can be found [here](https://github.com/izivkov/gshock_api), and contains a Python API library for developing applications for these watches. Please refer to the **gashock_api** repository for the latest updates and documentation.
 
 If you just like to include the API in your project, you can install it using pip:
 
@@ -19,12 +19,7 @@ pip install gashock-api
 
 ## Overview
 
-GShockTimeServer allows you to set the correct time on your Casio G-Shock watches, including:
-
-- [B5600](https://amzn.to/3Mt68Qb)
-- [B5000](https://amzn.to/4194M13)
-- [B2100](https://amzn.to/3MUDCGY)
-
+GShockTimeServer allows you to set the correct time on your Casio G-Shock watches. Most G-Shock and other Casio Bluetooth watches are supported. Please give us feedback if your watch does not work.
 
 ## Usage
 
