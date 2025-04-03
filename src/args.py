@@ -16,6 +16,13 @@ class Args:
             "--mailto", help="email when time set to email address", required=False
         )
         parser.add_argument(
+            "--fine-adjustment-secs",
+            type=int,
+            choices=range(-10, 11),
+            default=0,
+            help="Fine adjustment in seconds to add/subtract when setting time (-10 to 10)"
+        )
+        parser.add_argument(
             "-l", "--log_level", default="INFO", help="Sets log level", required=False
         )
         self.args = parser.parse_args(args)
