@@ -54,10 +54,15 @@ pip3 install -r requirements.txt
 Then run:
 
 ```bash
-python3 src/gshock_server.py [--multi-watch]
+python3 src/gshock_server.py [--multi-watch] [--fine-adjustment-secs secs]
 ```
 
 The optional `--multi-watch` parameter allows you to connect if you have multiple watches.
+The optional `--fine-adjustment-secs` alows you to fine adjust the time setting by providing an offset in seconds. For example:
+```
+python3 src/gshock_server.py --fine-adjustment-secs -9
+```
+will set the watches time 9 secods vefore the computer's time.
 
 ## Troubleshooting
 If your watch is not connecting, remove `config.ini` file and try again.
