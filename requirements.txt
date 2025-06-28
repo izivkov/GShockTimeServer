@@ -1,3 +1,5 @@
 pytz
 bleak
-gshock-api
+Pillow
+luma.oled
+gshock-api>=2.0.5

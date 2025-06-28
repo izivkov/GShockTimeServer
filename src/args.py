@@ -12,9 +12,7 @@ class Args:
             "--multi-watch",
             action='store_true',
             help="--multi-watch allows use of multimple watches")
-        parser.add_argument(
-            "--mailto", help="email when time set to email address", required=False
-        )
+
         parser.add_argument(
             "--fine-adjustment-secs",
             type=int,
