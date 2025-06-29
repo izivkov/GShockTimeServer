@@ -6,6 +6,9 @@ import time
 import pytz
 from datetime import datetime, timezone
 
+import sys
+print(sys.executable)
+
 from gshock_api.connection import Connection
 from gshock_api.gshock_api import GshockAPI
 from gshock_api.event import Event, create_event_date, RepeatPeriod
