@@ -72,11 +72,12 @@ If your watch is not connecting, remove `config.ini` file and try again.
 🔹 1. Create a systemd service file
 
 Create a file at /etc/systemd/system/gshock.service:
-
+```
 sudo nano /etc/systemd/system/gshock.service
+```
 
 Paste this (adjust paths if needed):
-
+```
 [Unit]
 Description=GShock Server
 After=network.target
@@ -92,28 +93,32 @@ User=pi
 
 [Install]
 WantedBy=multi-user.target
+```
 
     ✅ start.sg must be executable and have a proper shebang (#!/bin/bash) at the top.
 
 🔹 2. Make the script executable
 
+```
 chmod +x /home/pi/dist_dir/start.sg
+```
 
 🔹 3. Reload systemd to recognize the new service
-
+```
 sudo systemctl daemon-reload
+```
 
 🔹 4. Enable the service to start at boot
-
+```
 sudo systemctl enable gshock.service
-
+```
 🔹 5. Start it now (optional test)
-
+```
 sudo systemctl start gshock.service
-
+```
 Check if it’s working:
-
+```
 sudo systemctl status gshock.service
-
+```
 
 
