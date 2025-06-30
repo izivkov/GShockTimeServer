@@ -1,0 +1,5 @@
+pytz
+bleak>=1.0
+Pillow
+luma.oled
+gshock-api>=2.0.6

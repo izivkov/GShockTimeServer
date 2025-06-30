@@ -35,7 +35,6 @@ def prompt():
     )
     logger.info("")
 
-
 async def show_display(api: GshockAPI):
     from display.oled_simulator import MockOLEDDisplay
 
