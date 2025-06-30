@@ -84,7 +84,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/bin/bash /home/pi/dist_dir/start.sg
+ExecStart=/bin/bash /home/pi/dist_dir/start.sh
 WorkingDirectory=/home/pi/dist_dir
 StandardOutput=journal
 StandardError=journal
@@ -95,10 +95,10 @@ User=pi
 WantedBy=multi-user.target
 ```
 
-    ✅ start.sg must be executable and have a proper shebang (#!/bin/bash) at the top.
+    ✅ start.sh must be executable and have a proper shebang (#!/bin/bash) at the top.
 
 🔹 2. Make the script executable
-```chmod +x /home/pi/dist_dir/start.sg```
+```chmod +x /home/pi/dist_dir/start.sh```
 
 🔹 3. Reload systemd to recognize the new service
 ```sudo systemctl daemon-reload```
