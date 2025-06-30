@@ -25,7 +25,7 @@ def prompt():
     logger.info(
         "=============================================================================================="
     )
-    logger.info("Short-press lower-right button on your watch to set time...")
+    logger.info("Long-press LOWER-LEFT button on your watch to set time...")
     logger.info("")
     logger.info(
         "If Auto-time set on watch, the watch will connect and run automatically up to 4 times per day."

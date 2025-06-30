@@ -1,5 +1,5 @@
 pytz
-bleak>1.0
+bleak>=1.0
 Pillow
 luma.oled
-gshock-api>=2.0.5
+gshock-api>=2.0.6
