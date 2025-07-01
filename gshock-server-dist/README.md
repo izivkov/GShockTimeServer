@@ -67,3 +67,51 @@ will set the watches time 9 secods vefore the computer's time.
 ## Troubleshooting
 If your watch is not connecting, remove `config.ini` file and try again.
 
+## Seting up service to start the server at boot-time
+
+🔹 1. Create a systemd service file
+
+Create a file at /etc/systemd/system/gshock.service:
+```
+sudo nano /etc/systemd/system/gshock.service
+```
+
+Paste this (adjust paths if needed):
+```
+[Unit]
+Description=G-Shock Server Python App
+After=network.target bluetooth.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/gshock-server-dist
+ExecStart=/usr/bin/python3 /home/pi/gshock-server-dist/gshock_server.py --multi-watch
+Restart=on-failure
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
+```
+
+🔹 3. Reload systemd to recognize the new service
+```
+sudo systemctl daemon-reload
+```
+
+🔹 4. Enable the service to start at boot
+```
+sudo systemctl enable gshock.service
+```
+
+🔹 5. Start it now (optional test)
+```
+sudo systemctl start gshock.service
+```
+
+Check if it’s working:
+```
+sudo systemctl status gshock.service
+```
+
+

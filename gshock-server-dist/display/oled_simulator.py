@@ -39,7 +39,8 @@ class MockOLEDDisplay:
         self.font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
 
     def show_status(self, watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync):
-        MARGIN = 4  # margin in pixels around all edges
+        MARGIN = 8  # margin in pixels around all edges
+        BOX_PADDING = 8  # extra padding inside the battery/temperature box
 
         # Clear screen
         self.draw.rectangle((0, 0, self.width, self.height), fill=0)
@@ -60,10 +61,24 @@ class MockOLEDDisplay:
         temp_str = f"{temperature}°C"
         bbox_temp = self.draw.textbbox((0, 0), temp_str, font=self.font_small)
         temp_w = bbox_temp[2] - bbox_temp[0]
-        self.draw.text((self.width - temp_w - MARGIN, icon_y + battery_icon.height + 2), temp_str, font=self.font_small, fill=255)
+        temp_h = bbox_temp[3] - bbox_temp[1]
+        temp_x = self.width - temp_w - MARGIN
+        temp_y = icon_y + battery_icon.height + 2
+        self.draw.text((temp_x, temp_y), temp_str, font=self.font_small, fill=255)
+
+        # Draw rectangle around battery icon and temperature with padding
+        rect_left = min(icon_x, temp_x) - BOX_PADDING
+        rect_top = icon_y - BOX_PADDING
+        rect_right = self.width - MARGIN + BOX_PADDING - 1
+        rect_bottom = temp_y + temp_h + BOX_PADDING
+        self.draw.rectangle(
+            [rect_left, rect_top, rect_right, rect_bottom],
+            outline=255,
+            width=1
+        )
 
         # Info text with top margin
-        y = h + MARGIN * 2 + 12 # below header with spacing
+        y = h + MARGIN * 2 + 12 + 10 # below header with spacing
         if isinstance(last_sync, datetime):
             delta = datetime.now() - last_sync
             hours = delta.seconds // 3600
@@ -86,6 +101,45 @@ class MockOLEDDisplay:
             val_w = bbox_val[2] - bbox_val[0]
             self.draw.text((self.width - val_w - MARGIN, y), str_value, font=self.font_small, fill=255)
             y += bbox_val[3] - bbox_val[1] + MARGIN
+
+        # Draw a small watch icon at the bottom right in blue and yellow
+        icon_size = 24
+        watch_x = self.width - icon_size - MARGIN
+        watch_y = self.height - icon_size - MARGIN
+
+        # Create a small RGB image for the watch icon
+        watch_icon = Image.new("RGB", (icon_size, icon_size), (0, 0, 0))
+        icon_draw = ImageDraw.Draw(watch_icon)
+
+        # Draw watch body (blue circle)
+        icon_draw.ellipse(
+            [2, 2, icon_size - 3, icon_size - 3],
+            outline=(0, 0, 255),
+            fill=(0, 0, 255)
+        )
+
+        # Draw watch face (yellow circle)
+        icon_draw.ellipse(
+            [6, 6, icon_size - 7, icon_size - 7],
+            outline=(255, 255, 0),
+            fill=(255, 255, 0)
+        )
+
+        # Draw watch hands (blue)
+        center = icon_size // 2
+        icon_draw.line(
+            [center, center, center, center - 6],
+            fill=(0, 0, 255),
+            width=2
+        )
+        icon_draw.line(
+            [center, center, center + 5, center],
+            fill=(0, 0, 255),
+            width=2
+        )
+
+        # Convert to 1-bit if needed, or paste as RGB
+        self.image.paste(watch_icon.convert("1"), (watch_x, watch_y))
 
         # Save image
         self.image.save(self.output_file)
