@@ -79,27 +79,19 @@ sudo nano /etc/systemd/system/gshock.service
 Paste this (adjust paths if needed):
 ```
 [Unit]
-Description=GShock Server
-After=network.target
+Description=G-Shock Server Python App
+After=network.target bluetooth.target
 
 [Service]
 Type=simple
-ExecStart=/bin/bash /home/pi/dist_dir/start.sh
-WorkingDirectory=/home/pi/dist_dir
-StandardOutput=journal
-StandardError=journal
-Restart=on-failure
 User=pi
+WorkingDirectory=/home/pi/gshock-server-dist
+ExecStart=/usr/bin/python3 /home/pi/gshock-server-dist/gshock_server.py --multi-watch
+Restart=on-failure
+Environment=PYTHONUNBUFFERED=1
 
 [Install]
 WantedBy=multi-user.target
-```
-
-    ✅ start.sh must be executable and have a proper shebang (#!/bin/bash) at the top.
-
-🔹 2. Make the script executable
-```
-chmod +x /home/pi/dist_dir/start.sh
 ```
 
 🔹 3. Reload systemd to recognize the new service
