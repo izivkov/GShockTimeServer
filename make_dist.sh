@@ -5,18 +5,23 @@ set -e
 DIST_DIR="gshock-server-dist"
 DIST_REPO="https://github.com/izivkov/gshock-server-dist.git"
 
-# Clean submodule working tree but keep .git and config
+# Clean up previous output in submodule, but keep .git
+mkdir -p "$DIST_DIR"
+
 cd "$DIST_DIR"
 git rm -rf . > /dev/null 2>&1 || true
 git clean -fdx
 cd ..
+
 mkdir -p "$DIST_DIR/display"
 
-
-# Copy the two Python files
+# Copy files as before...
 cp ./src/gshock_server.py "$DIST_DIR"
 cp ./src/args.py "$DIST_DIR/"
 cp ./src/display/*.py "$DIST_DIR/display/"
+cp requirements.txt "$DIST_DIR/"
+[ -f README.md ] && cp README.md "$DIST_DIR/"
+[ -f LICENSE ] && cp LICENSE "$DIST_DIR/"
 
 # Copy requirements.txt and optional extras
 cp requirements.txt "$DIST_DIR/"
@@ -70,7 +75,7 @@ chmod +x "$DIST_DIR/setup.sh"
 
 echo "setup.sh has been created and made executable."
 
-zip -r "${DIST_DIR}.zip" "$DIST_DIR"
+# zip -r "${DIST_DIR}.zip" "$DIST_DIR"
 
 echo "✅ Distribution created in $DIST_DIR/"
 
