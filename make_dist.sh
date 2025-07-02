@@ -3,22 +3,20 @@
 set -e
 
 DIST_DIR="gshock-server-dist"
-DIST_REPO="https://github.com/izivkov/gshock-server-dist.git"
+SRC_DIR="gshock-server"
 
-# Clean submodule working tree but keep .git and config
+# Clean submodule working tree but keep .git
 cd "$DIST_DIR"
 git rm -rf . > /dev/null 2>&1 || true
 git clean -fdx
 cd ..
+
 mkdir -p "$DIST_DIR/display"
 
-
-# Copy the two Python files
-cp ./src/gshock_server.py "$DIST_DIR"
-cp ./src/args.py "$DIST_DIR/"
-cp ./src/display/*.py "$DIST_DIR/display/"
-
-# Copy requirements.txt and optional extras
+# Copy files
+cp $SRC_DIR/gshock_server.py "$DIST_DIR"
+cp $SRC_DIR/args.py "$DIST_DIR/"
+cp $SRC_DIR/display/*.py "$DIST_DIR/display/"
 cp requirements.txt "$DIST_DIR/"
 [ -f README.md ] && cp README.md "$DIST_DIR/"
 [ -f LICENSE ] && cp LICENSE "$DIST_DIR/"
@@ -33,9 +31,15 @@ echo "== G-Shock Server Installer for Raspberry Pi Zero =="
 sudo apt update && sudo apt upgrade -y
 
 # Install some tools
-sudo apt install -y python3 python3-pip
+sudo apt install -y python3-pip
 sudo apt update
 sudo apt install -y zip unzip
+
+# Setup virtual environmsnent
+sudo apt install python3-venv
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 
 # Install dependencies
 pip3 install --upgrade pip
@@ -44,15 +48,14 @@ pip3 install -r requirements.txt
 # Create and enable systemd service
 cat << EOL | sudo tee /etc/systemd/system/gshock.service > /dev/null
 [Unit]
-Description=G-Shock Server Python App
-After=network.target bluetooth.target
+Description=G-Shock Time Server
+After=network.target
 
 [Service]
-Type=simple
+ExecStart=python3 /home/pi/gshock-server-dist/gshock_server.py --multi-watch
+WorkingDirectory=/home/pi/gshock-server-dist
+Restart=always
 User=pi
-WorkingDirectory=\$(pwd)
-ExecStart=/usr/bin/python3 \$(pwd)/gshock_server.py --multi-watch
-Restart=on-failure
 Environment=PYTHONUNBUFFERED=1
 
 [Install]
@@ -62,27 +65,22 @@ EOL
 sudo systemctl daemon-reload
 sudo systemctl enable gshock.service
 sudo systemctl start gshock.service
-sudo systemctl status gshock.service
+# sudo systemctl status gshock.service
 EOF
 
-# Make setup.sh executable
 chmod +x "$DIST_DIR/setup.sh"
 
 echo "setup.sh has been created and made executable."
 
-zip -r "${DIST_DIR}.zip" "$DIST_DIR"
-
-echo "✅ Distribution created in $DIST_DIR/"
-
+# Commit and push in the submodule
+cd "$DIST_DIR"
 git add .
 git commit -m "Automated update from make_dist.sh on $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit."
-
-# Optionally add a tag if provided as an argument
 if [ -n "$1" ]; then
     git tag "$1"
     git push origin "$1"
 fi
-
 git push
+cd ..
 
-echo "✅ $DIST_DIR pushed to $DIST_REPO"
+echo "✅ $DIST_DIR updated and pushed to remote."
