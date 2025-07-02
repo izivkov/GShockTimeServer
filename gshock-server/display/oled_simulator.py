@@ -144,3 +144,15 @@ class MockOLEDDisplay:
         # Save image
         self.image.save(self.output_file)
         print(f"🖼 OLED preview saved as '{self.output_file}'")
+
+    def show_status_short(self, watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync):
+        """Short version of show_status for smaller displays."""
+        self.show_status(
+            watch_name=watch_name,
+            battery=battery,
+            temperature=temperature,
+            last_sync=last_sync,
+            alarm=alarm,
+            reminder=reminder,
+            auto_sync=auto_sync
+        )
