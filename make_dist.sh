@@ -3,10 +3,15 @@
 set -e
 
 DIST_DIR="gshock-server-dist"
+DIST_REPO="https://github.com/izivkov/gshock-server-dist.git"
 
-# Clean up previous output
-rm -rf "$DIST_DIR"
+# Clean submodule working tree but keep .git and config
+cd "$DIST_DIR"
+git rm -rf . > /dev/null 2>&1 || true
+git clean -fdx
+cd ..
 mkdir -p "$DIST_DIR/display"
+
 
 # Copy the two Python files
 cp ./src/gshock_server.py "$DIST_DIR"
@@ -68,3 +73,16 @@ echo "setup.sh has been created and made executable."
 zip -r "${DIST_DIR}.zip" "$DIST_DIR"
 
 echo "✅ Distribution created in $DIST_DIR/"
+
+git add .
+git commit -m "Automated update from make_dist.sh on $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit."
+
+# Optionally add a tag if provided as an argument
+if [ -n "$1" ]; then
+    git tag "$1"
+    git push origin "$1"
+fi
+
+git push
+
+echo "✅ $DIST_DIR pushed to $DIST_REPO"
