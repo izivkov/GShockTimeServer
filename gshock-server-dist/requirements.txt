@@ -1,4 +1,0 @@
-pytz
-bleak>=1.0
-luma.oled
-gshock-api>=2.0.6

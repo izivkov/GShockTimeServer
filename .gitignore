@@ -16,6 +16,9 @@ __pycache__/*
 .DS_Store
 .venv
 
+make_dist.sh
+gshock-server-dist/*
+
 # Project files
 .ropeproject
 .project
