@@ -19,7 +19,7 @@ __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
 
-
+# This script sets the time on a G-Shock
 async def main(argv):
     await run_time_server()
 
