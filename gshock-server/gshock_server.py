@@ -125,7 +125,7 @@ async def run_time_server():
             logger.info(f"Before Connecting to watch at {address}...")
             connection = Connection(address)
             await connection.connect()
-            logger.info(f"Connected to watch at {address}...")
+            logger.info(f" {address}...")
 
             api = GshockAPI(connection)
             pressed_button = await api.get_pressed_button()
