@@ -64,6 +64,12 @@ python3 src/gshock_server.py --fine-adjustment-secs -9
 ```
 will set the watches time 9 secods vefore the computer's time.
 
+On pi zero get from github:
+
+```
+git clone https://github.com/izivkov/gshock-server-dist.git
+```
+
 ## Troubleshooting
 If your watch is not connecting, remove `config.ini` file and try again.
 

@@ -32,18 +32,19 @@ sudo apt update && sudo apt upgrade -y
 
 # Install some tools
 sudo apt install -y python3-pip
-sudo apt update
 sudo apt install -y zip unzip
 
 # Setup virtual environmsnent
 sudo apt install python3-venv
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
 
 # Install dependencies
 pip3 install --upgrade pip
 pip3 install -r requirements.txt
+
+echo ""
+echo "✅ Installation complete!"
 
 # Create and enable systemd service
 cat << EOL | sudo tee /etc/systemd/system/gshock.service > /dev/null
@@ -52,11 +53,12 @@ Description=G-Shock Time Server
 After=network.target
 
 [Service]
-ExecStart=python3 /home/pi/gshock-server-dist/gshock_server.py --multi-watch
+ExecStart=/home/pi/gshock-server-dist/venv/bin/python /home/pi/gshock-server-dist/gshock_server.py --multi-watch
 WorkingDirectory=/home/pi/gshock-server-dist
-Restart=always
-User=pi
 Environment=PYTHONUNBUFFERED=1
+Restart=on-failure
+RestartSec=5
+User=pi
 
 [Install]
 WantedBy=multi-user.target
