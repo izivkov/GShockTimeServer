@@ -73,5 +73,11 @@ git clone https://github.com/izivkov/gshock-server-dist.git
 ## Troubleshooting
 If your watch is not connecting, remove `config.ini` file and try again.
 
+To see output from the service do:
+```
+journalctl -u gshock.service -f
+```
+
+
 
 

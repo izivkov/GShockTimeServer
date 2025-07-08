@@ -138,8 +138,6 @@ async def run_time_server():
 
             # Apply fine adjustment to the time
             fine_adjustment_secs = args.get().fine_adjustment_secs
-            logger.info(f"Fine adjustment: {fine_adjustment_secs} seconds")  
-
             await api.set_time(int(time.time()) + fine_adjustment_secs)
             
             logger.info(f"Time set at {datetime.now()} on {watch_info.name}")

@@ -122,10 +122,9 @@ async def run_time_server():
             else:
                 address = conf.get("device.address")
 
-            logger.info(f"Before Connecting to watch at {address}...")
+            logger.info(f"Waiting for Connection...")
             connection = Connection(address)
             await connection.connect()
-            logger.info(f" {address}...")
 
             api = GshockAPI(connection)
             pressed_button = await api.get_pressed_button()
@@ -138,7 +137,6 @@ async def run_time_server():
 
             # Apply fine adjustment to the time
             fine_adjustment_secs = args.get().fine_adjustment_secs
-            logger.info(f"Fine adjustment: {fine_adjustment_secs} seconds")  
 
             await api.set_time(int(time.time()) + fine_adjustment_secs)
             

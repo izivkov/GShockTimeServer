@@ -3,7 +3,7 @@ from typing import Any
 from gshock_api.exceptions import GShockConnectionError
 
 class CancelableResult:
-    def __init__(self, timeout: float = 3.0):
+    def __init__(self, timeout: float = 10.0):
         self._timeout = timeout
         self._future: asyncio.Future[Any] = asyncio.Future()
 
@@ -14,7 +14,7 @@ class CancelableResult:
         except asyncio.TimeoutError as e:
             if not self._future.done():
                 self._future.set_result('')  # or raise an exception instead
-            raise GShockConnectionError(f"Timeout occured wait for response from the watch: {e}") from e
+            raise GShockConnectionError(f"Timeout occured waiting for response from the watch: {e}") from e
 
     def set_result(self, result: Any) -> None:
         if not self._future.done():
