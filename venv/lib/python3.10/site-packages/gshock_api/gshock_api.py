@@ -205,8 +205,6 @@ class GshockAPI:
         if current_time == None:
             current_time = time.time()
 
-        self.logger.info(f"=======> passed: ${current_time}, ${time.time()}")
-
         await self.initialize_for_setting_time()
         await self._set_time(current_time)
         current_time = None
