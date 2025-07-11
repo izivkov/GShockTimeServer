@@ -12,21 +12,23 @@ git clean -fdx
 cd ..
 
 mkdir -p "$DIST_DIR/display"
+mkdir -p "$DIST_DIR/display/lib"
+mkdir -p "$DIST_DIR/display/pic"
+mkdir -p "$DIST_DIR/display/Font"
 
 # Copy files
 cp $SRC_DIR/gshock_server.py "$DIST_DIR"
 cp $SRC_DIR/args.py "$DIST_DIR/"
 cp $SRC_DIR/display/*.py "$DIST_DIR/display/"
+cp $SRC_DIR/display/lib/*.py "$DIST_DIR/display/lib/"
+cp $SRC_DIR/display/Font/* "$DIST_DIR/display/Font/"
+cp $SRC_DIR/display/pic/* "$DIST_DIR/display/pic/"
 cp requirements.txt "$DIST_DIR/"
-
-cp enable-spi.sh "$DIST_DIR/"
-cp setup-display.sh "$DIST_DIR/"
 
 [ -f README.md ] && cp README.md "$DIST_DIR/"
 [ -f LICENSE ] && cp LICENSE "$DIST_DIR/"
 
 # Create setup.sh with the desired content
-
 cat << 'EOF' > "$DIST_DIR/setup.sh"
 #!/bin/bash
 
@@ -34,6 +36,7 @@ set -e
 
 INSTALL_DIR="$(cd "$(dirname "$0")"; pwd)"
 SERVICE_USER="$(whoami)"
+VENV_DIR="$HOME/venv"
 
 echo "== G-Shock Server Installer for Linux =="
 
@@ -51,47 +54,124 @@ elif command -v pacman >/dev/null 2>&1; then
     sudo pacman -Sy --noconfirm python-pip python-virtualenv zip unzip
 fi
 
-# Setup virtual environment
-cd "$INSTALL_DIR"
-python3 -m venv venv
-source venv/bin/activate
+# Setup virtual environment in home directory
+if [ ! -d "$VENV_DIR" ]; then
+  python3 -m venv "$VENV_DIR"
+fi
+source "$VENV_DIR/bin/activate"
 
 # Install dependencies
 pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r "$INSTALL_DIR/requirements.txt"
 
 echo ""
 echo "✅ Installation complete!"
 
 # Create and enable systemd service
-SERVICE_FILE="/etc/systemd/system/gshock.service"
-sudo tee "$SERVICE_FILE" > /dev/null <<EOL
-[Unit]
-Description=G-Shock Time Server
-After=network.target
+# SERVICE_FILE="/etc/systemd/system/gshock.service"
+# sudo tee "$SERVICE_FILE" > /dev/null <<EOL
+# [Unit]
+# Description=G-Shock Time Server
+# After=network.target
 
-[Service]
-ExecStart=$INSTALL_DIR/venv/bin/python $INSTALL_DIR/gshock_server.py --multi-watch
-WorkingDirectory=$INSTALL_DIR
-Environment=PYTHONUNBUFFERED=1
-Restart=on-failure
-RestartSec=5
-User=$SERVICE_USER
+# [Service]
+# ExecStart=$VENV_DIR/bin/python \$INSTALL_DIR/gshock_server.py --multi-watch
+# WorkingDirectory=$INSTALL_DIR
+# Environment=PYTHONUNBUFFERED=1
+# Restart=on-failure
+# RestartSec=5
+# User=$SERVICE_USER
 
-[Install]
-WantedBy=multi-user.target
-EOL
+# [Install]
+# WantedBy=multi-user.target
+# EOL
 
-sudo systemctl daemon-reload
-sudo systemctl enable gshock.service
-sudo systemctl start gshock.service
-# sudo systemctl status gshock.service
+# sudo systemctl daemon-reload
+# sudo systemctl enable gshock.service
+# sudo systemctl start gshock.service
 
 echo "✅ gshock.service installed and started."
 EOF
 
 chmod +x "$DIST_DIR/setup.sh"
 echo "setup.sh has been created and made executable."
+
+cat << 'EOF' > "$DIST_DIR/setup-display.sh"
+#!/bin/bash
+
+echo "== OLED display setup =="
+
+# Update & upgrade
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y python3-pip python3-venv zip unzip \
+    libfreetype6-dev libjpeg-dev zlib1g-dev libopenjp2-7-dev \
+    libtiff5-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev \
+    python3-tk p7zip-full wget
+
+# Install Python packages
+pip install --upgrade pip
+pip install spidev smbus smbus2 gpiozero numpy luma.oled luma.lcd lgpio pillow st7789
+
+echo "✅ Display setup complete!"
+EOF
+chmod +x "$DIST_DIR/setup-display.sh"
+echo "setup-display.sh has been created and made executable."
+
+
+cat << 'EOF' > "$DIST_DIR/enable-spi.sh"
+#!/bin/bash
+
+echo "== Enabling SPI interface =="
+
+CONFIG_FILE="/boot/firmware/config.txt"
+SPI_LINE="dtparam=spi=on"
+REBOOT_NEEDED=false
+
+# Check if SPI line exists
+if grep -q "^$SPI_LINE" "$CONFIG_FILE"; then
+    echo "SPI is already enabled."
+else
+    if grep -q "^#\s*$SPI_LINE" "$CONFIG_FILE"; then
+        echo "Uncommenting SPI line..."
+        sudo sed -i "s/^#\s*$SPI_LINE/$SPI_LINE/" "$CONFIG_FILE"
+    else
+        echo "Adding SPI line..."
+        echo "$SPI_LINE" | sudo tee -a "$CONFIG_FILE" > /dev/null
+    fi
+    REBOOT_NEEDED=true
+fi
+
+# Check if spidev is installed
+if ! pip3 show spidev > /dev/null 2>&1; then
+    echo "Installing Python spidev module..."
+    pip3 install spidev
+else
+    echo "Python spidev module already installed."
+fi
+
+if $REBOOT_NEEDED; then
+    echo "SPI enabled. Reboot is required."
+    read -p "Reboot now? [Y/n]: " choice
+    case "$choice" in
+        [nN]*) echo "Please reboot manually later." ;;
+        *) echo "Rebooting..."; sudo reboot ;;
+    esac
+else
+    echo "No changes made. No reboot needed."
+fi
+echo "== SPI setup complete! =="
+EOF
+chmod +x "$DIST_DIR/enable-spi.sh"
+echo "enable-spi.sh has been created and made executable."
+
+cat << 'EOF' > "$DIST_DIR/setup-all.sh"
+#!/bin/bash
+. ./setup.sh
+. ./setup-display.sh
+. ./enable-spi.sh
+EOF
+chmod +x "$DIST_DIR/setup-all.sh"
+echo "setup-all.sh has been created and made executable."
 
 # Commit and push in the submodule
 cd "$DIST_DIR"
