@@ -19,7 +19,6 @@ __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
 
-
 async def main(argv):
     await run_time_server()
 
@@ -37,15 +36,6 @@ def prompt():
     )
     logger.info("")
 
-def find_todays_reminder(reminders):
-    today = datetime.now().date()
-    todays_reminders = [
-        reminder for reminder in reminders
-        if reminder.get("date") == today.strftime("%Y-%m-%d")
-    ]
-    if len(todays_reminders) == 0:
-        return None
-    return todays_reminders[0]
 
 def get_next_alarm_time(alarms):
     now = datetime.now()
@@ -77,11 +67,11 @@ def get_next_alarm_time(alarms):
 
     return next_alarm.hour, next_alarm.minute
 
+# Change this to a different display as needed.
+from display.oled_simulator import WaveshareDisplay
+oled = WaveshareDisplay() 
+
 async def show_display(api: GshockAPI):
-    from display.oled_simulator import MockOLEDDisplay
-
-    oled = MockOLEDDisplay()
-
     try:
         alarms = await api.get_alarms()
         hour, minute = get_next_alarm_time(alarms)
@@ -91,7 +81,7 @@ async def show_display(api: GshockAPI):
             alarm_str = "Invalid time"
 
         reminders = await api.get_reminders()
-        reminder_title = find_todays_reminder(reminders) or "None"
+        reminder_title = reminders[0].get("title") if reminders else "None"
         condition = await api.get_watch_condition()
         battery = condition.get("battery_level_percent")
         temperature = condition.get("temperature")
@@ -107,7 +97,6 @@ async def show_display(api: GshockAPI):
             reminder=reminder_title,
             auto_sync="On" if await api.get_time_adjustment() else "Off",
         )
-        print("🖼 OLED preview saved as 'oled_preview.png'")
 
     except Exception as e:
         logger.error(f"Got error: {e}")
