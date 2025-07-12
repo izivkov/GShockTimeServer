@@ -14,14 +14,12 @@ cd ..
 mkdir -p "$DIST_DIR/display"
 mkdir -p "$DIST_DIR/display/lib"
 mkdir -p "$DIST_DIR/display/pic"
-mkdir -p "$DIST_DIR/display/Font"
 
 # Copy files
 cp $SRC_DIR/gshock_server.py "$DIST_DIR"
 cp $SRC_DIR/args.py "$DIST_DIR/"
 cp $SRC_DIR/display/*.py "$DIST_DIR/display/"
 cp $SRC_DIR/display/lib/*.py "$DIST_DIR/display/lib/"
-cp $SRC_DIR/display/Font/* "$DIST_DIR/display/Font/"
 cp $SRC_DIR/display/pic/* "$DIST_DIR/display/pic/"
 cp requirements.txt "$DIST_DIR/"
 
@@ -75,7 +73,7 @@ echo "✅ Installation complete!"
 # After=network.target
 
 # [Service]
-# ExecStart=$VENV_DIR/bin/python \$INSTALL_DIR/gshock_server.py --multi-watch
+# ExecStart=$VENV_DIR/bin/python $INSTALL_DIR/gshock_server.py --multi-watch
 # WorkingDirectory=$INSTALL_DIR
 # Environment=PYTHONUNBUFFERED=1
 # Restart=on-failure
