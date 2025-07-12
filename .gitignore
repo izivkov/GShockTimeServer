@@ -14,7 +14,7 @@ __pycache__/*
 .*.swp
 */.ipynb_checkpoints/*
 .DS_Store
-./venv
+venv/
 
 # Distribution files
 *.tar.gz
