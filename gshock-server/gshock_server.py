@@ -14,6 +14,7 @@ from gshock_api.watch_info import watch_info
 from args import args
 from datetime import datetime, timedelta
 from gshock_api.watch_info import watch_info
+from display.waveshare_display import WaveshareDisplay
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
@@ -35,7 +36,6 @@ def prompt():
         "=============================================================================================="
     )
     logger.info("")
-
 
 def get_next_alarm_time(alarms):
     now = datetime.now()
@@ -68,7 +68,6 @@ def get_next_alarm_time(alarms):
     return next_alarm.hour, next_alarm.minute
 
 # Change this to a different display as needed.
-from display.oled_simulator import WaveshareDisplay
 oled = WaveshareDisplay() 
 
 async def show_display(api: GshockAPI):
@@ -88,7 +87,7 @@ async def show_display(api: GshockAPI):
         name = watch_info.name
         short_name = ' '.join(name.strip().split()[1:])
 
-        oled.show_status(
+        oled.show_status( 
             watch_name=short_name,
             battery = battery,
             temperature = temperature,
@@ -101,8 +100,12 @@ async def show_display(api: GshockAPI):
     except Exception as e:
         logger.error(f"Got error: {e}")
 
+from peristent_store import PersistentMap
+
 async def run_time_server():
     prompt()
+
+    store = PersistentMap("gshock_server_data.json")
 
     while True:
         try:
@@ -112,9 +115,14 @@ async def run_time_server():
                 address = conf.get("device.address")
 
             logger.info(f"Waiting for Connection...")
+            oled.show_welcome_screen(message="Waiting\nfor connection...", watch_name=store.get("watch_name", "Unknown"), last_sync=store.get("last_connected", "Unknown")) 
+
             connection = Connection(address)
             await connection.connect()
-
+            store.add("last_connected", datetime.now().strftime("%m/%d %H:%M"))
+            store.add("watch_name", watch_info.name)
+            oled.show_welcome_screen("Connected!")  
+ 
             api = GshockAPI(connection)
             pressed_button = await api.get_pressed_button()
             if (
@@ -126,9 +134,8 @@ async def run_time_server():
 
             # Apply fine adjustment to the time
             fine_adjustment_secs = args.get().fine_adjustment_secs
-
             await api.set_time(int(time.time()) + fine_adjustment_secs)
-            
+    
             logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
 
             # Only update the display of we have pressed LOWER-LEFT button,
