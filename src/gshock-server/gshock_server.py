@@ -15,6 +15,7 @@ from args import args
 from datetime import datetime, timedelta
 from gshock_api.watch_info import watch_info
 from display.waveshare_display import WaveshareDisplay
+# from display.mock_display import MockDisplay
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
@@ -115,13 +116,13 @@ async def run_time_server():
                 address = conf.get("device.address")
 
             logger.info(f"Waiting for Connection...")
-            oled.show_welcome_screen(message="Waiting\nfor connection...", watch_name=store.get("watch_name", "Unknown"), last_sync=store.get("last_connected", "Unknown")) 
+            # oled.show_welcome_screen(message="Waiting\nfor connection...", watch_name=store.get("watch_name", "Unknown"), last_sync=store.get("last_connected", "Unknown")) 
 
             connection = Connection(address)
             await connection.connect()
             store.add("last_connected", datetime.now().strftime("%m/%d %H:%M"))
             store.add("watch_name", watch_info.name)
-            oled.show_welcome_screen("Connected!")  
+            # oled.show_welcome_screen("Connected!")  
  
             api = GshockAPI(connection)
             pressed_button = await api.get_pressed_button()

@@ -10,7 +10,7 @@ class MockDisplay(Display):
         self.draw = ImageDraw.Draw(self.image)
 
     def show_status(self, watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync):
-        image = super().show_status(self, watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync)
+        image = super().show_status(watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync)
 
         # Save image
         self.image.save(self.output_file)

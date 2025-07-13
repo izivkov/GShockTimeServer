@@ -12,6 +12,7 @@ class WaveshareDisplay(Display):
         self.disp.bl_DutyCycle(10)
 
     def show_status(self, watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync):
-        image = super().show_status(self, watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync)
+        image = super().show_status(watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync)
+
         self.disp.ShowImage(image)
  

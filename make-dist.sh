@@ -3,7 +3,7 @@
 set -e
 
 DIST_DIR="gshock-server-dist"
-SRC_DIR="gshock-server"
+SRC_DIR="src/gshock-server"
 
 # Clean submodule working tree but keep .git
 cd "$DIST_DIR"
@@ -16,8 +16,7 @@ mkdir -p "$DIST_DIR/display/lib"
 mkdir -p "$DIST_DIR/display/pic"
 
 # Copy files
-cp $SRC_DIR/gshock_server.py "$DIST_DIR"
-cp $SRC_DIR/args.py "$DIST_DIR/"
+cp $SRC_DIR/*.py "$DIST_DIR"
 cp $SRC_DIR/display/*.py "$DIST_DIR/display/"
 cp $SRC_DIR/display/lib/*.py "$DIST_DIR/display/lib/"
 cp $SRC_DIR/display/pic/* "$DIST_DIR/display/pic/"

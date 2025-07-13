@@ -96,44 +96,40 @@ def show_welcome_screen(self, message, watch_name=None, last_sync=None):
     # Save for use in overlays (e.g., blinking dot)
     self.last_image = image.copy()
 
-# Common function to draw OLED status
 def draw_status(draw, image, width, height, font_large, font_small,
-                     watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync,
-                     margin=8, box_padding=8): 
-    
-    # Header (centered horizontally, margin from top)
+                watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync,
+                margin=8):
+
+    # Header (centered at the top)
     bbox = draw.textbbox((0, 0), watch_name, font=font_large)
     w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
     draw.text(((width - w) // 2, margin), watch_name, font=font_large, fill=(255, 255, 255))
 
-    # Battery level
-    battery_level = int(str(battery).strip('%')) if isinstance(battery, str) else int(battery)
-    battery_icon = generate_battery_icon(battery_level)
-    icon_x = width - battery_icon.width - margin
-    icon_y = margin
-    image.paste(battery_icon, (icon_x, icon_y))
-
-    # Temperature below battery icon
+    # Temperature string — draw it at bottom-left
     temp_str = f"{temperature}°C"
     bbox_temp = draw.textbbox((0, 0), temp_str, font=font_small)
     temp_w = bbox_temp[2] - bbox_temp[0]
     temp_h = bbox_temp[3] - bbox_temp[1]
-    temp_x = width - temp_w - margin
-    temp_y = icon_y + battery_icon.height + 2
+    temp_x = margin
+    temp_y = height - temp_h - margin
     draw.text((temp_x, temp_y), temp_str, font=font_small, fill=(255, 255, 255))
 
-    # Draw rectangle around battery icon and temperature with padding
-    rect_left = min(icon_x, temp_x) - box_padding
-    rect_top = icon_y - box_padding
-    rect_right = width - margin + box_padding - 1
-    rect_bottom = temp_y + temp_h + box_padding
-    draw.rectangle(
-        [rect_left, rect_top, rect_right, rect_bottom],
-        outline=255,
-        width=1
-    )
+    # Battery icon — make it longer (wider horizontally)
+    battery_level = int(str(battery).strip('%')) if isinstance(battery, str) else int(battery)
+    battery_icon = generate_battery_icon(battery_level)
 
-    # Info text with top margin
+    # Stretch battery icon width-wise (1.8x) and height-wise slightly (1.3x)
+    scale_x = 1.5
+    scale_y = 1.5
+    new_size = (int(battery_icon.width * scale_x), int(battery_icon.height * scale_y))
+    battery_icon = battery_icon.resize(new_size, Image.LANCZOS)
+
+    # Position battery icon at bottom-right
+    icon_x = width - battery_icon.width - margin
+    icon_y = height - battery_icon.height - margin
+    image.paste(battery_icon, (icon_x, icon_y))
+
+    # Info text (middle of screen, below header)
     y = h + margin * 2 + 12 + 10
 
     if isinstance(last_sync, datetime):
@@ -156,9 +152,10 @@ def draw_status(draw, image, width, height, font_large, font_small,
         draw.text((margin, y), label, font=font_small, fill=(255, 255, 255))
         bbox_val = draw.textbbox((0, 0), str_value, font=font_small)
         val_w = bbox_val[2] - bbox_val[0]
+        val_h = bbox_val[3] - bbox_val[1]
         draw.text((width - val_w - margin, y), str_value, font=font_small, fill=(255, 255, 255))
-        y += bbox_val[3] - bbox_val[1] + margin
-    
+        y += val_h + margin
+            
 class Display:
     def __init__(self, width=240, height=240, output_file="oled_preview.png"):
         # override in subclasses
@@ -166,7 +163,6 @@ class Display:
 
     def show_status(self, watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync):
         MARGIN = 8  # margin in pixels around all edges
-        BOX_PADDING = 8  # extra padding inside the battery/temperature box
 
         # Clear screen
         self.draw.rectangle((0, 0, self.width, self.height), fill=0)
@@ -176,7 +172,7 @@ class Display:
             self.draw, self.image, self.width, self.height,
             font_large, font_small,
             watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync,
-            margin=MARGIN, box_padding=BOX_PADDING
+            margin=MARGIN
         )
 
         return self.image
