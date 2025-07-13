@@ -12,7 +12,7 @@ class FTP154Display(Display):
         self.device = st7789(serial, width=240, height=240, rotate=0)
 
     def show_status(self, watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync):
-        image = super().show_status(self, watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync)
+        image = super().show_status(watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync)
 
         self.device.display(image)
 
