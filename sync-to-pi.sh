@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # === CONFIGURATION ===
-LOCAL_DIR="/home/izivkov/projects/GShockTimeServer/gshock-server"           # Folder you're editing on PC
+LOCAL_DIR="/home/izivkov/projects/GShockTimeServer/src/gshock-server"           # Folder you're editing on PC
 REMOTE_USER="pi"
 REMOTE_HOST="pizero.local"                 # Replace with your Pi's IP
 REMOTE_DIR="/home/pi/gshock-server-dist"   # Destination on the Pi
