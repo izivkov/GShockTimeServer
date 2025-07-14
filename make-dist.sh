@@ -113,12 +113,14 @@ echo "Select your display type:"
 echo "  1) waveshare (default)"
 echo "  2) ftp154"
 
-read -p "Enter 1 or 2 [default: 1]: " DISPLAY_CHOICE
+read -t 180 -p "Enter 1 or 2 [default: 1]: " DISPLAY_CHOICE
 
-case "$DISPLAY_CHOICE" in
-  2) DISPLAY_TYPE="ftp154" ;;
-  *) DISPLAY_TYPE="waveshare" ;;
-esac
+# If timed out or invalid input, fall back to default
+if [[ $? -ne 0 || "$DISPLAY_CHOICE" != "2" ]]; then
+  DISPLAY_TYPE="waveshare"
+else
+  DISPLAY_TYPE="ftp154"
+fi
 
 # Overwrite systemd service with display version
 SERVICE_FILE="/etc/systemd/system/gshock.service"
