@@ -104,7 +104,7 @@ async def run_time_server():
                 logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
             except Exception as e:
                 # Ignore this exception if the LOWER-RIGHT button is pressed.
-                # In  this case, the connection will be closed before the call completes with a respnse. 
+                # In this case, the connection will be closed before the call completes with a response.
                 # The call actually works, though.
 
                 if pressed_button == WatchButton.LOWER_LEFT:
