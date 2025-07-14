@@ -36,6 +36,22 @@ def prompt():
     )
     logger.info("")
 
+def get_display(display_type: str):
+    if display_type == "mock":
+        from display.mock_display import MockDisplay
+        return MockDisplay()
+    elif display_type == "waveshare":
+        from display.waveshare_display import WaveshareDisplay
+        return WaveshareDisplay()
+    elif display_type == "ftp154":
+        from display.ftp154_display import FTP154Display
+        return FTP154Display()
+    else:
+        raise ValueError(f"Unsupported display type: {display_type}")
+
+
+oled = get_display(args.display)
+
 def get_next_alarm_time(alarms):
     now = datetime.now()
     today = now.date()
@@ -66,6 +82,36 @@ def get_next_alarm_time(alarms):
 
     return next_alarm.hour, next_alarm.minute
 
+async def show_display(api: GshockAPI):
+    try:
+        alarms = await api.get_alarms()
+        hour, minute = get_next_alarm_time(alarms)
+        if hour is not None and minute is not None:
+            alarm_str = f"{hour:02d}:{minute:02d}"
+        else:
+            alarm_str = "Invalid time"
+
+        reminders = await api.get_reminders()
+        reminder_title = reminders[0].get("title") if reminders else "None"
+        condition = await api.get_watch_condition()
+        battery = condition.get("battery_level_percent")
+        temperature = condition.get("temperature")
+        name = watch_info.name
+        short_name = ' '.join(name.strip().split()[1:])
+
+        oled.show_status( 
+            watch_name=short_name,
+            battery = battery,
+            temperature = temperature,
+            last_sync=datetime.now().strftime("%m/%d %H:%M"),
+            alarm= alarm_str,
+            reminder=reminder_title,
+            auto_sync="On" if await api.get_time_adjustment() else "Off",
+        )
+
+    except Exception as e:
+        logger.error(f"Got error: {e}")
+
 from peristent_store import PersistentMap
 
 async def run_time_server():
@@ -75,17 +121,23 @@ async def run_time_server():
 
     while True:
         try:
-            if args.get().multi_watch:
+            if args.multi_watch:
                 address = None
             else:
                 address = conf.get("device.address")
             
             logger.info(f"Waiting for Connection...")
+            watch_name = store.get("watch_name", "Unknown")
+            last_sync = store.get("last_connected", "Unknown")
+
+            if watch_info is None or watch_info.name != watch_name:
+                oled.show_welcome_screen(message="Waiting\nfor connection...", watch_name=watch_name, last_sync=last_sync)
 
             connection = Connection(address)
             await connection.connect()
             store.add("last_connected", datetime.now().strftime("%m/%d %H:%M"))
             store.add("watch_name", watch_info.name)
+            oled.show_welcome_screen("Connected!")  
  
             api = GshockAPI(connection)
             pressed_button = await api.get_pressed_button()
@@ -97,11 +149,22 @@ async def run_time_server():
                 continue
 
             # Apply fine adjustment to the time
-            fine_adjustment_secs = args.get().fine_adjustment_secs
+            fine_adjustment_secs = args.fine_adjustment_secs
             await api.set_time(int(time.time()) + fine_adjustment_secs)
     
             logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
 
+            # Only update the display of we have pressed LOWER-LEFT button,
+            # Otherwise the watch will disconnect before we get all the information for the display.
+            if pressed_button == WatchButton.LOWER_LEFT:
+                await show_display(api)
+            elif pressed_button == WatchButton.LOWER_RIGHT:
+                oled.show_welcome_screen(
+                    message="Waiting\nfor connection...",
+                    watch_name=watch_name,
+                    last_sync=last_sync
+                )
+    
             if watch_info.alwaysConnected == False:
                 await connection.disconnect()
 

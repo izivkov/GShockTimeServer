@@ -157,12 +157,11 @@ def draw_status(draw, image, width, height, font_large, font_small,
         y += val_h + margin
             
 class Display:
-    def __init__(self, draw, image, width=240, height=240, output_file="oled_preview.png"):
+    def __init__(self, draw, image, width=240, height=240):
         self.draw = draw
         self.image = image
         self.width = width
         self.height = height
-        self.output_file = output_file
 
     def show_status(self, watch_name, battery, temperature, last_sync, alarm, reminder, auto_sync):
         MARGIN = 8  # margin in pixels around all edges
