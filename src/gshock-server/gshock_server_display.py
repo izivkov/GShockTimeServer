@@ -19,6 +19,8 @@ __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
 
+# This script is used to set the time on a G-Shock watch and display information on a connected display.
+
 async def main(argv):
     await run_time_server()
 
@@ -48,7 +50,6 @@ def get_display(display_type: str):
         return FTP154Display()
     else:
         raise ValueError(f"Unsupported display type: {display_type}")
-
 
 oled = get_display(args.display)
 
