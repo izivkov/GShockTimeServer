@@ -111,6 +111,9 @@ REPO_DIR="~/"
 REPO_URL="https://github.com/izivkov/gshock-server-dist.git"
 LAST_TAG_FILE="$HOME/last-tag"
 
+LOG_FILE="$HOME/logs/gshock-updater.log"
+mkdir -p "$(dirname "$LOG_FILE")"
+
 # Make sure last-tag directory exists
 mkdir -p "$(dirname "$LAST_TAG_FILE")"
 
@@ -137,19 +140,24 @@ fi
 # Deploy if new
 if [ "$LATEST_TAG" != "$LAST_TAG" ]; then
     echo "New tag found: $LATEST_TAG"
-    rm -rf "$DIST_DIR"/*
-    git fetch --all
+    git fetch --tags --force
+
+    # Optional: ensure you're clean before switching
+    git reset --hard
+    git clean -fd
+
     git checkout "$LATEST_TAG"
+    
     echo "$LATEST_TAG" > "$LAST_TAG_FILE"
 
-    echo "Restarting gshock-server.service"
-    sudo systemctl restart gshock-server.service
+    echo "Restarting gshock.service"
+    sudo systemctl restart gshock.service
 else
     echo "No update needed. Current tag: $LATEST_TAG"
 fi
 
 # Add cron job to run updater every 30 minutes
-CRON_JOB="*/3 * * * * $DIST_DIR/gshock-updater.sh >> /var/log/gshock-updater.log 2>&1"
+CRON_JOB="*/1 * * * * $DIST_DIR/gshock-updater.sh >> $LOG_FILE 2>&1"
 
 # Get current crontab or fallback to empty
 CURRENT_CRON=$(crontab -l 2>/dev/null)
@@ -286,7 +294,7 @@ cat << 'EOF' > "$DIST_DIR/setup-all.sh"
 #!/bin/bash
 . ./setup.sh
 . ./setup-display.sh
-# . ./gshock-updater.sh
+. ./gshock-updater.sh
 . ./enable-spi.sh
 EOF
 chmod +x "$DIST_DIR/setup-all.sh"

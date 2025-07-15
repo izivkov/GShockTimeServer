@@ -15,11 +15,12 @@ from args import args
 from datetime import datetime, timedelta
 from gshock_api.watch_info import watch_info
 from gshock_api.exceptions import GShockConnectionError
-
+from utils import run_once_key
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
+__tag__ = "1.0.6"
 
 # This script is used to set the time on a G-Shock watch and display information on a connected display.
 
@@ -112,7 +113,7 @@ async def show_display(api: GshockAPI):
             auto_sync="On" if await api.get_time_adjustment() else "Off",
         )
 
-    except GShockConnectionError as e:
+    except Exception as e:
         logger.error(f"Got error: {e}")
 
 from peristent_store import PersistentMap
@@ -122,6 +123,7 @@ async def run_time_server():
 
     store = PersistentMap("gshock_server_data.json")
 
+    first_run = True
     while True:
         try:
             if args.multi_watch:
@@ -132,17 +134,19 @@ async def run_time_server():
             watch_name = store.get("watch_name", "Unknown")
             last_sync = store.get("last_connected", "Unknown")
 
-            if watch_name == "Unknown":
-                oled.show_welcome_screen(
-                    message="Waiting\nfor connection...",
-                    watch_name=watch_name,
-                    last_sync=last_sync
-                )
+            run_once_key(
+                "show_welcome_screen",
+                oled.show_welcome_screen,
+                message="Waiting\nfor connection...",
+                watch_name=watch_name,
+                last_sync=last_sync
+            )
 
             logger.info("Waiting for Connection...")
 
             connection = Connection(address)
             await connection.connect()
+            first_run = False
 
             # Show connected screen
             oled.show_welcome_screen("Connected!")
@@ -166,20 +170,19 @@ async def run_time_server():
 
             logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
 
-        except Exception as e:
+        except GShockConnectionError as e:
             logger.error(f"Got error: {e}")
 
         finally:
             # Only show full display if LOWER_LEFT was pressed
             if pressed_button == WatchButton.LOWER_LEFT:
                 await show_display(api)
-            elif pressed_button == WatchButton.LOWER_RIGHT:
+            else:
                 oled.show_welcome_screen(
                     message="Waiting\nfor connection...",
                     watch_name=store.get("watch_name", "Unknown"),
-                    last_sync=last_sync
+                    last_sync=store.get("last_connected", "Unknown"),
                 )
-
             if watch_info.alwaysConnected is False:
                 await connection.disconnect()
             pass

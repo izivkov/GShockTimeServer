@@ -19,6 +19,7 @@ from gshock_api.exceptions import GShockConnectionError
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
+__tag__ = "1.0.6"
 
 async def main(argv):
     await run_time_server()
