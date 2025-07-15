@@ -14,6 +14,7 @@ from gshock_api.watch_info import watch_info
 from args import args
 from datetime import datetime, timedelta
 from gshock_api.watch_info import watch_info
+from gshock_api.exceptions import GShockConnectionError
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
@@ -99,25 +100,15 @@ async def run_time_server():
             # Apply fine adjustment to the time
             fine_adjustment_secs = args.get().fine_adjustment_secs
             
-            try:
-                await api.set_time(int(time.time()) + fine_adjustment_secs)
-                logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
-            except Exception as e:
-                # Ignore this exception if the LOWER-RIGHT button is pressed.
-                # In this case, the connection will be closed before the call completes with a response.
-                # The call actually works, though.
-
-                if pressed_button == WatchButton.LOWER_LEFT:
-                    # Re-throw the exception otherwise
-                    raise e    
+            await api.set_time(int(time.time()) + fine_adjustment_secs)
+            logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
 
             if watch_info.alwaysConnected == False:
                 await connection.disconnect()
 
-        except Exception as e:
+        except GShockConnectionError as e:
             logger.error(f"Got error: {e}")
             continue
-
 
 if __name__ == "__main__":
     asyncio.run(main(sys.argv[1:]))
