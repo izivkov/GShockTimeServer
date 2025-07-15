@@ -14,6 +14,8 @@ from gshock_api.watch_info import watch_info
 from args import args
 from datetime import datetime, timedelta
 from gshock_api.watch_info import watch_info
+from gshock_api.exceptions import GShockConnectionError
+
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
@@ -110,7 +112,7 @@ async def show_display(api: GshockAPI):
             auto_sync="On" if await api.get_time_adjustment() else "Off",
         )
 
-    except Exception as e:
+    except GShockConnectionError as e:
         logger.error(f"Got error: {e}")
 
 from peristent_store import PersistentMap
@@ -126,22 +128,31 @@ async def run_time_server():
                 address = None
             else:
                 address = conf.get("device.address")
-            
-            logger.info(f"Waiting for Connection...")
+
             watch_name = store.get("watch_name", "Unknown")
             last_sync = store.get("last_connected", "Unknown")
 
-            if watch_info is None or watch_info.name != watch_name:
-                oled.show_welcome_screen(message="Waiting\nfor connection...", watch_name=watch_name, last_sync=last_sync)
+            if watch_name == "Unknown":
+                oled.show_welcome_screen(
+                    message="Waiting\nfor connection...",
+                    watch_name=watch_name,
+                    last_sync=last_sync
+                )
+
+            logger.info("Waiting for Connection...")
 
             connection = Connection(address)
             await connection.connect()
+
+            # Show connected screen
+            oled.show_welcome_screen("Connected!")
+
             store.add("last_connected", datetime.now().strftime("%m/%d %H:%M"))
             store.add("watch_name", watch_info.name)
-            oled.show_welcome_screen("Connected!")  
- 
+
             api = GshockAPI(connection)
             pressed_button = await api.get_pressed_button()
+
             if (
                 pressed_button != WatchButton.LOWER_RIGHT
                 and pressed_button != WatchButton.NO_BUTTON
@@ -151,12 +162,15 @@ async def run_time_server():
 
             # Apply fine adjustment to the time
             fine_adjustment_secs = args.fine_adjustment_secs
-
             await api.set_time(int(time.time()) + fine_adjustment_secs)
+
             logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
-                
-            # Only update the display if we have pressed LOWER-LEFT button,
-            # Otherwise the watch will disconnect before we get all the information for the display.
+
+        except Exception as e:
+            logger.error(f"Got error: {e}")
+
+        finally:
+            # Only show full display if LOWER_LEFT was pressed
             if pressed_button == WatchButton.LOWER_LEFT:
                 await show_display(api)
             elif pressed_button == WatchButton.LOWER_RIGHT:
@@ -165,14 +179,10 @@ async def run_time_server():
                     watch_name=store.get("watch_name", "Unknown"),
                     last_sync=last_sync
                 )
-    
-            if watch_info.alwaysConnected == False:
+
+            if watch_info.alwaysConnected is False:
                 await connection.disconnect()
-
-        except Exception as e:
-            logger.error(f"Got error: {e}")
-            continue
-
+            pass
 
 if __name__ == "__main__":
     asyncio.run(main(sys.argv[1:]))
