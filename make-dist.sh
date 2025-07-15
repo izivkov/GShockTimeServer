@@ -2,8 +2,12 @@
 
 set -e
 
+# Tag 1.0.1
+
 DIST_DIR="gshock-server-dist"
 SRC_DIR="src/gshock-server"
+
+mkdir -p "$DIST_DIR/"
 
 # Clean submodule working tree but keep .git
 cd "$DIST_DIR"
@@ -25,7 +29,9 @@ cp requirements.txt "$DIST_DIR/"
 [ -f README.md ] && cp README.md "$DIST_DIR/"
 [ -f LICENSE ] && cp LICENSE "$DIST_DIR/"
 
-# Create setup.sh with the desired content
+################################################################
+# Create setup.sh
+################################################################
 cat << 'EOF' > "$DIST_DIR/setup.sh"
 #!/bin/bash
 
@@ -93,6 +99,83 @@ EOF
 chmod +x "$DIST_DIR/setup.sh"
 echo "setup.sh has been created and made executable."
 
+################################################################
+# Create gshock-updater.sh
+################################################################
+cat << 'EOF' > "$DIST_DIR/gshock-updater.sh"
+#!/bin/bash
+set -e
+
+DIST_DIR="gshock-server-dist"
+REPO_DIR="~/"
+REPO_URL="https://github.com/izivkov/gshock-server-dist.git"
+LAST_TAG_FILE="$HOME/last-tag"
+
+# Make sure last-tag directory exists
+mkdir -p "$(dirname "$LAST_TAG_FILE")"
+
+# Clone if repo is missing
+if [ ! -d "$REPO_DIR/.git" ]; then
+    git clone --depth 1 "$REPO_URL" "$REPO_DIR"
+fi
+
+cd "$REPO_DIR"
+
+# Fetch tags only
+git fetch --tags
+
+# Get latest tag name
+LATEST_TAG=$(git tag | sort -V | tail -n 1)
+
+# Read last deployed tag
+if [ -f "$LAST_TAG_FILE" ]; then
+    LAST_TAG=$(cat "$LAST_TAG_FILE")
+else
+    LAST_TAG=""
+fi
+
+# Deploy if new
+if [ "$LATEST_TAG" != "$LAST_TAG" ]; then
+    echo "New tag found: $LATEST_TAG"
+    rm -rf "$DIST_DIR"/*
+    git fetch --all
+    git checkout "$LATEST_TAG"
+    echo "$LATEST_TAG" > "$LAST_TAG_FILE"
+
+    echo "Restarting gshock-server.service"
+    sudo systemctl restart gshock-server.service
+else
+    echo "No update needed. Current tag: $LATEST_TAG"
+fi
+
+# Add cron job to run updater every 30 minutes
+CRON_JOB="*/3 * * * * $DIST_DIR/gshock-updater.sh >> /var/log/gshock-updater.log 2>&1"
+
+# Get current crontab or fallback to empty
+CURRENT_CRON=$(crontab -l 2>/dev/null)
+
+# Debug: show current crontab
+echo "Current crontab:"
+echo "$CURRENT_CRON"
+echo "-----"
+
+# Check if job already exists
+if echo "$CURRENT_CRON" | grep -Fq "$CRON_JOB"; then
+    echo "Cron job already exists. Skipping."
+else
+    # Add job
+    (echo "$CURRENT_CRON"; echo "$CRON_JOB") | crontab -
+    echo "Cron job added."
+fi
+EOF
+
+chmod +x "$DIST_DIR/gshock-updater.sh"
+echo "gshock-updater has been created and made executable."
+
+################################################################
+# Create setup-display.sh
+################################################################
+
 cat << 'EOF' > "$DIST_DIR/setup-display.sh"
 #!/bin/bash
 
@@ -150,6 +233,9 @@ EOF
 chmod +x "$DIST_DIR/setup-display.sh"
 echo "setup-display.sh has been created and made executable."
 
+################################################################
+# Create enable-spi.sh
+################################################################
 cat << 'EOF' > "$DIST_DIR/enable-spi.sh"
 #!/bin/bash
 
@@ -200,6 +286,7 @@ cat << 'EOF' > "$DIST_DIR/setup-all.sh"
 #!/bin/bash
 . ./setup.sh
 . ./setup-display.sh
+# . ./gshock-updater.sh
 . ./enable-spi.sh
 EOF
 chmod +x "$DIST_DIR/setup-all.sh"
