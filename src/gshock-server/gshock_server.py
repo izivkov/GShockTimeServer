@@ -107,7 +107,7 @@ async def run_time_server():
             if watch_info.alwaysConnected == False:
                 await connection.disconnect()
 
-        except GShockConnectionError as e:
+        except Exception as e:
             logger.error(f"Got error: {e}")
             continue
 

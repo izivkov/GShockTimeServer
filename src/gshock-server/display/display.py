@@ -91,7 +91,6 @@ def show_welcome_screen(self, message, watch_name=None, last_sync=None):
         self.device.display(image)
     elif hasattr(self, "output_file"):
         image.save(self.output_file)
-        print(f"🖼 OLED preview saved as '{self.output_file}'.")
 
     # Save for use in overlays (e.g., blinking dot)
     self.last_image = image.copy()

@@ -26,8 +26,16 @@ cp $SRC_DIR/display/lib/*.py "$DIST_DIR/display/lib/"
 cp $SRC_DIR/display/pic/* "$DIST_DIR/display/pic/"
 cp requirements.txt "$DIST_DIR/"
 
-[ -f README.md ] && cp README.md "$DIST_DIR/"
+# [ -f README.md ] && cp README.md "$DIST_DIR/"
 [ -f LICENSE ] && cp LICENSE "$DIST_DIR/"
+
+################################################################
+# Create README.md
+################################################################
+cat << 'EOF' > "$DIST_DIR/README.md"
+This repostory is used to hold the distribution files for `GShockTimeServer` repository:
+https://github.com/izivkov/GShockTimeServer
+EOF
 
 ################################################################
 # Create setup.sh
@@ -106,75 +114,53 @@ cat << 'EOF' > "$DIST_DIR/gshock-updater.sh"
 #!/bin/bash
 set -e
 
-DIST_DIR="gshock-server-dist"
-REPO_DIR="~/"
+REPO_NAME="gshock-server-dist"
 REPO_URL="https://github.com/izivkov/gshock-server-dist.git"
-LAST_TAG_FILE="$HOME/last-tag"
-
+REPO_DIR="$HOME/$REPO_NAME"
+LAST_TAG_FILE="$HOME/.config/gshock-updater/last-tag"
 LOG_FILE="$HOME/logs/gshock-updater.log"
+
+mkdir -p "$(dirname "$LAST_TAG_FILE")"
 mkdir -p "$(dirname "$LOG_FILE")"
 
-# Make sure last-tag directory exists
-mkdir -p "$(dirname "$LAST_TAG_FILE")"
-
-# Clone if repo is missing
+# Clone repo if missing
 if [ ! -d "$REPO_DIR/.git" ]; then
     git clone --depth 1 "$REPO_URL" "$REPO_DIR"
 fi
 
 cd "$REPO_DIR"
 
-# Fetch tags only
-git fetch --tags
+# Fetch tags and determine latest
+git fetch --tags --force
+LATEST_TAG=$(git tag --sort=-v:refname | head -n 1)
 
-# Get latest tag name
-LATEST_TAG=$(git tag | sort -V | tail -n 1)
-
-# Read last deployed tag
-if [ -f "$LAST_TAG_FILE" ]; then
-    LAST_TAG=$(cat "$LAST_TAG_FILE")
-else
-    LAST_TAG=""
+if [ -z "$LATEST_TAG" ]; then
+    echo "No tags found in repository."
+    exit 1
 fi
 
-# Deploy if new
-if [ "$LATEST_TAG" != "$LAST_TAG" ]; then
-    echo "New tag found: $LATEST_TAG"
-    git fetch --tags --force
+# Read last synced tag
+LAST_SYNCED_TAG=""
+if [ -f "$LAST_TAG_FILE" ]; then
+    LAST_SYNCED_TAG=$(cat "$LAST_TAG_FILE")
+fi
 
-    # Optional: ensure you're clean before switching
-    git reset --hard
+# Update if a new tag is found
+if [ "$LATEST_TAG" != "$LAST_SYNCED_TAG" ]; then
+    echo "Updating to tag: $LATEST_TAG"
+    git reset --hard "$LATEST_TAG"
     git clean -fd
-
-    git checkout "$LATEST_TAG"
-    
     echo "$LATEST_TAG" > "$LAST_TAG_FILE"
 
     echo "Restarting gshock.service"
     sudo systemctl restart gshock.service
 else
-    echo "No update needed. Current tag: $LATEST_TAG"
+    echo "Already up to date with tag: $LATEST_TAG"
 fi
 
-# Add cron job to run updater every 30 minutes
-CRON_JOB="*/1 * * * * $DIST_DIR/gshock-updater.sh >> $LOG_FILE 2>&1"
-
-# Get current crontab or fallback to empty
-CURRENT_CRON=$(crontab -l 2>/dev/null)
-
-# Debug: show current crontab
-echo "Current crontab:"
-echo "$CURRENT_CRON"
-echo "-----"
-
-# Check if job already exists
-if echo "$CURRENT_CRON" | grep -Fq "$CRON_JOB"; then
-    echo "Cron job already exists. Skipping."
-else
-    # Add job
-    (echo "$CURRENT_CRON"; echo "$CRON_JOB") | crontab -
-    echo "Cron job added."
-fi
+# Ensure cron job is present
+CRON_JOB="*/1 * * * * $REPO_DIR/gshock-updater.sh >> $LOG_FILE 2>&1"
+( crontab -l 2>/dev/null | grep -Fv "$REPO_NAME/gshock-updater.sh" ; echo "$CRON_JOB" ) | crontab -
 EOF
 
 chmod +x "$DIST_DIR/gshock-updater.sh"
@@ -304,11 +290,21 @@ echo "setup-all.sh has been created and made executable."
 cd "$DIST_DIR"
 git add .
 git commit -m "Automated update from make_dist.sh on $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit."
+# Get current branch name
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Push current branch
+echo "Pushing branch '$CURRENT_BRANCH'..."
+git push origin "$CURRENT_BRANCH"
+
+# If a tag is provided, create and push it
 if [ -n "$1" ]; then
-    git tag "$1"
-    git push origin "$1"
+    TAG="$1"
+    echo "Creating and pushing tag '$TAG'..."
+    git tag -a "$TAG" -m "Release $TAG"
+    git push origin "$TAG"
+else
+    echo "No tag provided, only branch pushed."
 fi
-git push
-cd ..
 
 echo "✅ $DIST_DIR updated and pushed to remote."

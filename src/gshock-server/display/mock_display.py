@@ -14,5 +14,4 @@ class MockDisplay(Display):
 
         # Save image
         self.image.save(self.output_file)
-        print(f"🖼 OLED preview saved as '{self.output_file}'.")
 
