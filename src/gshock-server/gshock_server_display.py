@@ -21,7 +21,7 @@ from peristent_store import PersistentMap
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
-__tag__ = "v1.0.37"
+__tag__ = "v1.0.39"
 
 # This script is used to set the time on a G-Shock watch and display information on a connected display.
 
@@ -132,10 +132,10 @@ async def safe_show_display(api):
         logger.error(f"Got error while showing display: {e}")
 
 async def run_time_server():
+    pressed_button = WatchButton.NO_BUTTON  # Always defined
     prompt()
 
     while True:
-        pressed_button = WatchButton.NO_BUTTON  # Always defined
         connection = None  # In case connection creation fails
 
         try:
@@ -146,7 +146,7 @@ async def run_time_server():
             run_once_key(
                 "show_welcome_screen",
                 oled.show_welcome_screen,
-                "Waiting\nfor connection...37.1",
+                "Waiting\nfor connection...40.1",
                 watch_name=store.get("watch_name", None),
                 last_sync=store.get("last_connected", None),
             )
@@ -155,7 +155,10 @@ async def run_time_server():
 
             # Connect to watch
             connection = Connection(address)
-            await connection.connect()
+            connected = await connection.connect()
+            if not connected:
+                logger.info("Failed to connect")
+                continue
 
             # Show connected screen
             oled.show_welcome_screen(message="Connected!")
@@ -181,9 +184,9 @@ async def run_time_server():
             # Display next view depending on button
             if pressed_button == WatchButton.LOWER_LEFT:
                 await safe_show_display(api)
-            else:
+            elif pressed_button == WatchButton.LOWER_RIGHT or pressed_button == WatchButton.NO_BUTTON:
                 oled.show_welcome_screen(
-                    "Waiting\nfor connection...37.2",
+                    "Waiting\nfor connection...",
                     watch_name=store.get("watch_name", None),
                     last_sync=store.get("last_connected", None),
                 )
@@ -199,7 +202,7 @@ async def run_time_server():
             logger.error(f"Got error: {e}")
 
             oled.show_welcome_screen(
-                "Waiting\nfor connection...37.3",
+                "Waiting\nfor connection...",
                 watch_name=store.get("watch_name", None),
                 last_sync=store.get("last_connected", None),
             )

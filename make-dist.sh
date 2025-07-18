@@ -159,7 +159,7 @@ else
 fi
 
 # Ensure cron job is present
-CRON_JOB="*/1 * * * * $REPO_DIR/gshock-updater.sh >> $LOG_FILE 2>&1"
+CRON_JOB="*/60 * * * * $REPO_DIR/gshock-updater.sh >> $LOG_FILE 2>&1"
 ( crontab -l 2>/dev/null | grep -Fv "$REPO_NAME/gshock-updater.sh" ; echo "$CRON_JOB" ) | crontab -
 EOF
 
