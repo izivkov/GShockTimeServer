@@ -146,7 +146,7 @@ async def run_time_server():
             run_once_key(
                 "show_welcome_screen",
                 oled.show_welcome_screen,
-                "Waiting\nfor connection...40.1",
+                "Waiting\nfor connection...",
                 watch_name=store.get("watch_name", None),
                 last_sync=store.get("last_connected", None),
             )
