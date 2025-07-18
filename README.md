@@ -47,6 +47,14 @@ python3 src/gshock_server.py --fine-adjustment-secs -9
 ```
 will set the watches time 9 secods vefore the computer's time.
 
+## Adding a Display
+
+If you are running the server on a [Pi Zero](https://amzn.to/3GA6nIR) or other Pi device, you can add a small LCD display to monitor the operation. Here is what the display shows:
+
+1. Welocome Screen.
+2. Connecting Screen.
+3. Detailed Information screen.
+
 ## Hardware
 You can run the server on a Pi 3/4 or Pi Zero device, optionally with LCD displays. Currently we support 
 the following 240x240 color displays:
@@ -63,10 +71,14 @@ the following 240x240 color displays:
 ![Waveshare LCD front](images/waveshare-front.jpg)
 ![Waveshare LCD back](images/waveshare-back.jpg)
 
+Get it [here](https://amzn.to/4eZDRNl).
+
 ### 1.54"-TFT-SPI LCD, ST7789 Controller
 
 ![TFT154 LCD front](images/tft154-front.jpg)
 ![TFT154 LCD back](images/tft154-back.jpg)
+
+Get it [here](https://amzn.to/3TQKNTk).
 
 TODO: Add links
 
