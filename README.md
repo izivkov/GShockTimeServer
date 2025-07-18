@@ -71,14 +71,14 @@ the following 240x240 color displays:
 ![Waveshare LCD front](images/waveshare-front.jpg)
 ![Waveshare LCD back](images/waveshare-back.jpg)
 
-Get it [here](https://amzn.to/4eZDRNl).
+[My associate link](https://amzn.to/4eZDRNl).
 
 ### 1.54"-TFT-SPI LCD, ST7789 Controller
 
 ![TFT154 LCD front](images/tft154-front.jpg)
 ![TFT154 LCD back](images/tft154-back.jpg)
 
-Get it [here](https://amzn.to/3TQKNTk).
+[My associate link](https://amzn.to/3IRtaAl).
 
 TODO: Add links
 
