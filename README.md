@@ -57,6 +57,26 @@ the following 240x240 color displays:
 | `tft154`     | 1.54"-TFT-SPI LCD, ST7789 Controller             | Inexpensive generic full-color TFT display. Requires jumper cables to connect to the Pi header pins |
 | `mock`       | No physical display                            | Simulates a display to `oled_preview.png` file. Used during development on PC |
 
+
+Here is how to connect the `1.54"-TFT-SPI LCD` to Rasoberry Pi 40-pin header:
+
+| LCD pin             | Purpose             | Raspberry Pi physical pin | Pi BCM GPIO | Notes                                                |
+| ------------------- | ------------------- | ------------------------- | ----------- | ---------------------------------------------------- |
+| **VCC**             | 3.3 V supply        | **1** (3V3)               | —           | The ST7789 is 3.3 V‑only—**never feed 5 V**          |
+| **GND**             | Ground              | **6** (GND)               | —           | Any ground pin is fine                               |
+| **SCL** or **CLK**  | SPI clock (SCLK)    | **23** (GPIO 11)          | GPIO 11     | Part of SPI0                                         |
+| **SDA** or **MOSI** | SPI data (MOSI)     | **19** (GPIO 10)          | GPIO 10     | Display is write‑only, so MISO isn’t used            |
+| **CS**              | Chip‑select         | **24** (GPIO 8 / CE0)     | GPIO 8      | Or pin 26 (CE1 / GPIO 7) if you prefer               |
+| **DC** (A0, D/C)    | Data/Command select | **18**                    | GPIO 24     | Any free GPIO works—update your code accordingly     |
+| **RES** (RST)       | Hardware reset      | **22**                    | GPIO 25     | Tie to 3 V3 if you don’t need GPIO reset             |
+| **BL** (LED)        | Back‑light          | **12** (GPIO 18)          | GPIO 18     | Drive with PWM to dim, or link to 3 V3 for always‑on |
+
+You need to enable SPI on the Pi (this is already done in the setup scripts `enable-spi.sh` shown bellow, so you don't have to do it manually)
+```
+sudo raspi-config            # Interface Options ▸ SPI ▸ Enable
+sudo reboot
+```
+
 TODO: Add links
 
 ## Automatic Setup
@@ -90,7 +110,9 @@ Note: You need to run both setup.sh and setup-display.sh.
 
 ### gshock-updater.sh
 
-(Optional) This script will set the device to automatically update its software if a new version is available on GitHub. It will then restart the server, so you will always be running the latest version.
+(Optional) This script will set the device to automatically update its software if a new version is available on GitHub.
+It will then restart the server, so you will always be running the latest version. The scripts sets us a cron job to
+run periodically and check for new tags on the `gshock-server-dist` GitHub repository.
 
 ### enable-spi.sh
 This script will enable the Linux driver needed for the display. Without this step, the display will not work. Reboot when asked after the script runs.
