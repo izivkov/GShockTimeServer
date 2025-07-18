@@ -49,7 +49,8 @@ will set the watches time 9 secods vefore the computer's time.
 
 ## Adding a Display
 
-If you are running the server on a [Pi Zero](https://amzn.to/3GA6nIR) or other Pi device, you can add a small LCD display to monitor the operation. Here is what the display shows:
+If you are running the server on a Pi Zero or other Pi device, you can add a small LCD display to monitor the operation. 
+If you are getting the Pi Zero, make sure you get one with the 40-pin header already soldered in, like [this one](https://amzn.to/3GA6nIR). Here is what the display shows:
 
 1. Welocome Screen.
 2. Connecting Screen.
