@@ -58,6 +58,15 @@ the following 240x240 color displays:
 | `mock`       | No physical display                            | Simulates a display to `oled_preview.png` file. Used during development on PC |
 
 
+### Waveshare 1.3" SPI LCD module HAT
+
+![Waveshare LCD front](images/waveshere-front.png)
+![Waveshare LCD back](images/waveshere-back.png)
+
+### 1.54"-TFT-SPI LCD, ST7789 Controller
+
+![TFT154 LCD front](images/tft154-front.png)
+![TFT154 LCD back](images/tft154-back.png)
 
 TODO: Add links
 
