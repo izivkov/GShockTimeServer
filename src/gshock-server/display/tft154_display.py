@@ -3,7 +3,7 @@ from luma.lcd.device import st7789
 from display.display import Display
 from PIL import Image, ImageDraw
     
-class FTP154Display(Display):
+class TFT154Display(Display):
     """
     """
     def __init__(self, width=240, height=240, i2c_port=1, i2c_address=0x3C):

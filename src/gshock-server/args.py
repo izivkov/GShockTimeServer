@@ -22,9 +22,9 @@ class Args:
         parser.add_argument(
             "--display",
             type=str,
-            choices=["mock", "waveshare", "ftp154"],
+            choices=["mock", "waveshare", "tft154"],
             default="mock",
-            help="Select display type: mock, waveshare, or ftp154"
+            help="Select display type: mock, waveshare, or tft154"
         )
         parser.add_argument(
             "-l", "--log_level", default="INFO", help="Sets log level", required=False
