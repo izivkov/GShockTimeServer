@@ -63,7 +63,7 @@ TODO: Add links
 
 To facilitate the installation, we provide several scripts to allow you to install all necessary files on an SD card created with the [Raspberry Pi Imager](https://www.raspberrypi.com/software/). Here are the steps:
 
-1. Use an SD card with a minimum of 4GB size and create your image using the Imager. Select your device, OS (select Lite), and your storage. After flashing the SD card, set your Wi-Fi network and password, and make sure SSH is enabled. Use the flashed SD card to boot your Pi device and SSH into it.
+1. Use an SD card with a minimum of 4GB size and create your image using the Imager. Select your device, OS (select Lite), and your storage. Don't forget to set your Wi-Fi network and password, and make sure SSH is enabled. Use the flashed SD card to boot your Pi device and SSH into it.
 
 2. Next we need to get the software from a GitHub repository. To do that, first install the `git` package on your device:
 
@@ -75,7 +75,9 @@ and then get the software:
 git clone https://github.com/izivkov/gshock-server-dist.git
 ```
 
-This will create a directory `gshock-server-dist` containing a number of shell scripts needed to set up the server. They are described below:
+This will create a directory `gshock-server-dist` containing a number of shell scripts needed to set up the server. Note that running the scripts takes relativey long time. In the Pi 3/4, typically half an hour. On the Pi Zero, let it run overnight ;-). 
+
+The scripts are described below:
 
 ### setup.sh
 
