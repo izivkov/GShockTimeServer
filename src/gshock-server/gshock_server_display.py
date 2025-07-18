@@ -51,9 +51,9 @@ def get_display(display_type: str):
     elif display_type == "waveshare":
         from display.waveshare_display import WaveshareDisplay
         return WaveshareDisplay()
-    elif display_type == "ftp154":
-        from display.ftp154_display import FTP154Display
-        return FTP154Display()
+    elif display_type == "tft154":
+        from display.tft154_display import TFT154Display
+        return TFT154Display()
     else:
         raise ValueError(f"Unsupported display type: {display_type}")
 

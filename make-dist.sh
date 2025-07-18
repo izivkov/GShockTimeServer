@@ -188,7 +188,7 @@ pip install spidev smbus smbus2 gpiozero numpy luma.oled luma.lcd lgpio pillow s
 
 echo "Select your display type:"
 echo "  1) waveshare (default)"
-echo "  2) ftp154"
+echo "  2) tft154"
 
 read -p "Enter 1 or 2 [default: 1]: " DISPLAY_CHOICE
 
@@ -196,7 +196,7 @@ read -p "Enter 1 or 2 [default: 1]: " DISPLAY_CHOICE
 if [[ "$DISPLAY_CHOICE" != "2" ]]; then
   DISPLAY_TYPE="waveshare"
 else
-  DISPLAY_TYPE="ftp154"
+  DISPLAY_TYPE="tft154"
 fi
 
 # Overwrite systemd service with display version

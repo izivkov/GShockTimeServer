@@ -54,7 +54,7 @@ the following 240x240 color displays:
 | Display Type | Description                                    | Notes                                      |
 |--------------|------------------------------------------------|--------------------------------------------|
 | `waveshare`  | Waveshare 1.3" SPI LCD module HAT, ST7789 Controller  | Widely available LCD color display. Directly plugs into the 40-pin header of the Pi |
-| `ftp154`     | 1.54"-TFT-SPI LCD, ST7789 Controller             | Inexpensive generic full-color TFT display. Requires jumper cables to connect to the Pi header pins |
+| `tft154`     | 1.54"-TFT-SPI LCD, ST7789 Controller             | Inexpensive generic full-color TFT display. Requires jumper cables to connect to the Pi header pins |
 | `mock`       | No physical display                            | Simulates a display to `oled_preview.png` file. Used during development on PC |
 
 TODO: Add links
