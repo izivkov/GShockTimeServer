@@ -60,8 +60,8 @@ the following 240x240 color displays:
 
 ### Waveshare 1.3" SPI LCD module HAT
 
-![Waveshare LCD front](images/waveshere-front.jpg)
-![Waveshare LCD back](images/waveshere-back.jpg)
+![Waveshare LCD front](images/waveshare-front.jpg)
+![Waveshare LCD back](images/waveshare-back.jpg)
 
 ### 1.54"-TFT-SPI LCD, ST7789 Controller
 
