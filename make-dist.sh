@@ -2,8 +2,6 @@
 
 set -e
 
-# Tag 1.0.1
-
 DIST_DIR="gshock-server-dist"
 SRC_DIR="src/gshock-server"
 
@@ -116,6 +114,8 @@ echo "setup.sh has been created and made executable."
 cat << 'EOF' > "$DIST_DIR/gshock-updater.sh"
 #!/bin/bash
 
+set -e
+
 # This script will set the device to automatically update its software if a new version is available on GitHub.
 # It will then restart the server, so you will always be running the latest version. The scripts sets us a cron job to
 # run periodically and check for new tags on the `gshock-server-dist` GitHub repository.
@@ -184,6 +184,8 @@ cat << 'EOF' > "$DIST_DIR/setup-display.sh"
 # Installs all display-related dependencies. While installing, it will ask you to select the display type.
 # Note: You need to run both setup.sh and setup-display.sh.
 
+set -e
+
 echo "== Display setup =="
 
 # Update & upgrade
@@ -246,6 +248,8 @@ cat << 'EOF' > "$DIST_DIR/enable-spi.sh"
 
 # This script will enable the Linux driver needed for the display. Without this step, the display will not work.
 # Reboot when asked after the script runs.
+
+set -e
 
 echo "== Enabling SPI interface =="
 
