@@ -45,6 +45,9 @@ cat << 'EOF' > "$DIST_DIR/setup.sh"
 
 set -e
 
+# This script installs the basic software, dependencies, sets up a service to start the server each time 
+# the device is rebooted, etc. For a device with no display, this is sufficient to run the server.
+
 INSTALL_DIR="$(cd "$(dirname "$0")"; pwd)"
 SERVICE_USER="$(whoami)"
 VENV_DIR="$HOME/venv"
@@ -112,6 +115,11 @@ echo "setup.sh has been created and made executable."
 ################################################################
 cat << 'EOF' > "$DIST_DIR/gshock-updater.sh"
 #!/bin/bash
+
+# This script will set the device to automatically update its software if a new version is available on GitHub.
+# It will then restart the server, so you will always be running the latest version. The scripts sets us a cron job to
+# run periodically and check for new tags on the `gshock-server-dist` GitHub repository.
+
 set -e
 
 REPO_NAME="gshock-server-dist"
@@ -173,6 +181,9 @@ echo "gshock-updater has been created and made executable."
 cat << 'EOF' > "$DIST_DIR/setup-display.sh"
 #!/bin/bash
 
+# Installs all display-related dependencies. While installing, it will ask you to select the display type.
+# Note: You need to run both setup.sh and setup-display.sh.
+
 echo "== Display setup =="
 
 # Update & upgrade
@@ -233,6 +244,9 @@ echo "setup-display.sh has been created and made executable."
 cat << 'EOF' > "$DIST_DIR/enable-spi.sh"
 #!/bin/bash
 
+# This script will enable the Linux driver needed for the display. Without this step, the display will not work.
+# Reboot when asked after the script runs.
+
 echo "== Enabling SPI interface =="
 
 CONFIG_FILE="/boot/firmware/config.txt"
@@ -278,6 +292,9 @@ echo "enable-spi.sh has been created and made executable."
 
 cat << 'EOF' > "$DIST_DIR/setup-all.sh"
 #!/bin/bash
+
+# This script runs all setup scripts in order.
+
 . ./setup.sh
 . ./setup-display.sh
 . ./gshock-updater.sh
