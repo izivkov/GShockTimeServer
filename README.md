@@ -50,9 +50,22 @@ will set the watches time 9 secods vefore the computer's time.
 ## Adding a Display
 
 If you are running the server on a Pi Zero or other Pi device, you can add a small LCD display to monitor the operation. 
-If you are getting the Pi Zero, make sure you get one with the 40-pin header already soldered in, like [this one](https://amzn.to/3GA6nIR). Here is what the display shows:
+If you are getting the Pi Zero, make sure you get one with the 40-pin header already soldered in, like [this one](https://amzn.to/3GA6nIR). 
 
-1. Welocome Screen.
+Here is how to run the display-enabled script:
+
+```
+python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs secs] [--display waveshare | tft154 | mock]
+```
+
+Note that instaed of running `gshock_server.py` we run `gshock_server_display.py`. Note also the extra parameter `display`, which can have values 
+of `waveshare`, `tft154` or `mock`, depending on the display type, as described bellow.
+
+There are also some extra dependencies which need to be installed, too many to list here. Instead, please refer to `setup-display.sh` scrpts. Running this script will install all depndencies, as well as create a service to start the GShock Server every time the device is booted. More info bellow.
+
+Here is what the display shows:
+
+1. Welcome Screen.
 2. Connecting Screen.
 3. Detailed Information screen.
 
@@ -72,6 +85,8 @@ the following 240x240 color displays:
 ![Waveshare LCD front](images/waveshare-front.jpg)
 ![Waveshare LCD back](images/waveshare-back.jpg)
 
+We recommend getting this one. It is easer to connect to the Pi, bacuse it already has a 40-pin female head which plugs directly into the Pi's 40-pin header, so this reduces connection errors.
+
 [My associate link](https://amzn.to/4eZDRNl).
 
 ### 1.54"-TFT-SPI LCD, ST7789 Controller
@@ -80,8 +95,7 @@ the following 240x240 color displays:
 ![TFT154 LCD back](images/tft154-back.jpg)
 
 [My associate link](https://amzn.to/3IRtaAl).
-
-TODO: Add links
+[Jumper Cables](https://amzn.to/4eXT55D)
 
 ## Automatic Setup
 
