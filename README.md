@@ -61,7 +61,7 @@ python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs sec
 Note that instaed of running `gshock_server.py` we run `gshock_server_display.py`. Note also the extra parameter `display`, which can have values 
 of `waveshare`, `tft154` or `mock`, depending on the display type, as described bellow.
 
-There are also some extra dependencies which need to be installed, too many to list here. Instead, please refer to `setup-display.sh` scrpt. Running this script will install all depexzindencies, as well as create a service to start the GShock Server every time the device is booted. More info bellow.
+There are also some extra dependencies which need to be installed, too many to list here. Instead, please refer to `setup-display.sh` scrpt. Running this script will install all dependencies, as well as create a service to start the Server every time the device is booted. More info bellow.
 
 Here is what the display shows:
 
@@ -84,32 +84,37 @@ This screen shows that a new connection has taken place.
 This screen shows some details about the last connected watch, such as time of last sync, upcoming alarm and reminder.
 
 ## Hardware
-You can run the server on a Pi 3/4 or Pi Zero device, optionally with LCD displays. Currently we support 
-the following 240x240 color displays:
+Currently we support the following 240x240 color displays:
 
 | Display Type | Description                                    | Notes                                      |
 |--------------|------------------------------------------------|--------------------------------------------|
-| `waveshare`  | Waveshare 1.3" SPI LCD module HAT, ST7789 Controller  | Widely available LCD color display. Directly plugs into the 40-pin header of the Pi |
-| `tft154`     | 1.54"-TFT-SPI LCD, ST7789 Controller             | Inexpensive generic full-color TFT display. [Requires jumper cables to connect to the Pi header pins](#connecting-the-154-tft-spi-lcd-to-raspberry-pi) |
-| `mock`       | No physical display                            | Simulates a display to `oled_preview.png` file. Used during development on PC |
+| `waveshare`  | Waveshare 1.3" SPI LCD module HAT, ST7789 Controller  | Widely available color display. Directly plugs into the Pi's 40-pin header. [Buy on Amazon](https://amzn.to/4eZDRNl) |
+| `tft154`     | 1.54" TFT SPI LCD, ST7789 Controller            | Inexpensive generic display. Requires jumper wires to connect to GPIO header. [Buy Display](https://amzn.to/3IRtaAl), [Buy Jumper Wires](https://amzn.to/4eXT55D) |
+| `mock`       | No physical display                            | Simulates a display to oled_preview.png. Useful during development or headless testing |
 
+---
 
 ### Waveshare 1.3" SPI LCD module HAT
 
-![Waveshare LCD front](images/waveshare-front.jpg)
+![Waveshare LCD front](images/waveshare-front.jpg)  
 ![Waveshare LCD back](images/waveshare-back.jpg)
 
-We recommend getting this one. It is easer to connect to the Pi, bacuse it already has a 40-pin female head which plugs directly into the Pi's 40-pin header, so this reduces connection errors.
+This is the easiest option to set up. It has a female 40-pin connector that mates directly with the Pi's GPIO header—no wiring needed and fewer connection errors.
 
-[My associate link](https://amzn.to/4eZDRNl).
+👉 [Buy on Amazon (affiliate)](https://amzn.to/4eZDRNl)
 
-### 1.54"-TFT-SPI LCD, ST7789 Controller
+---
 
-![TFT154 LCD front](images/tft154-front.jpg)
+### 1.54" TFT SPI LCD, ST7789 Controller
+
+![TFT154 LCD front](images/tft154-front.jpg)  
 ![TFT154 LCD back](images/tft154-back.jpg)
 
-[My associate link](https://amzn.to/3IRtaAl).
-[Jumper Cables](https://amzn.to/4eXT55D)
+This is a lower-cost generic display with the same ST7789 driver chip. It must be wired using jumper cables to the correct GPIO pins. See [Connecting the 1.54" TFT SPI LCD to Raspberry Pi](#connecting-the-154-tft-spi-lcd-to-raspberry-pi) for instructions.
+
+👉 [Buy Display](https://amzn.to/3IRtaAl)  
+👉 [Buy Jumper Wires](https://amzn.to/4eXT55D)
+
 
 ## Automatic Setup
 
