@@ -66,16 +66,21 @@ There are also some extra dependencies which need to be installed, too many to l
 Here is what the display shows:
 
 1. Welcome Screen.
+
 ![Welcome Screen](images/welcome-screen.png)
 
 This screen shows the watch name and time the watch was last synced.
 
 2. Connected Screen.
+
 ![Connected Screen](images/connected-screen.png)
+
 This screen shows that a new connection has taken place.
 
 3. Detailed Information screen.
+
 ![Detailed Screen](images/detailed-screen.png)
+
 This screen shows some details about the last connected watch, such as time of last sync, upcoming alarm and reminder.
 
 ## Hardware
