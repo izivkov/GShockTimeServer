@@ -61,6 +61,7 @@ To use a display, run this variant of the server:
 
 ```bash
 python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs SECS] --display waveshare|tft154|mock
+```
 
 ✅ Key differences:
 
