@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-### What the project does
+### What the project does.
 
 **ShockTimeServer** allows you to set the correct time on your Casio G-Shock watches. Just like your GShock Watch, it is designed to set-and-forget. Just start the server and it will run for months without any user intervention.
 
