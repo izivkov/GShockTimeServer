@@ -61,13 +61,22 @@ python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs sec
 Note that instaed of running `gshock_server.py` we run `gshock_server_display.py`. Note also the extra parameter `display`, which can have values 
 of `waveshare`, `tft154` or `mock`, depending on the display type, as described bellow.
 
-There are also some extra dependencies which need to be installed, too many to list here. Instead, please refer to `setup-display.sh` scrpts. Running this script will install all depndencies, as well as create a service to start the GShock Server every time the device is booted. More info bellow.
+There are also some extra dependencies which need to be installed, too many to list here. Instead, please refer to `setup-display.sh` scrpt. Running this script will install all depexzindencies, as well as create a service to start the GShock Server every time the device is booted. More info bellow.
 
 Here is what the display shows:
 
 1. Welcome Screen.
-2. Connecting Screen.
+![Welcome Screen](images/welcome-screen.png)
+
+This screen shows the watch name and time the watch was last synced.
+
+2. Connected Screen.
+![Connected Screen](images/connected-screen.png)
+This screen shows that a new connection has taken place.
+
 3. Detailed Information screen.
+![Detailed Screen](images/detailed-screen.png)
+This screen shows some details about the last connected watch, such as time of last sync, upcoming alarm and reminder.
 
 ## Hardware
 You can run the server on a Pi 3/4 or Pi Zero device, optionally with LCD displays. Currently we support 
