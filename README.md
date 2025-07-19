@@ -75,7 +75,7 @@ python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs SEC
 
         mock — no hardware, output goes to oled_preview.png (useful for development)
 
-Installing Display Dependencies
+#### Installing Display Dependencies
 
 Using a display requires several additional libraries (Pillow, luma.lcd, RPi.GPIO, etc.).
 
@@ -106,7 +106,6 @@ What the Display Shows
     Shows details about the last connected watch, including time of last sync, next alarm, and reminder.
 
     Detailed Screen
-
 
 ## Hardware
 Currently we support the following 240x240 color displays:
