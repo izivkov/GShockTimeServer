@@ -153,14 +153,19 @@ python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs SEC
 ✅ Welcome Screen
 
 ![Welcome Screen](images/welcome-screen.png)
+
 Displays the current watch name and last sync time.
 
 🔗 Connected Screen
+
 ![Connected Screen](images/connected-screen.png)
+
 Shown briefly when a new connection with the watch is established.
 
 🕒 Detailed Info Screen
+
 ![Detailed Screen](images/detailed-screen.png)
+
 Shows details about the last connected watch, including time of last sync, next alarm, and reminder.
 
 ## 7. Hardware
