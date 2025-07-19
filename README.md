@@ -1,23 +1,42 @@
 # GShockTimeServer
+## 1. Overview
 
-## Overview
+    ### What the project does
 
-GShockTimeServer allows you to set the correct time on your Casio G-Shock watches. Most G-Shock and other Casio Bluetooth watches are supported. Please give us feedback if your watch does not work.
+    **ShockTimeServer** allows you to set the correct time on your Casio G-Shock watches. Just like your GShock Watch, it is designed to set-and-forget. Just start the server and it will run for months without any user intervention.
 
-## Usage
+    ### Supported watch types
 
-This app can run on any device with Python and Bluetooth capabilities—from a desktop to a Raspberry Pi Zero.  
-It has been tested on Linux but should also work on Windows.
+    Most G-Shock and other Casio Bluetooth watches are supported. Here is a list of supported watches:
+    G(M)W-5600, G(M)W-5000, GA-B2100, GA-B001-1AER, GST-B500, GST-B200, MSG-B100, G-B001, GBD-H1000 (Partial support), MRG-B5000, GST-B600, GCW-B5000, GG-B100, ABL-100WE, Edifice ECB-30, ECB-10, ECB-20, most Edifice watches, most Protrek models.
 
+    Let us know if it works with other watches, and if you like us to add support for your watch.
 
-### Setting the Time
+    ### How it works at a high level
 
-1. Ensure the app is running on your device.
-2. Short-press the **lower-right** button on your G-Shock watch to connect.
-3. Once connected, the app will automatically set the correct time on your watch.
-4. If **AUTO TIME ADJUSTMENT** is enabled, the watch will sync up to **four times daily**.
+    The server waits for watches to connect vial Bluetooth, and sends them the time once connected. 
 
-## Manual Minimal Setup
+    ### Usage
+
+    1. Ensure the app is running on your device.
+    2. Short-press the **lower-right** or long-press the **lower-left** button on your G-Shock watch to connect.
+    3. Once connected, the app will automatically set the correct time on your watch.
+    4. If **AUTO TIME ADJUSTMENT** is enabled, the watch will sync up to **four times daily**.
+
+## 2. Features
+
+    Automatic time sync
+
+    Multi-watch support
+
+    Optional display support
+
+    Raspberry Pi integration
+
+    GitHub auto-updates (if applicable)
+
+## 3. Quick Start
+3.1 On Desktop or Laptop (Linux, Windows)
 
 If you like to run the Time Server on any Linux or Windows PC, here os how to do it. First you need to install
 the follwoing dependencies:
@@ -47,106 +66,17 @@ python3 src/gshock_server.py --fine-adjustment-secs -9
 ```
 will set the watches time 9 secods vefore the computer's time.
 
-## Adding a Display
+### 3.2 On Raspberry Pi
 
-If you're running the server on a Raspberry Pi Zero or another Pi model, you can attach a small SPI-based LCD display to visually monitor the system status.
+The above instructions will work on Raspberry Pi devices (including Pi Zero). But on the Pi, you can also connect a small LSD display to monitor the operation of the server. Also, if you are starting from a brand new Pi SD card, you will need to install some dependencies. We provide some scripts to automate this process. Here are instructions how to setup the server starting from flashing the official Pi SD card.
 
-➡️ If you're using a Pi Zero, make sure to get a model with a pre-soldered 40-pin GPIO header, such as [this one](https://amzn.to/3GA6nIR).
+    #### How to flash with [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
 
----
+    Use an SD card with a minimum of 4GB size and create your image using the Imager. Select your device, OS (select Lite), and your storage. Don't forget to set your Wi-Fi network and password, and make sure SSH is enabled. 
 
-### Running the Display-Enabled Script
+    #### Installing git and cloning the repo
 
-To use a display, run this variant of the server:
-
-```bash
-python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs SECS] --display waveshare|tft154|mock
-```
-
-✅ Key differences:
-
-    Use gshock_server_display.py instead of gshock_server.py.
-
-    Add the --display argument to select the display type:
-
-        waveshare — for Waveshare 1.3" HAT
-
-        tft154 — for generic 1.54" ST7789 SPI screen
-
-        mock — no hardware, output goes to oled_preview.png (useful for development)
-
-#### Installing Display Dependencies
-
-Using a display requires several additional libraries (Pillow, luma.lcd, RPi.GPIO, etc.).
-
-Instead of installing them manually, run:
-
-./setup-display.sh
-
-This script will:
-
-    Install all required Python packages and fonts
-
-    Set up the gshock service to start automatically on boot
-
-More details are available in the setup-display.sh script.
-What the Display Shows
-
-    ✅ Welcome Screen
-    Displays the current watch name and last sync time.
-
-    Welcome Screen
-
-    🔗 Connected Screen
-    Shown briefly when a new connection with the watch is established.
-
-    Connected Screen
-
-    🕒 Detailed Info Screen
-    Shows details about the last connected watch, including time of last sync, next alarm, and reminder.
-
-    Detailed Screen
-
-## Hardware
-Currently we support the following 240x240 color displays:
-
-| Display Type | Description                                    | Notes                                      |
-|--------------|------------------------------------------------|--------------------------------------------|
-| `waveshare`  | Waveshare 1.3" SPI LCD module HAT, ST7789 Controller  | Widely available color display. Directly plugs into the Pi's 40-pin header. [Buy on Amazon](https://amzn.to/4eZDRNl) |
-| `tft154`     | 1.54" TFT SPI LCD, ST7789 Controller            | Inexpensive generic display. Requires jumper wires to connect to GPIO header. [Buy Display](https://amzn.to/3IRtaAl), [Buy Jumper Wires](https://amzn.to/4eXT55D) |
-| `mock`       | No physical display                            | Simulates a display to oled_preview.png. Useful during development or headless testing |
-
----
-
-### Waveshare 1.3" SPI LCD module HAT
-
-![Waveshare LCD front](images/waveshare-front.jpg)  
-![Waveshare LCD back](images/waveshare-back.jpg)
-
-This is the easiest option to set up. It has a female 40-pin connector that mates directly with the Pi's GPIO header—no wiring needed and fewer connection errors.
-
-👉 [Buy on Amazon (affiliate)](https://amzn.to/4eZDRNl)
-
----
-
-### 1.54" TFT SPI LCD, ST7789 Controller
-
-![TFT154 LCD front](images/tft154-front.jpg)  
-![TFT154 LCD back](images/tft154-back.jpg)
-
-This is a lower-cost generic display with the same ST7789 driver chip. It must be wired using jumper cables to the correct GPIO pins. See [Connecting the 1.54" TFT SPI LCD to Raspberry Pi](#connecting-the-154-tft-spi-lcd-to-raspberry-pi) for instructions.
-
-👉 [Buy Display](https://amzn.to/3IRtaAl)  
-👉 [Buy Jumper Wires](https://amzn.to/4eXT55D)
-
-
-## Automatic Setup
-
-To facilitate the installation, we provide several scripts to allow you to install all necessary files on an SD card created with the [Raspberry Pi Imager](https://www.raspberrypi.com/software/). Here are the steps:
-
-1. Use an SD card with a minimum of 4GB size and create your image using the Imager. Select your device, OS (select Lite), and your storage. Don't forget to set your Wi-Fi network and password, and make sure SSH is enabled. Use the flashed SD card to boot your Pi device and SSH into it.
-
-2. Next we need to get the software from a GitHub repository. To do that, first install the `git` package on your device:
+    Use the flashed SD card to boot your Pi device and SSH into it. Next we need to get the software from a GitHub repository. To do that, first install the `git` package on your device:
 
 ```
 sudo apt-get install git
@@ -158,32 +88,127 @@ git clone https://github.com/izivkov/gshock-server-dist.git
 
 This will create a directory `gshock-server-dist` containing a number of shell scripts needed to set up the server. Note that running the scripts takes relativey long time. In the Pi 3/4, typically half an hour. On the Pi Zero, let it run overnight ;-). 
 
-The scripts are described below:
+## 4. Setup Scripts
 
-### setup.sh
+### 4.1 setup.sh
 
-This script installs the basic software, dependencies, sets up a service to start the server each time the device is rebooted, etc. For a device with no display, this is sufficient to run the server.
+    This script installs the basic software, dependencies, creates Python virtual environment, sets up a service to start the server each time the device is rebooted, etc. For a device with no display, this is sufficient to run the server. 
 
-### setup-display.sh
-Installs all display-related dependencies. While installing, it will ask you to select the display type.
+### 4.2 setup-display.sh
 
-Note: You need to run both setup.sh and setup-display.sh.
+    Installs all display-related dependencies. While installing, it will ask you to select the display type.
 
-### gshock-updater.sh
+    Note: You need to run both setup.sh and setup-display.sh.
 
-(Optional) This script will set the device to automatically update its software if a new version is available on GitHub.
+
+### 4.3 gshock-updater.sh (Optional)
+
+This script will set the device to automatically update its software if a new version is available on GitHub.
 It will then restart the server, so you will always be running the latest version. The scripts sets us a cron job to
 run periodically and check for new tags on the `gshock-server-dist` GitHub repository.
+4.4 enable-spi.sh
 
-### enable-spi.sh
-This script will enable the Linux driver needed for the display. Without this step, the display will not work. Reboot when asked after the script runs.
+### 4.4 nable-spi.sh
 
-### setup-all.sh
-Runs all the scripts above in one step.
+This script will enable the Linux driver needed for the display. Without this step, the display will not work. Reboot when asked after the script runs. In it you can see a line like this:
 
-## Connecting the 1.54"-TFT-SPI LCD to Raspberry Pi
+```
+/home/pi/venv/bin/python /home/pi/gshock-server-dist/gshock_server.py --multi-watch
+```
+or
+```
+/home/pi/venv/bin/python /home/pi/gshock-server-dist/gshock_server_display.py --multi-watch --display waveshare
+```
 
-Here is how to connect the `1.54"-TFT-SPI LCD` to Rasoberry Pi 40-pin header:
+Depending on weather you are running the headless or display-enabled version. The `--discplay` paramert is explained bellow.
+
+### 4.5 setup-all.sh
+
+    Runs all the scripts above in one step.
+
+## 5. Using the Server
+
+If you have used the scripts to install the software, a service file `/etc/systemd/system/gshock.service` will be created. This will start the server automatically when rebooting. 
+
+5.2 Connecting Your Watch
+
+    Short-press the **lower-right** or long-press the **lower-left** button on your G-Shock watch to connect. The watch will connect the its correct time will be set by the server. The watch then will be disconnected.
+
+    If you use the **lower-left** buton, in addition to setting time, the display on the Pi device will be updated with information about the currect state of the watch. **lower-right** button will just update the time.
+
+## 6. Adding a Display
+
+
+6.3 Running the Display Script
+
+To use a display, run this variant of the server:
+
+```bash
+python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs SECS] --display waveshare|tft154|mock
+```
+
+### 6.4 What the Display Shows
+
+✅ Welcome Screen
+
+    ![Welcome Screen](images/welcome-screen.png)
+    Displays the current watch name and last sync time.
+
+    Welcome Screen
+
+    🔗 Connected Screen
+    ![Connected Screen](images/connected-screen.png)
+    Shown briefly when a new connection with the watch is established.
+
+    Connected Screen
+
+    🕒 Detailed Info Screen
+    ![Detailed Screen](images/detailed-screen.png)
+    Shows details about the last connected watch, including time of last sync, next alarm, and reminder.
+
+    Detailed Screen    
+
+## 7. Hardware
+
+### 6.1 Supported Display Types
+
+If you're running the server on a Raspberry Pi Zero or another Pi model, you can attach a small SPI-based LCD display to visually monitor the system status.
+
+➡️ If you're using a Pi Zero, make sure to get a model with a pre-soldered 40-pin GPIO header, such as [this one](https://amzn.to/3GA6nIR).
+
+Currently we support the following 240x240 color displays:
+
+| Display Type | Description                                    | Notes                                      |
+|--------------|------------------------------------------------|--------------------------------------------|
+| `waveshare`  | Waveshare 1.3" SPI LCD module HAT, ST7789 Controller  | Widely available color display. Directly plugs into the Pi's 40-pin header. [Buy on Amazon](https://amzn.to/4eZDRNl) |
+| `tft154`     | 1.54" TFT SPI LCD, ST7789 Controller            | Inexpensive generic display. Requires jumper wires to connect to GPIO header. [Buy Display](https://amzn.to/3IRtaAl), [Buy Jumper Wires](https://amzn.to/4eXT55D) |
+| `mock`       | No physical display                            | Simulates a display to oled_preview.png. Useful during development or headless testing |
+
+
+### Waveshare 1.3" SPI LCD module HAT
+
+![Waveshare LCD front](images/waveshare-front.jpg)  
+![Waveshare LCD back](images/waveshare-back.jpg)
+
+This is the easiest option to set up. It has a female 40-pin connector that mates directly with the Pi's GPIO header—no wiring needed and fewer connection errors.
+
+👉 [Get on Amazon (affiliate)](https://amzn.to/4eZDRNl)
+
+---
+
+### 1.54" TFT SPI LCD, ST7789 Controller
+
+![TFT154 LCD front](images/tft154-front.jpg)  
+![TFT154 LCD back](images/tft154-back.jpg)
+
+This is a lower-cost generic display with the same ST7789 driver chip. It must be wired using jumper cables to the correct GPIO pins. See [Connecting the 1.54" TFT SPI LCD to Raspberry Pi](#connecting-the-154-tft-spi-lcd-to-raspberry-pi) for instructions.
+
+👉 [Get Display](https://amzn.to/3IRtaAl)  
+👉 [Get Jumper Wires](https://amzn.to/4eXT55D)
+
+6.2 Wiring Instructions for the 
+
+   Here is how to connect the `1.54"-TFT-SPI LCD` to Rasoberry Pi 40-pin header:
 
 | LCD pin             | Purpose             | Raspberry Pi physical pin | Pi BCM GPIO | Notes                                                |
 | ------------------- | ------------------- | ------------------------- | ----------- | ---------------------------------------------------- |
@@ -196,21 +221,48 @@ Here is how to connect the `1.54"-TFT-SPI LCD` to Rasoberry Pi 40-pin header:
 | **RES** (RST)       | Hardware reset      | **22**                    | GPIO 25     | Tie to 3 V3 if you don’t need GPIO reset             |
 | **BL** (LED)        | Back‑light          | **12** (GPIO 18)          | GPIO 18     | Drive with PWM to dim, or link to 3 V3 for always‑on |
 
-You need to enable SPI on the Pi (this is already done in the setup scripts `enable-spi.sh` shown bellow, so you don't have to do it manually)
+You need to enable SPI on the Pi (this is already done in the setup scripts `enable-spi.sh`, so you don't have to do it manually.
 ```
 sudo raspi-config            # Interface Options ▸ SPI ▸ Enable
 sudo reboot
 ```
 
+7.2 Waveshare Display
 
-## Troubleshooting
-If your watch is not connecting, remove `config.ini` file and try again. 
+    Description and images
 
-To see output from the service do:
-```
-journalctl -u gshock.service -f
-```
+    Amazon affiliate link
 
+7.3 TFT154 Display
 
+    Description and images
 
+    Amazon affiliate and jumper wire links
 
+7.4 Mock Display
+
+    What it does and when it's useful
+
+8. Wiring Guide
+8.1 Connecting the 1.54" TFT SPI LCD
+
+    Full pin mapping table
+
+    SPI enable instructions
+
+9. Troubleshooting
+9.1 Common Issues
+
+    BLE connection errors
+
+    Watch not syncing
+
+9.2 Debugging the Service
+
+    journalctl command
+
+10. License and Credits
+
+    License type
+
+    Acknowledgments
