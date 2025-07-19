@@ -49,39 +49,63 @@ will set the watches time 9 secods vefore the computer's time.
 
 ## Adding a Display
 
-If you are running the server on a Pi Zero or other Pi device, you can add a small LCD display to monitor the operation. 
-If you are getting the Pi Zero, make sure you get one with the 40-pin header already soldered in, like [this one](https://amzn.to/3GA6nIR). 
+If you're running the server on a Raspberry Pi Zero or another Pi model, you can attach a small SPI-based LCD display to visually monitor the system status.
 
-Here is how to run the display-enabled script:
+➡️ If you're using a Pi Zero, make sure to get a model with a pre-soldered 40-pin GPIO header, such as [this one](https://amzn.to/3GA6nIR).
 
-```
-python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs secs] [--display waveshare | tft154 | mock]
-```
+---
 
-Note that instaed of running `gshock_server.py` we run `gshock_server_display.py`. Note also the extra parameter `display`, which can have values 
-of `waveshare`, `tft154` or `mock`, depending on the display type, as described bellow.
+### Running the Display-Enabled Script
 
-There are also some extra dependencies which need to be installed, too many to list here. Instead, please refer to `setup-display.sh` scrpt. Running this script will install all dependencies, as well as create a service to start the Server every time the device is booted. More info bellow.
+To use a display, run this variant of the server:
 
-Here is what the display shows:
+```bash
+python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs SECS] --display waveshare|tft154|mock
 
-1. Welcome Screen.
+✅ Key differences:
 
-![Welcome Screen](images/welcome-screen.png)
+    Use gshock_server_display.py instead of gshock_server.py.
 
-This screen shows the watch name and time the watch was last synced.
+    Add the --display argument to select the display type:
 
-2. Connected Screen.
+        waveshare — for Waveshare 1.3" HAT
 
-![Connected Screen](images/connected-screen.png)
+        tft154 — for generic 1.54" ST7789 SPI screen
 
-This screen shows that a new connection has taken place.
+        mock — no hardware, output goes to oled_preview.png (useful for development)
 
-3. Detailed Information screen.
+Installing Display Dependencies
 
-![Detailed Screen](images/detailed-screen.png)
+Using a display requires several additional libraries (Pillow, luma.lcd, RPi.GPIO, etc.).
 
-This screen shows some details about the last connected watch, such as time of last sync, upcoming alarm and reminder.
+Instead of installing them manually, run:
+
+./setup-display.sh
+
+This script will:
+
+    Install all required Python packages and fonts
+
+    Set up the gshock service to start automatically on boot
+
+More details are available in the setup-display.sh script.
+What the Display Shows
+
+    ✅ Welcome Screen
+    Displays the current watch name and last sync time.
+
+    Welcome Screen
+
+    🔗 Connected Screen
+    Shown briefly when a new connection with the watch is established.
+
+    Connected Screen
+
+    🕒 Detailed Info Screen
+    Shows details about the last connected watch, including time of last sync, next alarm, and reminder.
+
+    Detailed Screen
+
 
 ## Hardware
 Currently we support the following 240x240 color displays:
