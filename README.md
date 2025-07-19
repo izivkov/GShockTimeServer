@@ -6,6 +6,10 @@
 
 **ShockTimeServer** allows you to set the correct time on your Casio G-Shock watches. Just like your GShock Watch, it is designed to set-and-forget. Just start the server and it will run for months without any user intervention.
 
+The server can run on a Raspberry Pi device with a small LSD display, ot can run headless on any device with Bluetooth and Python.
+
+    💡 Note: Here we refer to Raspberry Pi, but the same instructions apply to other Pi-like devices, like Banana-Pi and other hardware compatible devices.
+
 ### Supported watch types
 
 Most G-Shock and other Casio Bluetooth watches are supported. Here is a list of supported watches:
@@ -16,13 +20,6 @@ Let us know if it works with other watches, and if you like us to add support fo
 ### How it works at a high level
 
 The server waits for watches to connect vial Bluetooth, and sends them the time once connected. 
-
-### Usage
-
-1. Ensure the app is running on your device.
-2. Short-press the **lower-right** or long-press the **lower-left** button on your G-Shock watch to connect.
-3. Once connected, the app will automatically set the correct time on your watch.
-4. If **AUTO TIME ADJUSTMENT** is enabled, the watch will sync up to **four times daily**.
 
 ## 2. Features
 
@@ -36,11 +33,27 @@ The server waits for watches to connect vial Bluetooth, and sends them the time 
 
 - GitHub auto-updates (if applicable)
 
-## 3. Quick Start
-3.1 On Desktop or Laptop (Linux, Windows)
+### Usage
 
-If you like to run the Time Server on any Linux or Windows PC, here os how to do it. First you need to install
-the follwoing dependencies:
+1. Start the server:
+2. Short-press the **lower-right** or long-press the **lower-left** button on your G-Shock watch to connect.
+3. Once connected, the app will automatically set the correct time on your watch.
+4. If **AUTO TIME ADJUSTMENT** is enabled, the watch will sync up to **four times daily**.
+
+## 3. Quick Start
+
+
+### Headless
+
+    💡 Note: There are two versions of the server:
+
+        gshock_server.py – for headless use (no display)
+
+        gshock_server_display.py – for devices with an attached display
+
+To quickly get started with the headless server (on a device without a display), follow the steps below. For a more thorough and permanent installation, refer to the setup scripts described later in this document.
+
+- First you need to install the follwoing dependencies:
 
 ```
 pytz
@@ -67,9 +80,11 @@ python3 src/gshock_server.py --fine-adjustment-secs -9
 ```
 will set the watches time 9 secods vefore the computer's time.
 
-### 3.2 On Raspberry Pi
+### 3.2 On Raspberry Pi with Display
 
-The above instructions will work on Raspberry Pi devices (including Pi Zero). But on the Pi, you can also connect a small LSD display to monitor the operation of the server. Also, if you are starting from a brand new Pi SD card, you will need to install some dependencies. We provide some scripts to automate this process. Here are instructions how to setup the server starting from flashing the official Pi SD card.
+    💡 Note: In addition to this repository, we have created another repo on GitHub (https://github.com/izivkov/gshock-server-dist), specifically for distribution. It holds all the files nessecary to run the server and no more. This repository is preffereable for getting the distribution files, since ot also controlles versioning. Installing dependencies for the display can get a but complex, so se provide setup scripts, which use this repository to automatically set up your device.
+
+On the Pi devices, you can also connect a small LSD display to monitor the operation of the server. These instructions will guide you how to start from a blank SD card and install all you need to run the server on Pi 3/4 or Pi zero.
 
 #### How to flash with [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
 
@@ -97,31 +112,28 @@ This script installs the basic software, dependencies, creates Python virtual en
 
 ### 4.2 setup-display.sh
 
-Installs all display-related dependencies. While installing, it will ask you to select the display type.
+Installs all display-related dependencies. While installing, it will ask you to select the display type. 
 
-Note: You need to run both setup.sh and setup-display.sh.
+If you enter the wrong display type, you can change it later by editing the file `/etc/systemd/system/gshock.service`. In it you can see a line like:
+
+```
+/home/pi/venv/bin/python /home/pi/gshock-server-dist/gshock_server_display.py --multi-watch --display waveshare
+```
+Change the `display paramater` accordingly.
+
+    💡 Note: You need to run both setup.sh and setup-display.sh.
 
 
 ### 4.3 gshock-updater.sh (Optional)
 
 This script will set the device to automatically update its software if a new version is available on GitHub.
 It will then restart the server, so you will always be running the latest version. The scripts sets us a cron job to
-run periodically and check for new tags on the `gshock-server-dist` GitHub repository.
-4.4 enable-spi.sh
+run periodically and check for new tags on the `gshock-server-dist` GitHub repository. We recommend running this scripts, because we plan on adding new features soon, related to the display.
 
 ### 4.4 enable-spi.sh
 
-This script will enable the Linux driver needed for the display. Without this step, the display will not work. Reboot when asked after the script runs. In it you can see a line like this:
+This script will enable the Linux driver needed for the display. Without this step, the display will not work. Reboot when asked after the script runs. 
 
-```
-/home/pi/venv/bin/python /home/pi/gshock-server-dist/gshock_server.py --multi-watch
-```
-or
-```
-/home/pi/venv/bin/python /home/pi/gshock-server-dist/gshock_server_display.py --multi-watch --display waveshare
-```
-
-Depending on weather you are running the headless or display-enabled version. The `--discplay` paramert is explained bellow.
 
 ### 4.5 setup-all.sh
 
