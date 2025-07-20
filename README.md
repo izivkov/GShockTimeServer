@@ -128,7 +128,7 @@ If you enter the wrong display type, you can change it later by editing the file
 ```
 Change the `display paramater` accordingly.
 
-    💡 Note: You need to run both setup.sh and setup-display.sh.
+💡 Note: You need to run both `setup.sh` and `setup-display.sh`.
 
 
 ### 4.3 gshock-updater.sh (Optional)
@@ -152,20 +152,21 @@ If you have used the scripts to install the software, a service file `/etc/syste
 
 5.2 Connecting Your Watch
 
-Short-press the **lower-right** or long-press the **lower-left** button on your G-Shock watch to connect. The watch will connect the its correct time will be set by the server. The watch then will be disconnected.
+Short-press the **lower-right** or long-press the **lower-left** button on your G-Shock watch to connect. The watch will connect the its correct time will be set by the server. The watch then will be disconnected. If you use the **lower-left** buton, in addition to setting time, the display on the Pi device will be updated with information about the currect state of the watch. **lower-right** button will just update the time.
 
-If you use the **lower-left** buton, in addition to setting time, the display on the Pi device will be updated with information about the currect state of the watch. **lower-right** button will just update the time.
+If your watch is set for auto-update time, the watch will connect automaticlly and update its time every 6 hours.
 
 ## 6. Adding a Display
 
-
 6.3 Running the Display Script
 
-To use a display, run this variant of the server:
+If you have not set the serivce to start your server at boot time, you can start it manually:
 
 ```bash
 python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs SECS] --display waveshare|tft154|mock
 ```
+
+For development without a physical display, you can select the `mock` display option. You can then watch file `oled_preview.png` being created and modified in the root directory of the project.
 
 ### 6.4 What the Display Shows
 
