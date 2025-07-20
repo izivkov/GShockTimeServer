@@ -85,7 +85,7 @@ will set the watches time 9 secods vefore the computer's time.
 💡 Note: In addition to this repository, we have created another repo on GitHub (https://github.com/izivkov/gshock-server-dist), specifically for distribution. It holds all the files nessecary to run the server and no more. This repository is preffereable for getting the distribution files, since ot also controlles versioning. Installing dependencies for the display can get a but complex, so se provide setup scripts, which use this repository to automatically set up your device.
 
 <a href="https://youtu.be/esZWTlzKvus" target="_blank" rel="noopener noreferrer">
-  <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="Watch the video">
+  <img src="https://img.youtube.com/vi/esZWTlzKvus/mqdefault.jpg" alt="Watch the video">
 </a>
 
 On the Pi devices, you can also connect a small LSD display to monitor the operation of the server. These instructions will guide you how to start from a blank SD card and install all you need to run the server on Pi 3/4 or Pi zero.
