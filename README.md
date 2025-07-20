@@ -8,7 +8,10 @@
 
 The server can run on a Raspberry Pi device with a small LSD display, ot can run headless on any device with Bluetooth and Python.
 
-    💡 Note: Here we refer to Raspberry Pi, but the same instructions apply to other Pi-like devices, like Banana-Pi and other hardware compatible devices.
+💡 Note: Here we refer to Raspberry Pi, but the same instructions apply to other Pi-like devices, like Banana-Pi and other hardware compatible devices.
+
+[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://youtu.be/esZWTlzKvus)
+[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://youtu.be/etIWP7ct0M0)
 
 ### Supported watch types
 
@@ -45,11 +48,11 @@ The server waits for watches to connect vial Bluetooth, and sends them the time 
 
 ### Headless
 
-    💡 Note: There are two versions of the server:
+💡 Note: There are two versions of the server:
 
-        gshock_server.py – for headless use (no display)
+gshock_server.py – for headless use (no display)
 
-        gshock_server_display.py – for devices with an attached display
+gshock_server_display.py – for devices with an attached display
 
 To quickly get started with the headless server (on a device without a display), follow the steps below. For a more thorough and permanent installation, refer to the setup scripts described later in this document.
 
@@ -82,7 +85,7 @@ will set the watches time 9 secods vefore the computer's time.
 
 ### 3.2 On Raspberry Pi with Display
 
-    💡 Note: In addition to this repository, we have created another repo on GitHub (https://github.com/izivkov/gshock-server-dist), specifically for distribution. It holds all the files nessecary to run the server and no more. This repository is preffereable for getting the distribution files, since ot also controlles versioning. Installing dependencies for the display can get a but complex, so se provide setup scripts, which use this repository to automatically set up your device.
+💡 Note: In addition to this repository, we have created another repo on GitHub (https://github.com/izivkov/gshock-server-dist), specifically for distribution. It holds all the files nessecary to run the server and no more. This repository is preffereable for getting the distribution files, since ot also controlles versioning. Installing dependencies for the display can get a but complex, so se provide setup scripts, which use this repository to automatically set up your device.
 
 On the Pi devices, you can also connect a small LSD display to monitor the operation of the server. These instructions will guide you how to start from a blank SD card and install all you need to run the server on Pi 3/4 or Pi zero.
 
