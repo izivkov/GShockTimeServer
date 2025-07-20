@@ -83,6 +83,8 @@ will set the watches time 9 secods vefore the computer's time.
 
 ### 3.2 On Raspberry Pi with Display
 
+On the Pi devices, you can also connect a small LCD display to monitor the operation of the server. These instructions will guide you how to start from a blank SD card and install all you need to run the server on Pi 3/4 or Pi zero.
+
 ![pi-sero-with-display](images/pi-zero-with-display.jpg)
 
 Pi Zero with **Waveshare** display
@@ -90,8 +92,6 @@ Pi Zero with **Waveshare** display
 ![pi3-with-display](images/pi3-with-display.jpg)
 
 Pi 3 with **1.54" TFT SPI LCD** display
-
-On the Pi devices, you can also connect a small LCD display to monitor the operation of the server. These instructions will guide you how to start from a blank SD card and install all you need to run the server on Pi 3/4 or Pi zero.
 
 <a href="https://www.raspberrypi.com/software/" target="_blank" rel="noopener noreferrer">Raspberry Pi Imager</a>
 
