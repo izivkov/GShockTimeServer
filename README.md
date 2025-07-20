@@ -10,9 +10,6 @@ The server can run on a Raspberry Pi device with a small LSD display, ot can run
 
 💡 Note: Here we refer to Raspberry Pi, but the same instructions apply to other Pi-like devices, like Banana-Pi and other hardware compatible devices.
 
-[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://youtu.be/esZWTlzKvus)
-[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://youtu.be/etIWP7ct0M0)
-
 ### Supported watch types
 
 Most G-Shock and other Casio Bluetooth watches are supported. Here is a list of supported watches:
@@ -87,9 +84,13 @@ will set the watches time 9 secods vefore the computer's time.
 
 💡 Note: In addition to this repository, we have created another repo on GitHub (https://github.com/izivkov/gshock-server-dist), specifically for distribution. It holds all the files nessecary to run the server and no more. This repository is preffereable for getting the distribution files, since ot also controlles versioning. Installing dependencies for the display can get a but complex, so se provide setup scripts, which use this repository to automatically set up your device.
 
+<a href="https://youtu.be/esZWTlzKvus" target="_blank" rel="noopener noreferrer">
+  <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="Watch the video">
+</a>
+
 On the Pi devices, you can also connect a small LSD display to monitor the operation of the server. These instructions will guide you how to start from a blank SD card and install all you need to run the server on Pi 3/4 or Pi zero.
 
-#### How to flash with [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
+<a href="https://www.raspberrypi.com/software/" target="_blank" rel="noopener noreferrer">Raspberry Pi Imager</a>
 
 Use an SD card with a minimum of 4GB size and create your image using the Imager. Select your device, OS (select Lite), and your storage. Don't forget to set your Wi-Fi network and password, and make sure SSH is enabled. 
 
