@@ -87,7 +87,7 @@ Description=G-Shock Time Server
 After=network.target
 
 [Service]
-ExecStart=$VENV_DIR/bin/python $INSTALL_DIR/gshock_server.py --multi-watch
+ExecStart=$VENV_DIR/bin/python $INSTALL_DIR/gshock_server.py
 WorkingDirectory=$INSTALL_DIR
 Environment=PYTHONUNBUFFERED=1
 Restart=on-failure
@@ -212,6 +212,58 @@ else
   DISPLAY_TYPE="tft154"
 fi
 
+# Update config.ini with the selected display type
+CONFIG_FILE="config.ini"
+SECTION="[main]"
+KEY="display"
+
+# Validate DISPLAY_TYPE
+case "$DISPLAY_TYPE" in
+    waveshare|tft154|mock)
+        ;;
+    *)
+        echo "Error: DISPLAY_TYPE must be one of: waveshare, tft154, mock"
+        exit 1
+        ;;
+esac
+
+# Create file if it doesn't exist
+[ -f "$CONFIG_FILE" ] || touch "$CONFIG_FILE"
+
+# Check if section exists
+if ! grep -q "^\[main\]" "$CONFIG_FILE"; then
+    echo "[main]" >> "$CONFIG_FILE"
+fi
+
+# Update or insert key under [main]
+awk -v section="$SECTION" -v key="$KEY" -v value="$DISPLAY_TYPE" '
+BEGIN { found=0; updated=0 }
+/^\[.*\]/ {
+    if (found && !updated) {
+        print key " = " value
+        updated = 1
+    }
+    if ($0 == section) {
+        found = 1
+    } else {
+        found = 0
+    }
+}
+found && $1 == key {
+    print key " = " value
+    updated = 1
+    next
+}
+{ print }
+END {
+    if (!updated && found) {
+        print key " = " value
+    }
+}
+' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
+# end of config.ini update
+echo "Display type set to: $DISPLAY_TYPE"
+
 # Overwrite systemd service with display version
 SERVICE_FILE="/etc/systemd/system/gshock.service"
 sudo tee "$SERVICE_FILE" > /dev/null <<EOL
@@ -220,7 +272,7 @@ Description=G-Shock Time Server
 After=network.target
 
 [Service]
-ExecStart=$VENV_DIR/bin/python $INSTALL_DIR/gshock_server_display.py --multi-watch --display $DISPLAY_TYPE
+ExecStart=$VENV_DIR/bin/python $INSTALL_DIR/gshock_server_display.py
 WorkingDirectory=$INSTALL_DIR
 Environment=PYTHONUNBUFFERED=1
 Restart=on-failure

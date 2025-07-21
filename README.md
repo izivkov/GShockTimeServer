@@ -71,10 +71,9 @@ pip3 install -r requirements.txt
 Then run:
 
 ```bash
-python3 src/gshock_server.py [--multi-watch] [--fine-adjustment-secs secs]
+python3 src/gshock_server.py [--fine-adjustment-secs secs]
 ```
 
-The optional `--multi-watch` parameter allows you to connect if you have multiple watches.
 The optional `--fine-adjustment-secs` alows you to fine adjust the time setting by providing an offset in seconds. For example:
 ```
 python3 src/gshock_server.py --fine-adjustment-secs -9
@@ -111,66 +110,82 @@ and then get the software:
 git clone https://github.com/izivkov/gshock-server-dist.git
 ```
 
-This will create a directory `gshock-server-dist` containing a number of shell scripts needed to set up the server. Note that running the scripts takes relativey long time. In the Pi 3/4, typically half an hour. On the Pi Zero, let it run overnight ;-). 
+This will create a directory `gshock-server-dist` containing a number of shell scripts needed to set up the server. Note that running the scripts takes relativey long time. In the Pi 3/4, typically half an hour. On the Pi Zero, let it run overnight ;-).
 
-## 4. Setup Scripts
+> **Pro Tip:** If you have another Raspberry Pi device in addition to the Pi Zero, you can set up the server on that device and use the **same SD card** on both.  
+> The key is to use a **32-bit OS** when creating the image with Raspberry Pi Imager, as it ensures compatibility across all Pi models, including the Pi Zero.
 
-### 4.1 setup.sh
+## Setup Scripts
+
+### setup.sh
 
 This script installs the basic software, dependencies, creates Python virtual environment, sets up a service to start the server each time the device is rebooted, etc. For a device with no display, this is sufficient to run the server. 
 
-### 4.2 setup-display.sh
+### setup-display.sh
 
 Installs all display-related dependencies. While installing, it will ask you to select the display type. 
 
-If you enter the wrong display type, you can change it later by editing the file `/etc/systemd/system/gshock.service`. In it you can see a line like:
-
+If you enter the wrong display type, you can change it later by editing the file `setup.ini`. In it you can see a line like:
 ```
-/home/pi/venv/bin/python /home/pi/gshock-server-dist/gshock_server_display.py --multi-watch --display waveshare
+display = waveshare
 ```
-Change the `display paramater` accordingly.
+Change it accirdingly
 
 💡 Note: You need to run both `setup.sh` and `setup-display.sh`.
 
 
-### 4.3 gshock-updater.sh (Optional)
+### gshock-updater.sh (Optional)
 
 This script will set the device to automatically update its software if a new version is available on GitHub.
 It will then restart the server, so you will always be running the latest version. The scripts sets us a cron job to
 run periodically and check for new tags on the `gshock-server-dist` GitHub repository. We recommend running this scripts, because we plan on adding new features soon, related to the display.
 
-### 4.4 enable-spi.sh
+### enable-spi.sh
 
 This script will enable the Linux driver needed for the display. Without this step, the display will not work. Reboot when asked after the script runs. 
 
-
-### 4.5 setup-all.sh
+### setup-all.sh
 
 Runs all the scripts above in one step.
 
-## 5. Using the Server
+## Using the Server
 
 If you have used the scripts to install the software, a service file `/etc/systemd/system/gshock.service` will be created. This will start the server automatically when rebooting. 
 
-5.2 Connecting Your Watch
+## Ignoring Specific Watches
 
-Short-press the **lower-right** or long-press the **lower-left** button on your G-Shock watch to connect. The watch will connect the its correct time will be set by the server. The watch then will be disconnected. If you use the **lower-left** buton, in addition to setting time, the display on the Pi device will be updated with information about the currect state of the watch. **lower-right** button will just update the time.
+You may have some watches that you prefer **not** to connect to the server. For example, certain Edifice models attempt to connect frequently, which can interfere with connections from other watches.
+
+To prevent the server from connecting to specific models, you can manually list them in your `config.ini` file under the `excluded_watches` setting:
+
+```ini
+excluded_watches = ["OCW-S400-2AJF", "OCW-S400SG-2AJR", "OCW-T200SB-1AJF", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]
+```
+
+After editing the configuration file, restart the service for the changes to take effect:
+```
+sudo systemctl start gshock.service
+```
+
+### Connecting Your Watch
+
+Short-press the **lower-right** or long-press the **lower-left** button on your G-Shock watch to connect. The watch will connect the its correct time will be set by the server. The watch then will be disconnected. If you use the **lower-left** buton, in addition to setting time, the display on the Pi device will be updated with information about the current state of the watch. **lower-right** button will just update the time.
 
 If your watch is set for auto-update time, the watch will connect automaticlly and update its time every 6 hours.
 
-## 6. Adding a Display
+## Adding a Display
 
-6.3 Running the Display Script
+### Running the Display Script
 
 If you have not set the serivce to start your server at boot time, you can start it manually:
 
 ```bash
-python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs SECS] --display waveshare|tft154|mock
+python3 src/gshock_server_display.py [--fine-adjustment-secs SECS]
 ```
 
 For development without a physical display, you can select the `mock` display option. You can then watch file `oled_preview.png` being created and modified in the root directory of the project.
 
-### 6.4 What the Display Shows
+### What the Display Shows
 
 ✅ Welcome Screen
 
@@ -190,9 +205,9 @@ Shown briefly when a new connection with the watch is established.
 
 Shows details about the last connected watch, including time of last sync, next alarm, and reminder.
 
-## 7. Hardware
+## Hardware
 
-### 6.1 Supported Display Types
+### Supported Display Types
 
 If you're running the server on a Raspberry Pi Zero or another Pi model, you can attach a small SPI-based LCD display to visually monitor the system status.
 
@@ -228,7 +243,7 @@ This is a lower-cost generic display with the same ST7789 driver chip. It must b
 👉 [Get Display](https://amzn.to/3IRtaAl)  
 👉 [Get Jumper Wires](https://amzn.to/4eXT55D)
 
-6.2 Wiring Instructions for the 
+### Wiring Instructions for the 
 
 Here is how to connect the `1.54"-TFT-SPI LCD` to Rasoberry Pi 40-pin header:
 
@@ -249,42 +264,13 @@ sudo raspi-config            # Interface Options ▸ SPI ▸ Enable
 sudo reboot
 ```
 
-7.2 Waveshare Display
+## Troubleshooting
 
-    Description and images
+If your watch is not connecting, remove `config.ini` file and try again. 
 
-    Amazon affiliate link
+To see output from the service do:
+```
+journalctl -u gshock.service -f
+```
 
-7.3 TFT154 Display
 
-    Description and images
-
-    Amazon affiliate and jumper wire links
-
-7.4 Mock Display
-
-    What it does and when it's useful
-
-8. Wiring Guide
-8.1 Connecting the 1.54" TFT SPI LCD
-
-    Full pin mapping table
-
-    SPI enable instructions
-
-9. Troubleshooting
-9.1 Common Issues
-
-    BLE connection errors
-
-    Watch not syncing
-
-9.2 Debugging the Service
-
-    journalctl command
-
-10. License and Credits
-
-    License type
-
-    Acknowledgments
