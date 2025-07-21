@@ -123,7 +123,7 @@ This script installs the basic software, dependencies, creates Python virtual en
 
 ### setup-display.sh
 
-Installs all display-related dependencies. While installing, it will ask you to select the display type. 
+Installs all display-related dependencies, such as `luma, spidev, numpy, pillow`. While installing, it will ask you to select the display type. 
 
 If you enter the wrong display type, you can change it later by editing the file `setup.ini`. In it you can see a line like:
 ```
@@ -132,7 +132,6 @@ display = waveshare
 Change it accirdingly
 
 💡 Note: You need to run both `setup.sh` and `setup-display.sh`.
-
 
 ### gshock-updater.sh (Optional)
 
@@ -240,8 +239,8 @@ This is the easiest option to set up. It has a female 40-pin connector that mate
 
 This is a lower-cost generic display with the same ST7789 driver chip. It must be wired using jumper cables to the correct GPIO pins. See [Connecting the 1.54" TFT SPI LCD to Raspberry Pi](#connecting-the-154-tft-spi-lcd-to-raspberry-pi) for instructions.
 
-👉 [Get Display](https://amzn.to/4526yos)  
-👉 [Get Jumper Wires](https://amzn.to/4eXT55D)
+👉 You can get the display [here](https://amzn.to/3TSXM70)  
+👉 And the Jumper Wires [here]](https://amzn.to/4eXT55D)
 
 ### Wiring Instructions for the 
 
