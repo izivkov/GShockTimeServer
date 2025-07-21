@@ -14,7 +14,7 @@ from gshock_api.watch_info import watch_info
 from args import args
 from datetime import datetime, timedelta
 from gshock_api.watch_info import watch_info
-from gshock_api.exceptions import GShockConnectionError
+from gshock_api.configurator import conf
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
@@ -71,21 +71,22 @@ def get_next_alarm_time(alarms):
 from peristent_store import PersistentMap
 
 async def run_time_server():
-    prompt()
-
+    excluded_watches = conf.get("excluded_watches")
     store = PersistentMap("gshock_server_data.json")
+    prompt()
 
     while True:
         try:
-            if args.get().multi_watch:
-                address = None
-            else:
-                address = conf.get("device.address")
             
             logger.info(f"Waiting for Connection...")
 
-            connection = Connection(address)
-            await connection.connect()
+            connection = Connection()
+            connected = await connection.connect(excluded_watches)
+            if not connected:
+                logger.info("Failed to connect")
+                continue
+
+            logger.info(f"Connected to {watch_info.name} ({watch_info.address})")
             store.add("last_connected", datetime.now().strftime("%m/%d %H:%M"))
             store.add("watch_name", watch_info.name)
  
@@ -99,7 +100,7 @@ async def run_time_server():
                 continue
 
             # Apply fine adjustment to the time
-            fine_adjustment_secs = args.get().fine_adjustment_secs
+            fine_adjustment_secs = args.fine_adjustment_secs
             
             await api.set_time(int(time.time()) + fine_adjustment_secs)
             logger.info(f"Time set at {datetime.now()} on {watch_info.name}")

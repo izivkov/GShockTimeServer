@@ -37,10 +37,9 @@ pip3 install -r requirements.txt
 Then run:
 
 ```bash
-python3 src/gshock_server.py [--multi-watch] [--fine-adjustment-secs secs]
+python3 src/gshock_server.py [--fine-adjustment-secs secs]
 ```
 
-The optional `--multi-watch` parameter allows you to connect if you have multiple watches.
 The optional `--fine-adjustment-secs` alows you to fine adjust the time setting by providing an offset in seconds. For example:
 ```
 python3 src/gshock_server.py --fine-adjustment-secs -9
@@ -60,7 +59,7 @@ If you're running the server on a Raspberry Pi Zero or another Pi model, you can
 To use a display, run this variant of the server:
 
 ```bash
-python3 src/gshock_server_display.py [--multi-watch] [--fine-adjustment-secs SECS] --display waveshare|tft154|mock
+python3 src/gshock_server_display.py [--fine-adjustment-secs SECS] --display waveshare|tft154|mock
 ```
 
 ✅ Key differences:

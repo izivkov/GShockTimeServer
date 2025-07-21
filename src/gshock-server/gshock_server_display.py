@@ -57,7 +57,7 @@ def get_display(display_type: str):
     else:
         raise ValueError(f"Unsupported display type: {display_type}")
 
-oled = get_display(args.display)
+oled = get_display(conf.get("display"))
 
 def get_next_alarm_time(alarms):
     now = datetime.now()
@@ -133,15 +133,14 @@ async def safe_show_display(api):
 
 async def run_time_server():
     pressed_button = WatchButton.NO_BUTTON  # Always defined
+    excluded_watches = conf.get("excluded_watches")
+
     prompt()
 
     while True:
         connection = None  # In case connection creation fails
 
         try:
-            # Get device address
-            address = None if args.multi_watch else conf.get("device.address")
-
             # Show welcome screen only once
             run_once_key(
                 "show_welcome_screen",
@@ -153,9 +152,8 @@ async def run_time_server():
 
             logger.info("Waiting for Connection...")
 
-            # Connect to watch
-            connection = Connection(address)
-            connected = await connection.connect()
+            connection = Connection()
+            connected = await connection.connect(excluded_watches)
             if not connected:
                 logger.info("Failed to connect")
                 continue
