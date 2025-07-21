@@ -240,8 +240,8 @@ This is the easiest option to set up. It has a female 40-pin connector that mate
 
 This is a lower-cost generic display with the same ST7789 driver chip. It must be wired using jumper cables to the correct GPIO pins. See [Connecting the 1.54" TFT SPI LCD to Raspberry Pi](#connecting-the-154-tft-spi-lcd-to-raspberry-pi) for instructions.
 
-👉 [Get Display](https://amzn.to/3IRtaAl)  
-👉 [Get Jumper Wires](https://amzn.to/46fFUut)
+👉 [Get Display](https://amzn.to/46fFUut)  
+👉 [Get Jumper Wires](https://amzn.to/4eXT55D)
 
 ### Wiring Instructions for the 
 
