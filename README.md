@@ -228,7 +228,7 @@ Currently we support the following 240x240 color displays:
 
 This is the easiest option to set up. It has a female 40-pin connector that mates directly with the Pi's GPIO header—no wiring needed and fewer connection errors.
 
-👉 [Get on Amazon (affiliate)](https://amzn.to/4eZDRNl)
+👉 You can get it [here](https://amzn.to/4eZDRNl)
 
 ---
 
