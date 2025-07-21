@@ -14,14 +14,12 @@ class PersistentMap:
         """
         Load the data from disk if the file exists.
         """
-        if os.path.exists(self.filepath):
-            try:
+        try:
+            if os.path.isfile(self.filepath):
                 with open(self.filepath, 'r') as f:
                     self.data = json.load(f)
-            except Exception as e:
-                print(f"⚠️ Failed to load map from {self.filepath}: {e}")
-                self.data = {}
-        else:
+        except (json.JSONDecodeError, OSError) as e:
+            print(f"⚠️ Failed to load map from {self.filepath}: {e}")
             self.data = {}
 
     def _save(self):
@@ -31,7 +29,7 @@ class PersistentMap:
         try:
             with open(self.filepath, 'w') as f:
                 json.dump(self.data, f, indent=2)
-        except Exception as e:
+        except OSError as e:
             print(f"❌ Failed to save map to {self.filepath}: {e}")
 
     def add(self, key, value):
