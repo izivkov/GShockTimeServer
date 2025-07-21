@@ -76,6 +76,10 @@ source "$VENV_DIR/bin/activate"
 pip install --upgrade pip
 pip install -r "$INSTALL_DIR/requirements.txt"
 
+CONFIG_FILE="./config.ini"
+echo "[main]" > "$CONFIG_FILE"
+echo excluded_watches = '["DW-H5600", "OCW-S400", "OCW-S400SG", "OCW-T200SB", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]' >> "$CONFIG_FILE"
+
 echo ""
 echo "✅ Installation complete!"
 
@@ -188,6 +192,14 @@ set -e
 
 echo "== Display setup =="
 
+VENV_DIR="$HOME/venv"
+
+# Setup virtual environment in home directory
+if [ ! -d "$VENV_DIR" ]; then
+  python3 -m venv "$VENV_DIR"
+fi
+source "$VENV_DIR/bin/activate"
+
 # Update & upgrade
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y python3-pip python3-venv zip unzip \
@@ -227,9 +239,7 @@ esac
 
 echo "Display type set to: $DISPLAY_TYPE"
 
-echo "[main]" > "$CONFIG_FILE"
 echo "display = $DISPLAY_TYPE" >> "$CONFIG_FILE"
-echo excluded_watches = '["OCW-S400-2AJF", "OCW-S400SG-2AJR", "OCW-T200SB-1AJF", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]' >> "$CONFIG_FILE"
 
 # end of config.ini update
 
