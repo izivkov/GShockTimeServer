@@ -197,7 +197,7 @@ sudo apt install -y python3-pip python3-venv zip unzip \
 
 # Install Python packages
 pip install --upgrade pip
-pip install spidev smbus smbus2 gpiozero numpy luma.oled luma.lcd lgpio pillow st7789
+pip install spidev smbus smbus2 gpiozero numpy luma.oled luma.lcd lgpio pillow st7789 RPi.GPIO
 
 echo "Select your display type:"
 echo "  1) waveshare (default)"
@@ -213,9 +213,7 @@ else
 fi
 
 # Update config.ini with the selected display type
-CONFIG_FILE="config.ini"
-SECTION="[main]"
-KEY="display"
+CONFIG_FILE="./config.ini"
 
 # Validate DISPLAY_TYPE
 case "$DISPLAY_TYPE" in
@@ -227,42 +225,13 @@ case "$DISPLAY_TYPE" in
         ;;
 esac
 
-# Create file if it doesn't exist
-[ -f "$CONFIG_FILE" ] || touch "$CONFIG_FILE"
-
-# Check if section exists
-if ! grep -q "^\[main\]" "$CONFIG_FILE"; then
-    echo "[main]" >> "$CONFIG_FILE"
-fi
-
-# Update or insert key under [main]
-awk -v section="$SECTION" -v key="$KEY" -v value="$DISPLAY_TYPE" '
-BEGIN { found=0; updated=0 }
-/^\[.*\]/ {
-    if (found && !updated) {
-        print key " = " value
-        updated = 1
-    }
-    if ($0 == section) {
-        found = 1
-    } else {
-        found = 0
-    }
-}
-found && $1 == key {
-    print key " = " value
-    updated = 1
-    next
-}
-{ print }
-END {
-    if (!updated && found) {
-        print key " = " value
-    }
-}
-' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
-# end of config.ini update
 echo "Display type set to: $DISPLAY_TYPE"
+
+echo "[main]" > "$CONFIG_FILE"
+echo "display = $DISPLAY_TYPE" >> "$CONFIG_FILE"
+echo excluded_watches = ["OCW-S400-2AJF", "OCW-S400SG-2AJR", "OCW-T200SB-1AJF", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]" >> "$CONFIG_FILE"
+
+# end of config.ini update
 
 # Overwrite systemd service with display version
 SERVICE_FILE="/etc/systemd/system/gshock.service"
