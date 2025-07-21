@@ -164,7 +164,7 @@ excluded_watches = ["OCW-S400-2AJF", "OCW-S400SG-2AJR", "OCW-T200SB-1AJF", "ECB-
 
 After editing the configuration file, restart the service for the changes to take effect:
 ```
-sudo systemctl start gshock.service
+sudo systemctl restart gshock.service
 ```
 
 ### Connecting Your Watch
