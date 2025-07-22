@@ -119,9 +119,9 @@ async def show_display(api: GshockAPI):
     except Exception as e:
         logger.error(f"Got error: {e}")
 
-async def safe_set_time(api, time_secs):
+async def safe_set_time(api, offset = 0):
     try:
-        await api.set_time(time_secs)
+        await api.set_time(offset = offset)
     except Exception as e:
         logger.error(f"Got error while setting time: {e}")
 
@@ -175,7 +175,7 @@ async def run_time_server():
 
             # Set the time with fine adjustment
             fine_adjustment_secs = args.fine_adjustment_secs
-            await safe_set_time(api, int(time.time()) + fine_adjustment_secs)
+            await safe_set_time(api, offset = int(fine_adjustment_secs))
 
             logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
 

@@ -135,6 +135,7 @@ REPO_URL="https://github.com/izivkov/gshock-server-dist.git"
 REPO_DIR="$HOME/$REPO_NAME"
 LAST_TAG_FILE="$HOME/.config/gshock-updater/last-tag"
 LOG_FILE="$HOME/logs/gshock-updater.log"
+INSTALL_DIR="$(cd "$(dirname "$0")"; pwd)"
 
 mkdir -p "$(dirname "$LAST_TAG_FILE")"
 mkdir -p "$(dirname "$LOG_FILE")"
@@ -167,6 +168,9 @@ if [ "$LATEST_TAG" != "$LAST_SYNCED_TAG" ]; then
     git reset --hard "$LATEST_TAG"
     git clean -fd
     echo "$LATEST_TAG" > "$LAST_TAG_FILE"
+
+    echo "Updating API's"
+    pip install -r "$INSTALL_DIR/requirements.txt"
 
     echo "Restarting gshock.service"
     sudo systemctl restart gshock.service
