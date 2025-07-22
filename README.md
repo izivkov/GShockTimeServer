@@ -158,8 +158,9 @@ You may have some watches that you prefer **not** to connect to the server. For 
 To prevent the server from connecting to specific models, you can manually list them in your `config.ini` file under the `excluded_watches` setting:
 
 ```ini
-excluded_watches = ["OCW-S400-2AJF", "OCW-S400SG-2AJR", "OCW-T200SB-1AJF", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]
+excluded_watches = ["DW-H5600", "OCW-S400", "OCW-S400SG", "OCW-T200SB", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]
 ```
+This file is located at `$HOME/.config/gshock/config.ini`
 
 After editing the configuration file, restart the service for the changes to take effect:
 ```
@@ -179,7 +180,7 @@ If your watch is set for auto-update time, the watch will connect automaticlly a
 If you have not set the serivce to start your server at boot time, you can start it manually:
 
 ```bash
-python3 src/gshock_server_display.py [--fine-adjustment-secs SECS]
+python3 src/gshock_server_display.py [--fine-adjustment-secs SECS] --display [waveshare|tft154|mock]
 ```
 
 For development without a physical display, you can select the `mock` display option. You can then watch file `oled_preview.png` being created and modified in the root directory of the project.
