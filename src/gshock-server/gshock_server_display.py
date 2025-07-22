@@ -10,7 +10,6 @@ from gshock_api.iolib.button_pressed_io import WatchButton
 from gshock_api.scanner import scanner
 from configurator import conf
 from gshock_api.logger import logger
-from gshock_api.watch_info import watch_info
 from args import args
 from datetime import datetime, timedelta
 from gshock_api.watch_info import watch_info
@@ -21,7 +20,6 @@ from peristent_store import PersistentMap
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
-__tag__ = "v1.0.39"
 
 # This script is used to set the time on a G-Shock watch and display information on a connected display.
 
