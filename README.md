@@ -3,7 +3,7 @@
 ## 1. Overview
 
 ### What the project does.
-** ShockTimeServer ** automatically sets the correct time on your Casio G-Shock watches. Like your G-Shock itself, it’s designed to be set-and-forget. Just start the server once—it will run reliably for months with no user intervention.
+**ShockTimeServer** automatically sets the correct time on your Casio G-Shock watches. Like your G-Shock itself, it’s designed to be set-and-forget. Just start the server once—it will run reliably for months with no user intervention.
 
 The server can run on a Raspberry Pi device with a small LSD display, ot can run headless on any device with Bluetooth and Python.
 
