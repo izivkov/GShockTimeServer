@@ -10,6 +10,8 @@ The server can run on a Raspberry Pi device with a small LSD display, ot can run
 
 💡 Note: Here we refer to Raspberry Pi, but the same instructions apply to other Pi-like devices, like Banana-Pi and other hardware compatible devices.
 
+[![Watch the video](https://img.youtube.com/vi/esZWTlzKvus/mqdefault.jpg)](https://youtu.be/esZWTlzKvus)
+
 ### Supported watch types
 
 Most G-Shock and other Casio Bluetooth watches are supported. Here is a list of supported watches:
