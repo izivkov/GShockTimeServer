@@ -16,6 +16,13 @@ class Args:
             help="Fine adjustment in seconds to add/subtract when setting time (-10 to 10)"
         )        
         parser.add_argument(
+             "--display",
+             type=str,
+             choices=["mock", "waveshare", "tft154"],
+             default="mock",
+             help="Select display type: mock, waveshare, or tft154"
+         )
+        parser.add_argument(
             "-l", "--log_level", default="INFO", help="Sets log level", required=False
         )
 

@@ -76,7 +76,11 @@ source "$VENV_DIR/bin/activate"
 pip install --upgrade pip
 pip install -r "$INSTALL_DIR/requirements.txt"
 
-CONFIG_FILE="./config.ini"
+CONFIG_DIR="$HOME/.config/gshock"
+CONFIG_FILE="$CONFIG_DIR/config.ini"
+# Create the directory if it doesn't exist
+mkdir -p "$CONFIG_DIR"
+
 echo "[main]" > "$CONFIG_FILE"
 echo excluded_watches = '["DW-H5600", "OCW-S400", "OCW-S400SG", "OCW-T200SB", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]' >> "$CONFIG_FILE"
 
@@ -192,7 +196,9 @@ set -e
 
 echo "== Display setup =="
 
+INSTALL_DIR="$(cd "$(dirname "$0")"; pwd)"
 VENV_DIR="$HOME/venv"
+SERVICE_USER="$(whoami)"
 
 # Setup virtual environment in home directory
 if [ ! -d "$VENV_DIR" ]; then
@@ -224,9 +230,6 @@ else
   DISPLAY_TYPE="tft154"
 fi
 
-# Update config.ini with the selected display type
-CONFIG_FILE="./config.ini"
-
 # Validate DISPLAY_TYPE
 case "$DISPLAY_TYPE" in
     waveshare|tft154|mock)
@@ -239,10 +242,6 @@ esac
 
 echo "Display type set to: $DISPLAY_TYPE"
 
-echo "display = $DISPLAY_TYPE" >> "$CONFIG_FILE"
-
-# end of config.ini update
-
 # Overwrite systemd service with display version
 SERVICE_FILE="/etc/systemd/system/gshock.service"
 sudo tee "$SERVICE_FILE" > /dev/null <<EOL
@@ -251,7 +250,7 @@ Description=G-Shock Time Server
 After=network.target
 
 [Service]
-ExecStart=$VENV_DIR/bin/python $INSTALL_DIR/gshock_server_display.py
+ExecStart=$VENV_DIR/bin/python $INSTALL_DIR/gshock_server_display.py --display $DISPLAY_TYPE
 WorkingDirectory=$INSTALL_DIR
 Environment=PYTHONUNBUFFERED=1
 Restart=on-failure
