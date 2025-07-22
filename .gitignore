@@ -14,10 +14,15 @@ __pycache__/*
 .*.swp
 */.ipynb_checkpoints/*
 .DS_Store
-.venv
+venv/
 
+# Distribution files
+*.tar.gz
+*.whl
+*.zip
 make_dist.sh
-gshock-server-dist/*
+/gshock-server-dist/*
+!/gshock-server-dist/.git
 
 # Project files
 .ropeproject
