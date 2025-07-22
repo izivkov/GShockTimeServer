@@ -101,7 +101,8 @@ async def run_time_server():
             # Apply fine adjustment to the time
             fine_adjustment_secs = args.fine_adjustment_secs
             
-            await api.set_time(int(time.time()) + fine_adjustment_secs)
+            await api.set_time(offset = int(fine_adjustment_secs))
+
             logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
 
             if watch_info.alwaysConnected == False:
