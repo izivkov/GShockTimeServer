@@ -79,7 +79,7 @@ The optional `--fine-adjustment-secs` alows you to fine adjust the time setting 
 ```
 python3 src/gshock_server.py --fine-adjustment-secs -9
 ```
-will set the watches time 9 secods vefore the computer's time.
+will set the watches time 9 secods before the computer's time.
 
 ### 3.2 On Raspberry Pi with Display
 
@@ -118,6 +118,10 @@ This will create a directory `gshock-server-dist` containing a number of shell s
 
 ## Setup Scripts
 
+```
+cd gshock-server-dist
+```
+
 ### setup.sh
 
 This script installs the basic software, dependencies, creates Python virtual environment, sets up a service to start the server each time the device is rebooted, etc. For a device with no display, this is sufficient to run the server. 
@@ -126,11 +130,7 @@ This script installs the basic software, dependencies, creates Python virtual en
 
 Installs all display-related dependencies, such as `luma, spidev, numpy, pillow`. While installing, it will ask you to select the display type. 
 
-If you enter the wrong display type, you can change it later by editing the file `setup.ini`. In it you can see a line like:
-```
-display = waveshare
-```
-Change it accirdingly
+If you enter the wrong display type, you can change it later by editing the file `/etc/systemd/system/gshock.service` and change the `--display` pareamert value to one of `waveshare`, ``tft154` or `mock`.
 
 💡 Note: You need to run both `setup.sh` and `setup-display.sh`.
 
@@ -138,7 +138,7 @@ Change it accirdingly
 
 This script will set the device to automatically update its software if a new version is available on GitHub.
 It will then restart the server, so you will always be running the latest version. The scripts sets us a cron job to
-run periodically and check for new tags on the `gshock-server-dist` GitHub repository. We recommend running this scripts, because we plan on adding new features soon, related to the display.
+run periodically and check for new tags on the `gshock-server-dist` GitHub repository. We recommend running this script, because we plan on adding new features soon.
 
 ### enable-spi.sh
 
@@ -156,14 +156,13 @@ If you have used the scripts to install the software, a service file `/etc/syste
 
 You may have some watches that you prefer **not** to connect to the server. For example, certain Edifice models attempt to connect frequently, which can interfere with connections from other watches.
 
-To prevent the server from connecting to specific models, you can manually list them in your `config.ini` file under the `excluded_watches` setting:
+To prevent the server from connecting to specific models, you can manually list them in your `config.ini` file, ocated at $HOME/.config/gshock/config.ini, under the `excluded_watches` setting:
 
 ```ini
 excluded_watches = ["DW-H5600", "OCW-S400", "OCW-S400SG", "OCW-T200SB", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]
 ```
-This file is located at `$HOME/.config/gshock/config.ini`
 
-After editing the configuration file, restart the service for the changes to take effect:
+Then restart the service for the changes to take effect:
 ```
 sudo systemctl restart gshock.service
 ```
@@ -218,8 +217,8 @@ Currently we support the following 240x240 color displays:
 
 | Display Type | Description                                    | Notes                                      |
 |--------------|------------------------------------------------|--------------------------------------------|
-| `waveshare`  | Waveshare 1.3" SPI LCD module HAT, ST7789 Controller  | Widely available color display. Directly plugs into the Pi's 40-pin header. [Buy on Amazon](https://amzn.to/4eZDRNl) |
-| `tft154`     | 1.54" TFT SPI LCD, ST7789 Controller            | Inexpensive generic display. Requires jumper wires to connect to GPIO header. [Buy Display](https://amzn.to/3IRtaAl), [Buy Jumper Wires](https://amzn.to/4eXT55D) |
+| `waveshare`  | [Waveshare 1.3" SPI LCD module HAT, ST7789 Controller](https://amzn.to/4eZDRNl)  | Widely available color display. Directly plugs into the Pi's 40-pin header.|
+| `tft154`     | [1.54" TFT SPI LCD, ST7789 Controller](https://amzn.to/3TSXM70)            | Inexpensive [generic display. Requires jumper wires to connect to GPIO header. |
 | `mock`       | No physical display                            | Simulates a display to oled_preview.png. Useful during development or headless testing |
 
 
@@ -231,7 +230,6 @@ Currently we support the following 240x240 color displays:
 This is the easiest option to set up. It has a female 40-pin connector that mates directly with the Pi's GPIO header—no wiring needed and fewer connection errors.
 
 👉 You can get it [here](https://amzn.to/4eZDRNl)
-
 ---
 
 ### 1.54" TFT SPI LCD, ST7789 Controller
@@ -239,12 +237,10 @@ This is the easiest option to set up. It has a female 40-pin connector that mate
 ![TFT154 LCD front](images/tft154-front.jpg)  
 ![TFT154 LCD back](images/tft154-back.jpg)
 
-This is a lower-cost generic display with the same ST7789 driver chip. It must be wired using jumper cables to the correct GPIO pins. See [Connecting the 1.54" TFT SPI LCD to Raspberry Pi](#connecting-the-154-tft-spi-lcd-to-raspberry-pi) for instructions.
+This is a lower-cost generic display with the same ST7789 driver chip. It must be wired using jumper cables to the correct GPIO pins.
 
 👉 You can get the display [here](https://amzn.to/3TSXM70)  
-👉 And the Jumper Wires [here]](https://amzn.to/4eXT55D)
-
-### Wiring Instructions for the 
+👉 And the Jumper Wires [here](https://amzn.to/4eXT55D)
 
 Here is how to connect the `1.54"-TFT-SPI LCD` to Rasoberry Pi 40-pin header:
 
@@ -259,7 +255,7 @@ Here is how to connect the `1.54"-TFT-SPI LCD` to Rasoberry Pi 40-pin header:
 | **RES** (RST)       | Hardware reset      | **22**                    | GPIO 25     | Tie to 3 V3 if you don’t need GPIO reset             |
 | **BL** (LED)        | Back‑light          | **12** (GPIO 18)          | GPIO 18     | Drive with PWM to dim, or link to 3 V3 for always‑on |
 
-You need to enable SPI on the Pi (this is already done in the setup scripts `enable-spi.sh`, so you don't have to do it manually.
+You also need to enable SPI on the Pi. This should already be done by the `enable-spi.sh` script, but here is how to do it manually
 ```
 sudo raspi-config            # Interface Options ▸ SPI ▸ Enable
 sudo reboot
