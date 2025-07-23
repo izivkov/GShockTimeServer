@@ -5,7 +5,7 @@
 ### What the project does.
 **ShockTimeServer** automatically sets the correct time on your Casio G-Shock watches. Like your G-Shock itself, it’s designed to be set-and-forget. Just start the server once—it will run reliably for months with no user intervention.
 
-The server can run on a Raspberry Pi device with a small LSD display, ot can run headless on any device with Bluetooth and Python.
+The server can run on a Raspberry Pi device with a small LCD display, ot can run headless on any device with Bluetooth and Python.
 
 💡 Note: Here we refer to Raspberry Pi, but the same instructions apply to other Pi-like devices, like Banana-Pi and other hardware compatible devices.
 
@@ -97,11 +97,36 @@ These instructions will guide you how to start from a blank SD card and install 
 
 <a href="https://www.raspberrypi.com/software/" target="_blank" rel="noopener noreferrer">Raspberry Pi Imager</a>
 
-Use an SD card with a minimum of 4GB size and create your image using the Imager. Select your device, OS (select Lite), and your storage. Don't forget to set your Wi-Fi network and password, and make sure SSH is enabled. 
+There are two ways to create your SD card: 1. Using a pre-build image, or 2. Start with a fresh SD card and download and setup the software.
+
+### Using the pre-built image
+
+1. Download and unzip [pi.zip](https://github.com/izivkov/GShockTimeServer/releases/download/pi_image/gshock-server-pi.img.xz).
+
+2. Use the Raspberry PI Imager to flash to an SD card
+
+    - Use an SD card with a minimum of 4GB. Start the Parpberry Pi Imager
+    - Chose your target device
+    - For OS chose "Use Custom", and select the uncompressed image file gshock-server-pi.img.xz
+    - Select as storage a new SD you have mounted
+    - Click NEXT, and edit your settings. Here you can enter your networks SSID and password. Also, from the Services tab, enable SSH.
+    - Apply settings when asked, and flash your SD. You should be able to now boot your Pi.
+    - The image is configured to use the ``waveshare` display. If you are using a different display, like the `tft154` or `mock` after booting yout Pi, you need to manually set the display type in file `/etc/systemd/system/gshock.service`. After that, restart the service:
+```
+sudo systemctl daemon-reload
+sudo systemctl enable gshock.service
+sudo systemctl start gshock.service
+```
+
+### Downloading and setting up the software
+
+If you preffer to download and setup the software yourself, here are the instructions:
+
+Use an SD card with a minimum of 4GB size and flash new image using the Pi Imager. Select your device, OS (select Lite), and your storage. Don't forget to set your Wi-Fi network and password, and make sure SSH is enabled. 
 
 #### Installing git and cloning the repo
 
-Use the flashed SD card to boot your Pi device and SSH into it. Next we need to get the software from a GitHub repository. To do that, first install the `git` package on your device:
+Use the flashed SD card to boot your Pi and SSH into it. Next we need to get the software from a GitHub repository. To do that, first install the `git` package on your device:
 
 ```
 sudo apt-get install git
@@ -115,19 +140,6 @@ This will create a directory `gshock-server-dist` containing a number of shell s
 
 > **Pro Tip:** If you have another Raspberry Pi device in addition to the Pi Zero, you can set up the server on that device and use the **same SD card** on both.  
 > The key is to use a **32-bit OS** when creating the image with Raspberry Pi Imager, as it ensures compatibility across all Pi models, including the Pi Zero.
-
-## Using the pre-built image
-
-1. Download and unzip [pi.zip](https://github.com/izivkov/GShockTimeServer/releases/download/pi_image/pi.zip).
-
-2. Use the Raspberry PI Imager to flash to SD card
-
-    - Chose your target device
-    - For OS chose "Use Custom", and select the uncompressed image file pi.img
-    - Select as storage a new SD you have mounted
-    - Click NEXT, and edit your settings. Here you can enter your networks SSID and password. Also, from the Services tab, enable SSH.
-    - Apply settings when asked, and flash your SD. You should be able to now boot your Pi.
-    - After booting yout Pi, you might have to manually set the display type in file `/etc/systemd/system/gshock.service` if it does not match your display. In this case, reboot again and you should see the initial screen,
 
 ## Setup Scripts
 
