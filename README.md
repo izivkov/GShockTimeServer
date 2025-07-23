@@ -218,7 +218,7 @@ Currently we support the following 240x240 color displays:
 | Display Type | Description                                    | Notes                                      |
 |--------------|------------------------------------------------|--------------------------------------------|
 | `waveshare`  | [Waveshare 1.3" SPI LCD module HAT, ST7789 Controller](https://amzn.to/4eZDRNl)  | Widely available color display. Directly plugs into the Pi's 40-pin header.|
-| `tft154`     | [1.54" TFT SPI LCD, ST7789 Controller](https://amzn.to/3TSXM70)            | Inexpensive [generic display. Requires jumper wires to connect to GPIO header. |
+| `tft154`     | [1.54" TFT SPI LCD, ST7789 Controller](https://amzn.to/3TSXM70)            | Inexpensive generic display. Requires jumper wires to connect to GPIO header. |
 | `mock`       | No physical display                            | Simulates a display to oled_preview.png. Useful during development or headless testing |
 
 
@@ -230,7 +230,6 @@ Currently we support the following 240x240 color displays:
 This is the easiest option to set up. It has a female 40-pin connector that mates directly with the Pi's GPIO header—no wiring needed and fewer connection errors.
 
 👉 You can get it [here](https://amzn.to/4eZDRNl)
----
 
 ### 1.54" TFT SPI LCD, ST7789 Controller
 
