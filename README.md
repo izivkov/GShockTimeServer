@@ -118,43 +118,16 @@ This will create a directory `gshock-server-dist` containing a number of shell s
 
 ## Using the pre-built image
 
-1. Download and uncompress [Download the image pi.zip](https://github.com/izivkov/GShockTimeServer/releases/download/pi_image/pi.zip).
+1. Download and unzip [pi.zip](https://github.com/izivkov/GShockTimeServer/releases/download/pi_image/pi.zip).
 
-2. Set up your WiFi network:
+2. Use the Raspberry PI Imager to flash to SD card
 
-Mount the SD card on any computer (Windows, macOS, or Linux).
-
-Open the boot partition (it’s the small FAT32 partition that shows up as boot).
-
-Inside the boot/ directory, create a file named:
-
-wpa_supplicant.conf
-
-Paste this content (replace with user-specific Wi-Fi credentials):
-
-```
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
-country=US
-
-network={
-    ssid="YourNetworkName"
-    psk="YourNetworkPassword"
-    key_mgmt=WPA-PSK
-}
-```
-
-    country=US should be set to the correct 2-letter country code (important for Wi-Fi regulatory compliance).
-
-Also create an empty ssh file in the same boot directory to enable SSH:
-
-touch boot/ssh
-
-Insert the SD card into the Pi and boot. It will:
-
-    Copy the wpa_supplicant.conf into /etc/wpa_supplicant/
-
-    Connect to Wi-Fi automatically.
+- Chose your target device
+- For OS chose "Use Custom", and select the uncompressed image file pi.img
+- Select as storage a new SD you have mounted
+- Click NEXT, and edit your settings. Here you can enter your networks SSID and password. Also, from the Services tab, enable SSH.
+- Apply settings when asked, and flash you SD. You should be able to now boot your Pi.
+- After booting yout Pi, you might have to manually set the display type in file `/etc/systemd/system/gshock.service` if it does not match your display. In this case, reboot again and you should see the initial screen,
 
 ## Setup Scripts
 
