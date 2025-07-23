@@ -116,6 +116,46 @@ This will create a directory `gshock-server-dist` containing a number of shell s
 > **Pro Tip:** If you have another Raspberry Pi device in addition to the Pi Zero, you can set up the server on that device and use the **same SD card** on both.  
 > The key is to use a **32-bit OS** when creating the image with Raspberry Pi Imager, as it ensures compatibility across all Pi models, including the Pi Zero.
 
+## Using the pre-built image
+
+1. Download and uncompress [Download the image pi.zip](https://github.com/izivkov/GShockTimeServer/releases/download/pi_image/pi.zip).
+
+2. Set up your WiFi network:
+
+Mount the SD card on any computer (Windows, macOS, or Linux).
+
+Open the boot partition (it’s the small FAT32 partition that shows up as boot).
+
+Inside the boot/ directory, create a file named:
+
+wpa_supplicant.conf
+
+Paste this content (replace with user-specific Wi-Fi credentials):
+
+```
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=US
+
+network={
+    ssid="YourNetworkName"
+    psk="YourNetworkPassword"
+    key_mgmt=WPA-PSK
+}
+```
+
+    country=US should be set to the correct 2-letter country code (important for Wi-Fi regulatory compliance).
+
+Also create an empty ssh file in the same boot directory to enable SSH:
+
+touch boot/ssh
+
+Insert the SD card into the Pi and boot. It will:
+
+    Copy the wpa_supplicant.conf into /etc/wpa_supplicant/
+
+    Connect to Wi-Fi automatically.
+
 ## Setup Scripts
 
 ```
