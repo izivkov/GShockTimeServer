@@ -122,12 +122,12 @@ This will create a directory `gshock-server-dist` containing a number of shell s
 
 2. Use the Raspberry PI Imager to flash to SD card
 
-- Chose your target device
-- For OS chose "Use Custom", and select the uncompressed image file pi.img
-- Select as storage a new SD you have mounted
-- Click NEXT, and edit your settings. Here you can enter your networks SSID and password. Also, from the Services tab, enable SSH.
-- Apply settings when asked, and flash you SD. You should be able to now boot your Pi.
-- After booting yout Pi, you might have to manually set the display type in file `/etc/systemd/system/gshock.service` if it does not match your display. In this case, reboot again and you should see the initial screen,
+    - Chose your target device
+    - For OS chose "Use Custom", and select the uncompressed image file pi.img
+    - Select as storage a new SD you have mounted
+    - Click NEXT, and edit your settings. Here you can enter your networks SSID and password. Also, from the Services tab, enable SSH.
+    - Apply settings when asked, and flash your SD. You should be able to now boot your Pi.
+    - After booting yout Pi, you might have to manually set the display type in file `/etc/systemd/system/gshock.service` if it does not match your display. In this case, reboot again and you should see the initial screen,
 
 ## Setup Scripts
 
