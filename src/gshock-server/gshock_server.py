@@ -75,7 +75,9 @@ async def run_time_server():
 
     while True:
         try:
-            
+            # avoud tight loops
+            time.sleep(1)
+
             logger.info(f"Waiting for Connection...")
 
             connection = Connection()

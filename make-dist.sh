@@ -78,9 +78,11 @@ pip install -r "$INSTALL_DIR/requirements.txt"
 
 CONFIG_DIR="$HOME/.config/gshock"
 CONFIG_FILE="$CONFIG_DIR/config.ini"
-# Create the directory if it doesn't exist
-mkdir -p "$CONFIG_DIR"
 
+# Disable power-saving mode for the WiFi, otherwize it disconnects after some time.
+echo 'sudo /sbin/iwconfig wlan0 power off' | sudo tee /etc/rc.local > /dev/null
+
+mkdir -p "$CONFIG_DIR"
 echo "[main]" > "$CONFIG_FILE"
 echo excluded_watches = '["DW-H5600", "OCW-S400", "OCW-S400SG", "OCW-T200SB", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]' >> "$CONFIG_FILE"
 

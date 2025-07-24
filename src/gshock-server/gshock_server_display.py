@@ -17,6 +17,8 @@ from gshock_api.exceptions import GShockConnectionError
 from utils import run_once_key
 from peristent_store import PersistentMap
 
+from check_bt import ensure_bt_ready
+
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
@@ -133,10 +135,16 @@ async def run_time_server():
     pressed_button = WatchButton.NO_BUTTON  # Always defined
     excluded_watches = conf.get("excluded_watches")
 
+    while not ensure_bt_ready():
+        logger.error("Bluetooth not ready after 10 seconds")
+        
     prompt()
 
     while True:
         connection = None  # In case connection creation fails
+        
+        # avoud tight loops
+        time.sleep(1)
 
         try:
             # Show welcome screen only once

@@ -101,17 +101,17 @@ There are two ways to create your SD card: 1. Using a pre-build image, or 2. Sta
 
 ### Using the pre-built image
 
-1. Download [gshock-server-pi.img.xz](https://github.com/izivkov/GShockTimeServer/releases/download/pi_image/gshock-server-pi.img.xz).
+1. Download [gshock-server-pi.img.xz](https://github.com/izivkov/GShockTimeServer/releases/download/pi_image/time-server-pi.img.gz).
 
 2. Use the Raspberry PI Imager to flash to an SD card
 
-    - Use an SD card with a minimum of 4GB. Start the Parpberry Pi Imager
-    - Chose your target device
-    - For OS chose "Use Custom", and select the uncompressed image file `gshock-server-pi.img.xz`
-    - Select as storage a new SD you have mounted
-    - Click NEXT, and edit your settings. Here you can enter your networks SSID and password. Also, from the Services tab, enable SSH.
-    - Apply settings when asked, and flash your SD. You should be able to now boot your Pi.
-    - The image is configured to use the `waveshare` display. If you are using a different display, like the `tft154` or `mock` after booting yout Pi, you need to manually set the display type in file `/etc/systemd/system/gshock.service`. After that, restart the service:
+- Use an SD card with a minimum of 4GB. Start the Parpberry Pi Imager
+- Chose your target device
+- For OS chose "Use Custom", and select the uncompressed image file `gshock-server-pi.img.xz`
+- Select as storage a new SD you have mounted
+- Click NEXT, and edit your settings. Here you can enter your networks SSID and password. Also, from the Services tab, enable SSH.
+- Apply settings when asked, and flash your SD. You should be able to now boot your Pi.
+- The image is configured to use the `waveshare` display. If you are using a different display, like the `tft154` or `mock` after booting yout Pi, you need to manually set the display type in file `/etc/systemd/system/gshock.service`. After that, restart the service:
 ```
 sudo systemctl daemon-reload
 sudo systemctl enable gshock.service
