@@ -101,7 +101,7 @@ There are two ways to create your SD card: 1. Using a pre-build image, or 2. Sta
 
 ### Using the pre-built image
 
-This image works for both Pi Zero and Pi 3/4
+This image works for both Pi Zero and Pi 3.
 
 1. Download [time-server-pi.img.gz](https://github.com/izivkov/GShockTimeServer/releases/download/pi_image/time-server-pi.img.gz).
 
