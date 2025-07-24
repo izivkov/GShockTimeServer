@@ -101,13 +101,15 @@ There are two ways to create your SD card: 1. Using a pre-build image, or 2. Sta
 
 ### Using the pre-built image
 
+This image works for both Pi Zero and Pi 3/4
+
 1. Download [time-server-pi.img.gz](https://github.com/izivkov/GShockTimeServer/releases/download/pi_image/time-server-pi.img.gz).
 
 2. Use the Raspberry PI Imager to flash to an SD card
 
 - Use an SD card with a minimum of 4GB. Start the Parpberry Pi Imager
 - Chose your target device
-- For OS chose "Use Custom", and select the uncompressed image file `time-server-pi.img.gz`
+- For OS chose "Use Custom", and select the image file `time-server-pi.img.gz` you just downloaded.
 - Select as storage a new SD you have mounted
 - Click NEXT, and edit your settings. Here you can enter your networks SSID and password. Also, from the Services tab, enable SSH.
 - Apply settings when asked, and flash your SD. You should be able to now boot your Pi.
