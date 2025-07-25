@@ -8,9 +8,15 @@ from .segment import Segment
 from .style import Style, StyleStack, StyleType
 from .styled import Styled
 
+GuideType = Tuple[str, str, str, str]
+
 
 class Tree(JupyterMixin):
     """A renderable for a tree structure.
+
+    Attributes:
+        ASCII_GUIDES (GuideType): Guide lines used when Console.ascii_only is True.
+        TREE_GUIDES (List[GuideType, GuideType, GuideType]): Default guide lines.
 
     Args:
         label (RenderableType): The renderable or str for the tree label.
@@ -18,7 +24,15 @@ class Tree(JupyterMixin):
         guide_style (StyleType, optional): Style of the guide lines. Defaults to "tree.line".
         expanded (bool, optional): Also display children. Defaults to True.
         highlight (bool, optional): Highlight renderable (if str). Defaults to False.
+        hide_root (bool, optional): Hide the root node. Defaults to False.
     """
+
+    ASCII_GUIDES = ("    ", "|   ", "+-- ", "`-- ")
+    TREE_GUIDES = [
+        ("    ", "│   ", "├── ", "└── "),
+        ("    ", "┃   ", "┣━━ ", "┗━━ "),
+        ("    ", "║   ", "╠══ ", "╚══ "),
+    ]
 
     def __init__(
         self,
@@ -45,7 +59,7 @@ class Tree(JupyterMixin):
         style: Optional[StyleType] = None,
         guide_style: Optional[StyleType] = None,
         expanded: bool = True,
-        highlight: bool = False,
+        highlight: Optional[bool] = False,
     ) -> "Tree":
         """Add a child tree.
 
@@ -72,7 +86,6 @@ class Tree(JupyterMixin):
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
     ) -> "RenderResult":
-
         stack: List[Iterator[Tuple[bool, Tree]]] = []
         pop = stack.pop
         push = stack.append
@@ -83,21 +96,15 @@ class Tree(JupyterMixin):
         guide_style = get_style(self.guide_style, default="") or null_style
         SPACE, CONTINUE, FORK, END = range(4)
 
-        ASCII_GUIDES = ("    ", "|   ", "+-- ", "`-- ")
-        TREE_GUIDES = [
-            ("    ", "│   ", "├── ", "└── "),
-            ("    ", "┃   ", "┣━━ ", "┗━━ "),
-            ("    ", "║   ", "╠══ ", "╚══ "),
-        ]
         _Segment = Segment
 
         def make_guide(index: int, style: Style) -> Segment:
             """Make a Segment for a level of the guide lines."""
             if options.ascii_only:
-                line = ASCII_GUIDES[index]
+                line = self.ASCII_GUIDES[index]
             else:
                 guide = 1 if style.bold else (2 if style.underline2 else 0)
-                line = TREE_GUIDES[0 if options.legacy_windows else guide][index]
+                line = self.TREE_GUIDES[0 if options.legacy_windows else guide][index]
             return _Segment(line, style)
 
         levels: List[Segment] = [make_guide(CONTINUE, guide_style)]
@@ -136,6 +143,7 @@ class Tree(JupyterMixin):
                     highlight=self.highlight,
                     height=None,
                 ),
+                pad=options.justify is not None,
             )
 
             if not (depth == 0 and self.hide_root):
@@ -194,7 +202,6 @@ class Tree(JupyterMixin):
 
 
 if __name__ == "__main__":  # pragma: no cover
-
     from pip._vendor.rich.console import Group
     from pip._vendor.rich.markdown import Markdown
     from pip._vendor.rich.panel import Panel
@@ -214,9 +221,9 @@ if __name__ == "__main__":  # pragma: no cover
 
     code = """\
 class Segment(NamedTuple):
-    text: str = ""    
-    style: Optional[Style] = None    
-    is_control: bool = False    
+    text: str = ""
+    style: Optional[Style] = None
+    is_control: bool = False
 """
     syntax = Syntax(code, "python", theme="monokai", line_numbers=True)
 
@@ -224,7 +231,7 @@ class Segment(NamedTuple):
         """\
 ### example.md
 > Hello, World!
-> 
+>
 > Markdown _all_ the things
 """
     )
@@ -246,4 +253,5 @@ class Segment(NamedTuple):
     containers_node.add(Group("📄 [b magenta]Table", table))
 
     console = Console()
+
     console.print(root)

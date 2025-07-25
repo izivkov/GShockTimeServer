@@ -157,7 +157,7 @@ This script installs the basic software, dependencies, creates Python virtual en
 
 Installs all display-related dependencies, such as `luma, spidev, numpy, pillow`. While installing, it will ask you to select the display type. 
 
-If you enter the wrong display type, you can change it later by editing the file `/etc/systemd/system/gshock.service` and change the `--display` pareamert value to one of `waveshare`, ``tft154` or `mock`.
+If you enter the wrong display type, you can change it later by editing the file `/etc/systemd/system/gshock.service` and change the `--display` pareamert value to one of `waveshare`, `tft154` or `mock`.
 
 💡 Note: You need to run both `setup.sh` and `setup-display.sh`.
 

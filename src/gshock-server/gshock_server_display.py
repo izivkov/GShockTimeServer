@@ -155,7 +155,7 @@ async def run_time_server():
 
             logger.info("Waiting for Connection...")
 
-            connection = Connection()
+            connection = Connection(address=None)
             connected = await connection.connect(excluded_watches)
             if not connected:
                 logger.info("Failed to connect")
