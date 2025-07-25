@@ -49,8 +49,6 @@ set -e
 INSTALL_DIR="$(cd "$(dirname "$0")"; pwd)"
 SERVICE_USER="$(whoami)"
 VENV_DIR="$HOME/venv"
-BOOT_SCRIPT="$HOME/onboot.sh"
-LOG_DIR="$HOME/logs"
 
 echo "== G-Shock Server Installer for Linux =="
 
@@ -114,8 +112,23 @@ sudo systemctl daemon-reload
 sudo systemctl enable gshock.service
 sudo systemctl start gshock.service
 echo "✅ gshock.service installed and started."
+EOF
 
+chmod +x "$DIST_DIR/setup.sh"
+echo "setup.sh has been created and made executable."
+
+################################################################
+# Create setup-boot.sh
+################################################################
 # run commands on boot
+
+cat << 'EOF' > "$DIST_DIR/setup-boot.sh"
+#!/bin/bash
+
+set -e
+BOOT_SCRIPT="$HOME/onboot.sh"
+LOG_DIR="$HOME/logs"
+
 tee "$BOOT_SCRIPT" > /dev/null <<EOL
 #!/bin/bash
 
@@ -162,9 +175,7 @@ sudo systemctl enable user-boot-script.service
 sudo systemctl start user-boot-script.service
 
 EOF
-
-chmod +x "$DIST_DIR/setup.sh"
-echo "setup.sh has been created and made executable."
+chmod +x "$DIST_DIR/setup-boot.sh"
 
 ################################################################
 # Create gshock-updater.sh
@@ -384,6 +395,7 @@ cat << 'EOF' > "$DIST_DIR/setup-all.sh"
 # This script runs all setup scripts in order.
 
 . ./setup.sh
+. ./setup-boot.sh
 . ./setup-display.sh
 . ./gshock-updater.sh
 . ./enable-spi.sh
