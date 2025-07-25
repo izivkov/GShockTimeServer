@@ -135,9 +135,6 @@ async def run_time_server():
     pressed_button = WatchButton.NO_BUTTON  # Always defined
     excluded_watches = conf.get("excluded_watches")
 
-    while not ensure_bt_ready():
-        logger.error("Bluetooth not ready after 10 seconds")
-        
     prompt()
 
     while True:

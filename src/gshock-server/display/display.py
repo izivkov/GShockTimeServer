@@ -48,11 +48,6 @@ def show_welcome_screen(self, message, watch_name=None, last_sync=None):
         img_path = "gshock-server-dist/display/pic/dw-b5600.png" if hasattr(self, 'output_file') \
             else "display/pic/dw-b5600.png"
 
-        logger.info (f"img_path: {img_path}")
-        import os
-        cwd = os.getcwd()
-        logger.info("Current working directory:", cwd)
-
         image = Image.open(img_path).convert("RGB").resize((self.width, self.height))
     except FileNotFoundError:
         print(f"❌ Background image '{img_path}' not found. Using black fallback.")
