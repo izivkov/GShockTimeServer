@@ -64,3 +64,5 @@ MANIFEST
 .venv*/
 .conda*/
 .python-version
+time-server-pi.img.gz
+time-server-pi.img.gz
