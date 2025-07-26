@@ -191,6 +191,7 @@ set -e
 
 set -e
 
+VENV_DIR="$HOME/venv"
 REPO_NAME="gshock-server-dist"
 REPO_URL="https://github.com/izivkov/gshock-server-dist.git"
 REPO_DIR="$HOME/$REPO_NAME"
@@ -231,6 +232,7 @@ if [ "$LATEST_TAG" != "$LAST_SYNCED_TAG" ]; then
     echo "$LATEST_TAG" > "$LAST_TAG_FILE"
 
     echo "Updating API's"
+    source "$VENV_DIR/bin/activate"
     pip install -r "$INSTALL_DIR/requirements.txt"
 
     echo "Restarting gshock.service"
