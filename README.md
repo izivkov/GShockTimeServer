@@ -107,7 +107,7 @@ This image works for both Pi Zero and Pi 3.
 
 2. Use the Raspberry PI Imager to flash to an SD card
 
-- Use a SD card with a minimum of 4GB. Start the Parpberry Pi Imager
+- Use an SD card with a minimum of 4GB. Start the Parpberry Pi Imager
 - Choose your target device
 - For OS choose "Use Custom", and select the image file `time-server-pi.img.gz` you just downloaded.
 - Select as storage a new SD you have mounted
