@@ -157,7 +157,7 @@ This script installs the basic software, dependencies, creates Python virtual en
 
 Installs all display-related dependencies, such as `luma, spidev, numpy, pillow`. While installing, it will ask you to select the display type. 
 
-If you enter the wrong display type, you can change it later by editing the file `/etc/systemd/system/gshock.service` and change the `--display` pareamert value to one of `waveshare`, `tft154` or `mock`.
+If you enter the wrong display type, you can change it later by editing the file `/etc/systemd/system/gshock.service` and change the `--display` pareamert value to one of `waveshare`, `tft154` or `mock`. Reboot.
 
 💡 Note: You need to run both `setup.sh` and `setup-display.sh`.
 
@@ -183,7 +183,7 @@ If you have used the scripts to install the software, a service file `/etc/syste
 
 You may have some watches that you prefer **not** to connect to the server. For example, certain Edifice models attempt to connect frequently, which can interfere with connections from other watches.
 
-To prevent the server from connecting to specific models, you can manually list them in your `config.ini` file, ocated at $HOME/.config/gshock/config.ini, under the `excluded_watches` setting:
+To prevent the server from connecting to specific models, you can manually list them in your `config.ini` file, located at `$HOME/.config/gshock/config.ini`, under the `excluded_watches` setting:
 
 ```ini
 excluded_watches = ["DW-H5600", "OCW-S400", "OCW-S400SG", "OCW-T200SB", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]
