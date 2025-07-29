@@ -2,6 +2,9 @@
 
 ## 1. Overview
 
+📢 Announcement: We're looking for contributors!
+Check out our [list of features](https://github.com/izivkov/GShockTimeServer/issues) we'd like to implement. If you're up for a challenge, feel free to assign an issue to yourself and create a pull request.
+
 ### What the project does.
 **ShockTimeServer** automatically sets the correct time on your Casio G-Shock watches. Like your G-Shock itself, it’s designed to be set-and-forget. Just start the server once—it will run reliably for months with no user intervention.
 
@@ -167,6 +170,10 @@ This script will set the device to automatically update its software if a new ve
 It will then restart the server, so you will always be running the latest version. The scripts sets us a cron job to
 run periodically and check for new tags on the `gshock-server-dist` GitHub repository. We recommend running this script, because we plan on adding new features soon.
 
+### setup-boot.sh (Optional)
+
+This script creates a service and another script, `onboot.sh`, to run on reboot. `onboot.sh` disables Wi-Fi power saving mode and restarts the G-Shock service once Wi-Fi is up. This is done to address some stability issues with the Pi Zero, where the device may lose Bluetooth and Wi-Fi connectivity. If you are not experiencing these issues, there is no need to run this script, but you can add your own commands in `onboot.sh` instead.
+
 ### enable-spi.sh
 
 This script will enable the Linux driver needed for the display. Without this step, the display will not work. Reboot when asked after the script runs. 
@@ -239,6 +246,8 @@ Shows details about the last connected watch, including time of last sync, next 
 If you're running the server on a Raspberry Pi Zero or another Pi model, you can attach a small SPI-based LCD display to visually monitor the system status.
 
 ➡️ If you're using a Pi Zero, make sure to get a model with a pre-soldered 40-pin GPIO header, such as [this one](https://amzn.to/3GA6nIR).
+
+💡 **Note**: We have experienced some stability issues with the Pi Zero, specifically, loss of Wi-Fi and Bluetooth connections. We recommend using the Pi Zero 2 WH instead, as mentioned in the link above.
 
 Currently we support the following 240x240 color displays:
 
