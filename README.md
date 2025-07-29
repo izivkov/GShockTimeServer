@@ -1,6 +1,6 @@
 # GShockTimeServer
 
-📢 Announcement: We're looking for contributors!
+📢 **Announcement**: We're looking for contributors!
 Check out our [list of features](https://github.com/izivkov/GShockTimeServer/issues) we'd like to implement. If you're up for a challenge, feel free to assign an issue to yourself and create a pull request.
 
 ## 1. Overview
