@@ -1,9 +1,9 @@
 # GShockTimeServer
 
-## 1. Overview
-
 📢 Announcement: We're looking for contributors!
 Check out our [list of features](https://github.com/izivkov/GShockTimeServer/issues) we'd like to implement. If you're up for a challenge, feel free to assign an issue to yourself and create a pull request.
+
+## 1. Overview
 
 ### What the project does.
 **ShockTimeServer** automatically sets the correct time on your Casio G-Shock watches. Like your G-Shock itself, it’s designed to be set-and-forget. Just start the server once—it will run reliably for months with no user intervention.
