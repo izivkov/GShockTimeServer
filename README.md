@@ -306,3 +306,11 @@ journalctl -u gshock.service -f
 ```
 
 
+## Related Projects
+
+Also check out this even tinier server running on an ESP32 microcontroller:
+
+https://github.com/izivkov/gshock-api-esp32
+
+
+
