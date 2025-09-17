@@ -14,6 +14,7 @@ from gshock_api.watch_info import watch_info
 from args import args
 from datetime import datetime, timedelta
 from configurator import conf
+from gshock_api.always_connected_watch_filter import always_connected_watch_filter as watch_filter
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
@@ -69,7 +70,6 @@ def get_next_alarm_time(alarms):
 from peristent_store import PersistentMap
 
 async def run_time_server():
-    excluded_watches = conf.get("excluded_watches")
     store = PersistentMap("gshock_server_data.json")
     prompt()
 
@@ -81,7 +81,8 @@ async def run_time_server():
             logger.info(f"Waiting for Connection...")
 
             connection = Connection()
-            connected = await connection.connect(excluded_watches)
+            connected = await connection.connect(watch_filter.connection_filter)
+
             if not connected:
                 logger.info("Failed to connect")
                 continue

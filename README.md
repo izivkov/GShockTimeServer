@@ -188,18 +188,13 @@ If you have used the scripts to install the software, a service file `/etc/syste
 
 ## Ignoring Specific Watches
 
-You may have some watches that you prefer **not** to connect to the server. For example, certain Edifice models attempt to connect frequently, which can interfere with connections from other watches.
+Some watches, such as the DW-H5600 or the Edifice ECB-30, continuously attempt to connect to the server. This behavior interferes with other watches, so they are limited to connecting only once every 6 hours. This is achieved by passing a built-in filter function to the connection:
 
-To prevent the server from connecting to specific models, you can manually list them in your `config.ini` file, located at `$HOME/.config/gshock/config.ini`, under the `excluded_watches` setting:
-
-```ini
-excluded_watches = ["DW-H5600", "OCW-S400", "OCW-S400SG", "OCW-T200SB", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]
+```
+connected = await connection.connect(watch_filter.connection_filter)
 ```
 
-Then restart the service for the changes to take effect:
-```
-sudo systemctl restart gshock.service
-```
+You can change this behavior by either not passing the filter function or by providing your own custom filter.
 
 ### Connecting Your Watch
 

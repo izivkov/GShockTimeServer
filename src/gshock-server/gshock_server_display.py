@@ -16,6 +16,7 @@ from gshock_api.watch_info import watch_info
 from gshock_api.exceptions import GShockConnectionError
 from utils import run_once_key
 from peristent_store import PersistentMap
+from gshock_api.always_connected_watch_filter import always_connected_watch_filter as watch_filter
 
 from check_bt import ensure_bt_ready
 
@@ -133,7 +134,6 @@ async def safe_show_display(api):
 
 async def run_time_server():
     pressed_button = WatchButton.NO_BUTTON  # Always defined
-    excluded_watches = conf.get("excluded_watches")
 
     prompt()
 
@@ -156,7 +156,7 @@ async def run_time_server():
             logger.info("Waiting for Connection...")
 
             connection = Connection(address=None)
-            connected = await connection.connect(excluded_watches)
+            connected = await connection.connect(watch_filter.connection_filter)
             if not connected:
                 logger.info("Failed to connect")
                 continue
