@@ -81,11 +81,6 @@ CONFIG_FILE="$CONFIG_DIR/config.ini"
 
 # Disable power-saving mode for the WiFi, otherwize it disconnects after some time.
 echo 'sudo /sbin/iwconfig wlan0 power off' | sudo tee /etc/rc.local > /dev/null
-
-mkdir -p "$CONFIG_DIR"
-echo "[main]" > "$CONFIG_FILE"
-echo excluded_watches = '["DW-H5600", "OCW-S400", "OCW-S400SG", "OCW-T200SB", "ECB-30", "ECB-20", "ECB-10", "ECB-50", "ECB-60", "ECB-70"]' >> "$CONFIG_FILE"
-
 echo ""
 echo "✅ Installation complete!"
 
@@ -278,7 +273,7 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y python3-pip python3-venv zip unzip \
     libfreetype6-dev libjpeg-dev zlib1g-dev libopenjp2-7-dev \
     libtiff5-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev \
-    python3-tk p7zip-full wget
+    python3-tk p7zip-full wget libopenblas-dev
 
 # Install Python packages
 pip install --upgrade pip
