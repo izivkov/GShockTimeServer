@@ -81,7 +81,9 @@ async def run_time_server():
             logger.info(f"Waiting for Connection...")
 
             connection = Connection()
-            connected = await connection.connect(watch_filter.connection_filter)
+            connected = await connection.connect(
+                lambda name: name not in ["CASIO OCW-T200"] and watch_filter.connection_filter(name)
+            )
 
             if not connected:
                 logger.info("Failed to connect")
