@@ -27,13 +27,11 @@
 # THE SOFTWARE.
 #
 
-import os
-import sys
 import time
 import spidev
 import logging
 import numpy as np
-from gpiozero import *
+from gpiozero import DigitalInputDevice, DigitalOutputDevice, PWMOutputDevice
 
 class RaspberryPi:
     def __init__(self,spi=spidev.SpiDev(0,0),spi_freq=40000000,rst = 27,dc = 25,bl = 18,bl_freq=1000,i2c=None,i2c_freq=100000):
@@ -51,7 +49,7 @@ class RaspberryPi:
         
         #Initialize SPI
         self.SPI = spi
-        if self.SPI!=None :
+        if self.SPI is not None :
             self.SPI.max_speed_hz = spi_freq
             self.SPI.mode = 0b00
 
@@ -77,7 +75,7 @@ class RaspberryPi:
         return PWMOutputDevice(Pin,frequency = self.BL_freq)
 
     def spi_writebyte(self, data):
-        if self.SPI!=None :
+        if self.SPI is not None :
             self.SPI.writebytes(data)
 
     def bl_DutyCycle(self, duty):
@@ -87,14 +85,14 @@ class RaspberryPi:
         self.BL_PIN.frequency = freq
            
     def module_init(self):
-        if self.SPI!=None :
+        if self.SPI is not None :
             self.SPI.max_speed_hz = self.SPEED        
             self.SPI.mode = 0b00     
         return 0
 
     def module_exit(self):
         logging.debug("spi end")
-        if self.SPI!=None :
+        if self.SPI is not None :
             self.SPI.close()
         
         logging.debug("gpio cleanup...")

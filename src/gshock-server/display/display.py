@@ -1,10 +1,7 @@
-from email.mime import message
-from luma.core.interface.serial import spi
-from luma.lcd.device import st7789
 
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
-from gshock_api.logger import logger
+
 
 font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 16)
 font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 20)
@@ -29,8 +26,6 @@ def generate_battery_icon(percent: int, width=20, height=10) -> Image.Image:
     if fill_width < (width - 2):
         draw.rectangle([1 + fill_width, 1, width - 2, height - 2], fill=(0, 0, 0))
     return icon
-
-from PIL import Image, ImageDraw, ImageFont
 
 def show_welcome_screen(self, message, watch_name=None, last_sync=None):
     """
@@ -109,7 +104,6 @@ def draw_status(draw, image, width, height, font_large, font_small,
     # Temperature string — draw it at bottom-left
     temp_str = f"{temperature}°C"
     bbox_temp = draw.textbbox((0, 0), temp_str, font=font_small)
-    temp_w = bbox_temp[2] - bbox_temp[0]
     temp_h = bbox_temp[3] - bbox_temp[1]
     temp_x = margin
     temp_y = height - temp_h - margin
