@@ -7,13 +7,11 @@ import time
 from gshock_api.connection import Connection
 from gshock_api.gshock_api import GshockAPI
 from gshock_api.iolib.button_pressed_io import WatchButton
-from gshock_api.scanner import scanner
 from gshock_api.logger import logger
 from gshock_api.watch_info import watch_info
-from gshock_api.watch_info import watch_info
 from args import args
-from datetime import datetime, timedelta
-from configurator import conf
+from datetime import timedelta
+from peristent_store import PersistentMap
 from gshock_api.always_connected_watch_filter import always_connected_watch_filter as watch_filter
 
 __author__ = "Ivo Zivkov"
@@ -67,8 +65,6 @@ def get_next_alarm_time(alarms):
 
     return next_alarm.hour, next_alarm.minute
 
-from peristent_store import PersistentMap
-
 async def run_time_server():
     store = PersistentMap("gshock_server_data.json")
     prompt()
@@ -78,7 +74,7 @@ async def run_time_server():
             # avoud tight loops
             time.sleep(1)
 
-            logger.info(f"Waiting for Connection...")
+            logger.info("Waiting for Connection...")
 
             connection = Connection()
             connected = await connection.connect(
@@ -109,7 +105,7 @@ async def run_time_server():
 
             logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
 
-            if watch_info.alwaysConnected == False:
+            if not watch_info.alwaysConnected:
                 await connection.disconnect()
 
         except Exception as e:

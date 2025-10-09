@@ -8,7 +8,7 @@ def ensure_bt_ready():
             if "Powered: yes" in output:
                 return True
             subprocess.run(["bluetoothctl", "power", "on"], input=b"yes\n", timeout=2)
-        except:
+        except Exception:
             pass
         time.sleep(1)
     return False
