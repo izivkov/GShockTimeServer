@@ -270,10 +270,12 @@ source "$VENV_DIR/bin/activate"
 
 # Update & upgrade
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y python3-pip python3-venv zip unzip \
+sudo apt install -y python3-pip python3-venv zip unzip swig liblgpio-dev \
     libfreetype6-dev libjpeg-dev zlib1g-dev libopenjp2-7-dev \
     libtiff5-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev \
     python3-tk p7zip-full wget libopenblas-dev
+
+sudo apt-get -y autoremove
 
 # Install Python packages
 pip install --upgrade pip
