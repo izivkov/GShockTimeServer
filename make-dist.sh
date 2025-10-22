@@ -127,6 +127,9 @@ LOG_DIR="$HOME/logs"
 tee "$BOOT_SCRIPT" > /dev/null <<EOL
 #!/bin/bash
 
+# Unblock all rfkill (WiFi, Bluetooth, etc.)
+sudo rfkill unblock all
+
 # Wait for wlan0 to be ready (max 20 seconds)
 for i in {1..20}; do
     if /sbin/iw dev wlan0 info > /dev/null 2>&1; then
@@ -143,6 +146,7 @@ sudo /usr/sbin/iw wlan0 set power_save off >> /home/pi/boot.log 2>&1
 
 sleep 10
 sudo systemctl restart gshock.service >> /home/pi/boot.log 2>&1
+
 EOL
 
 chmod +x "$BOOT_SCRIPT"
