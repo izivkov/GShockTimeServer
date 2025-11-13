@@ -14,12 +14,33 @@ The server can run on a Raspberry Pi device with a small LCD display, ot can run
 
 [![Watch the video](https://img.youtube.com/vi/esZWTlzKvus/mqdefault.jpg)](https://youtu.be/esZWTlzKvus)
 
-### Supported watch types
+### Supported Watch Models
 
-Most G-Shock and other Casio Bluetooth watches are supported. Here is a list of supported watches:
-G(M)W-5600, G(M)W-5000, GA-B2100, GA-B001-1AER, GST-B500, GST-B200, MSG-B100, G-B001, GBD-H1000 (Partial support), MRG-B5000, GST-B600, GCW-B5000, GG-B100, ABL-100WE, Edifice ECB-30, ECB-10, ECB-20, most Edifice watches, most Protrek models.
+Works with many **G-Shock**, **Edifice**, and **Pro Trek** variants. Here are the models reported to be compatible with the app and their modules.
 
-Let us know if it works with other watches, and if you like us to add support for your watch.
+> **Note:** By _compatible watches_ we mean that these watches can work with the app, but this does not mean that every function of the watch is supported by the app. For example, fitness functions are not implemented in the app.
+
+| Model              | Module Number(s)     |
+|--------------------|----------------------|
+| GM-5600 / GMW-5600 | 3229                 |
+| GMW-B5000          | 3459, 3461           |
+| GW-5000            | 3159, 3495           |
+| GA-B2100           | 5689                 |
+| GST-B500           | 5684                 |
+| GST-B200           | 5608                 |
+| MSG-B100           | 5659                 |
+| G-B001             | 3519                 |
+| GBD-800            | 3464                 |
+| GBD-H1000          | 3475                 |
+| MRG-B5000          | 3541                 |
+| GCW-B5000          | 3543                 |
+| GG-B100            | 5594, 5595           |
+| ABL-100WE          | 3565                 |
+| Edifice ECB-10     | 5618, 5604           |
+| Edifice ECB-20     | 5638, 5603           |
+| Edifice ECB-30     | 5686, 5672           |
+
+We are looking for feedback about the accuracy of this table, so please comment in the **Issues** section with any disrepancies.
 
 ### How it works at a high level
 
