@@ -81,6 +81,7 @@ sudo apt install -y \
 # Install dependencies using uv
 echo "== Installing dependencies via uv =="
 cd "$INSTALL_DIR"
+uv pip install numpy==1.26.4
 uv sync -q
 
 # Optional: disable WiFi power-saving
