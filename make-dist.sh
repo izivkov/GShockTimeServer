@@ -23,6 +23,7 @@ cp $SRC_DIR/display/*.py "$DIST_DIR/display/"
 cp $SRC_DIR/display/lib/*.py "$DIST_DIR/display/lib/"
 cp $SRC_DIR/display/pic/* "$DIST_DIR/display/pic/"
 cp requirements.txt "$DIST_DIR/"
+cp pyproject.toml "$DIST_DIR/"
 
 # [ -f README.md ] && cp README.md "$DIST_DIR/"
 [ -f LICENSE ] && cp LICENSE "$DIST_DIR/"
@@ -40,73 +41,91 @@ EOF
 ################################################################
 cat << 'EOF' > "$DIST_DIR/setup.sh"
 #!/bin/bash
-
 set -e
 
-# This script installs the basic software, dependencies, sets up a service to start the server each time 
-# the device is rebooted, etc. For a device with no display, this is sufficient to run the server.
+# G-Shock Server Installer for Raspberry Pi (headless, uv-native, systemd user service)
 
 INSTALL_DIR="$(cd "$(dirname "$0")"; pwd)"
 SERVICE_USER="$(whoami)"
-VENV_DIR="$HOME/venv"
+LAUNCHER="$HOME/.local/bin/start_gshock.sh"
+USER_SYSTEMD_DIR="$HOME/.config/systemd/user"
+SERVICE_FILE="$USER_SYSTEMD_DIR/gshock.service"
 
-echo "== G-Shock Server Installer for Linux =="
+echo "== G-Shock Server Installer =="
 
-# Update & upgrade
-if command -v apt >/dev/null 2>&1; then
-    sudo apt update && sudo apt upgrade -y
-    sudo apt install -y python3-pip python3-venv zip unzip \
-        libfreetype6-dev libjpeg-dev zlib1g-dev libopenjp2-7-dev \
-        libtiff5-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python3-tk
-elif command -v dnf >/dev/null 2>&1; then
-    sudo dnf install -y python3-pip python3-venv zip unzip
-elif command -v yum >/dev/null 2>&1; then
-    sudo yum install -y python3-pip python3-venv zip unzip
-elif command -v pacman >/dev/null 2>&1; then
-    sudo pacman -Sy --noconfirm python-pip python-virtualenv zip unzip
+# Ensure Python3 and Git are available
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "Python3 is required. Please install Python3 first."
+    exit 1
+fi
+if ! command -v git >/dev/null 2>&1; then
+    echo "Git is required. Installing..."
+    sudo apt-get update && sudo apt-get install -y git
 fi
 
-# Setup virtual environment in home directory
-if [ ! -d "$VENV_DIR" ]; then
-  python3 -m venv "$VENV_DIR"
+# Install uv if missing
+if ! command -v uv >/dev/null 2>&1; then
+    echo "Installing uv globally..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
 fi
-source "$VENV_DIR/bin/activate"
 
-# Install dependencies
-pip install --upgrade pip
-pip install -r "$INSTALL_DIR/requirements.txt"
+echo "== Installing system dependencies for Pillow and other libs =="
+sudo apt update
+sudo apt install -y \
+  build-essential python3-dev cython3 \
+  libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev \
+  libopenjp2-7-dev libtiff-dev libwebp-dev tcl-dev tk-dev \
+  libdbus-1-dev libglib2.0-dev
 
-CONFIG_DIR="$HOME/.config/gshock"
-CONFIG_FILE="$CONFIG_DIR/config.ini"
+# Install dependencies using uv
+echo "== Installing dependencies via uv =="
+cd "$INSTALL_DIR"
+uv sync -q
 
-# Disable power-saving mode for the WiFi, otherwize it disconnects after some time.
-echo 'sudo /sbin/iwconfig wlan0 power off' | sudo tee /etc/rc.local > /dev/null
-echo ""
-echo "✅ Installation complete!"
+# Optional: disable WiFi power-saving
+if command -v iwconfig >/dev/null 2>&1; then
+    echo "Disabling WiFi power-saving..."
+    sudo bash -c 'echo "/sbin/iwconfig wlan0 power off" >> /etc/rc.local'
+else
+    echo "Skipping WiFi power-saving (iwconfig not found)."
+fi
 
-# Create and enable systemd service
-SERVICE_FILE="/etc/systemd/system/gshock.service"
-sudo tee "$SERVICE_FILE" > /dev/null <<EOL
+# Create launcher script that runs server via uv
+mkdir -p "$(dirname "$LAUNCHER")"
+cat > "$LAUNCHER" <<EOL
+#!/bin/bash
+export PATH="\$HOME/.local/bin:\$PATH"
+cd "$INSTALL_DIR"
+uv run gshock_server.py
+EOL
+chmod +x "$LAUNCHER"
+
+# Create systemd user service
+mkdir -p "$USER_SYSTEMD_DIR"
+cat > "$SERVICE_FILE" <<EOL
 [Unit]
 Description=G-Shock Time Server
 After=network.target
 
 [Service]
-ExecStart=$VENV_DIR/bin/python $INSTALL_DIR/gshock_server.py
-WorkingDirectory=$INSTALL_DIR
-Environment=PYTHONUNBUFFERED=1
+ExecStart=$LAUNCHER
 Restart=on-failure
 RestartSec=5
-User=$SERVICE_USER
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 EOL
 
-sudo systemctl daemon-reload
-sudo systemctl enable gshock.service
-sudo systemctl start gshock.service
-echo "✅ gshock.service installed and started."
+# Enable linger and start service
+loginctl enable-linger "$SERVICE_USER"
+systemctl --user daemon-reload
+systemctl --user enable gshock.service
+systemctl --user start gshock.service
+
+echo "✅ G-Shock server installed and started via systemd user service."
+echo "Manage with: systemctl --user status gshock.service"
+
 EOF
 
 chmod +x "$DIST_DIR/setup.sh"
@@ -181,28 +200,37 @@ chmod +x "$DIST_DIR/setup-boot.sh"
 ################################################################
 cat << 'EOF' > "$DIST_DIR/gshock-updater.sh"
 #!/bin/bash
-
 set -e
 
-# This script will set the device to automatically update its software if a new version is available on GitHub.
-# It will then restart the server, so you will always be running the latest version. The scripts sets us a cron job to
-# run periodically and check for new tags on the `gshock-server-dist` GitHub repository.
+# G-Shock Server Updater (uv-native)
+# Pulls the latest GitHub release tag and restarts the systemd user service.
 
-set -e
-
-VENV_DIR="$HOME/venv"
 REPO_NAME="gshock-server-dist"
 REPO_URL="https://github.com/izivkov/gshock-server-dist.git"
 REPO_DIR="$HOME/$REPO_NAME"
 LAST_TAG_FILE="$HOME/.config/gshock-updater/last-tag"
 LOG_FILE="$HOME/logs/gshock-updater.log"
-INSTALL_DIR="$(cd "$(dirname "$0")"; pwd)"
+SERVICE_NAME="gshock.service"
 
-mkdir -p "$(dirname "$LAST_TAG_FILE")"
-mkdir -p "$(dirname "$LOG_FILE")"
+mkdir -p "$(dirname "$LAST_TAG_FILE")" "$(dirname "$LOG_FILE")"
+
+echo "== G-Shock Updater started at $(date) ==" >> "$LOG_FILE"
+
+# Ensure dependencies exist
+if ! command -v git >/dev/null 2>&1; then
+    echo "Installing Git..." | tee -a "$LOG_FILE"
+    sudo apt-get update && sudo apt-get install -y git
+fi
+
+if ! command -v uv >/dev/null 2>&1; then
+    echo "Installing uv CLI..." | tee -a "$LOG_FILE"
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+fi
 
 # Clone repo if missing
 if [ ! -d "$REPO_DIR/.git" ]; then
+    echo "Cloning repository..." | tee -a "$LOG_FILE"
     git clone --depth 1 "$REPO_URL" "$REPO_DIR"
 fi
 
@@ -213,8 +241,8 @@ git fetch --tags --force
 LATEST_TAG=$(git tag --sort=-v:refname | head -n 1)
 
 if [ -z "$LATEST_TAG" ]; then
-    echo "No tags found in repository."
-    exit 1
+    echo "No tags found in repository." | tee -a "$LOG_FILE"
+    exit 0
 fi
 
 # Read last synced tag
@@ -223,26 +251,29 @@ if [ -f "$LAST_TAG_FILE" ]; then
     LAST_SYNCED_TAG=$(cat "$LAST_TAG_FILE")
 fi
 
-# Update if a new tag is found
+# Update if a new tag is available
 if [ "$LATEST_TAG" != "$LAST_SYNCED_TAG" ]; then
-    echo "Updating to tag: $LATEST_TAG"
+    echo "Updating to tag: $LATEST_TAG" | tee -a "$LOG_FILE"
     git reset --hard "$LATEST_TAG"
     git clean -fd
     echo "$LATEST_TAG" > "$LAST_TAG_FILE"
 
-    echo "Updating API's"
-    source "$VENV_DIR/bin/activate"
-    pip install -r "$INSTALL_DIR/requirements.txt"
+    echo "Installing/updating dependencies with uv..." | tee -a "$LOG_FILE"
+    uv sync -q
 
-    echo "Restarting gshock.service"
-    sudo systemctl restart gshock.service
+    echo "Restarting G-Shock server user service..." | tee -a "$LOG_FILE"
+    systemctl --user restart "$SERVICE_NAME"
+
+    echo "✅ Updated to tag $LATEST_TAG at $(date)" | tee -a "$LOG_FILE"
 else
-    echo "Already up to date with tag: $LATEST_TAG"
+    echo "Already up to date with tag: $LATEST_TAG" | tee -a "$LOG_FILE"
 fi
 
-# Ensure cron job is present
-CRON_JOB="*/60 * * * * $REPO_DIR/gshock-updater.sh >> $LOG_FILE 2>&1"
-( crontab -l 2>/dev/null | grep -Fv "$REPO_NAME/gshock-updater.sh" ; echo "$CRON_JOB" ) | crontab -
+# Ensure cron job is present for hourly updates
+CRON_JOB="0 * * * * $REPO_DIR/gshock-updater.sh >> $LOG_FILE 2>&1"
+( crontab -l 2>/dev/null | grep -Fv "$REPO_DIR/gshock-updater.sh" ; echo "$CRON_JOB" ) | crontab -
+
+echo "Updater job installed in crontab (hourly check)." | tee -a "$LOG_FILE"
 EOF
 
 chmod +x "$DIST_DIR/gshock-updater.sh"
@@ -254,86 +285,96 @@ echo "gshock-updater has been created and made executable."
 
 cat << 'EOF' > "$DIST_DIR/setup-display.sh"
 #!/bin/bash
-
-# Installs all display-related dependencies. While installing, it will ask you to select the display type.
-# Note: You need to run both setup.sh and setup-display.sh.
-
 set -e
 
-echo "== Display setup =="
+# G-Shock Display Setup (headless, uv-native, systemd user service)
+
+echo "== G-Shock Display Setup =="
 
 INSTALL_DIR="$(cd "$(dirname "$0")"; pwd)"
-VENV_DIR="$HOME/venv"
 SERVICE_USER="$(whoami)"
+LAUNCHER="$HOME/.local/bin/start_gshock_display.sh"
+USER_SYSTEMD_DIR="$HOME/.config/systemd/user"
+SERVICE_FILE="$USER_SYSTEMD_DIR/gshock_display.service"
 
-# Setup virtual environment in home directory
-if [ ! -d "$VENV_DIR" ]; then
-  python3 -m venv "$VENV_DIR"
+# Ensure Python and basic dependencies exist
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "Python3 is required. Please install it first."
+    exit 1
 fi
-source "$VENV_DIR/bin/activate"
 
-# Update & upgrade
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y python3-pip python3-venv zip unzip swig liblgpio-dev \
-    libfreetype6-dev libjpeg-dev zlib1g-dev libopenjp2-7-dev \
-    libtiff5-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev \
-    python3-tk p7zip-full wget libopenblas-dev
+# Ensure uv CLI is installed (system-wide or user)
+if ! command -v uv >/dev/null 2>&1; then
+    echo "Installing uv CLI..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+fi
 
+# Ensure system packages are available
+echo "== Installing required system libraries =="
+sudo apt-get update -qq
+sudo apt install -y \
+  build-essential python3-dev python3-numpy cython3 \
+  libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev \
+  libopenjp2-7-dev libtiff-dev libwebp-dev tcl-dev tk-dev \
+  libdbus-1-dev libglib2.0-dev
+  
 sudo apt-get -y autoremove
 
-# Install Python packages
-pip install --upgrade pip
-pip install spidev smbus smbus2 gpiozero numpy luma.oled luma.lcd lgpio pillow st7789 RPi.GPIO
+# Sync display-related Python dependencies (auto env handled by uv)
+echo "== Installing display-related Python packages with uv =="
+uv sync --quiet
+uv pip install spidev smbus smbus2 gpiozero numpy luma.oled luma.lcd lgpio pillow st7789 RPi.GPIO
 
+# Ask user for display type
 echo "Select your display type:"
 echo "  1) waveshare (default)"
 echo "  2) tft154"
-
 read -p "Enter 1 or 2 [default: 1]: " DISPLAY_CHOICE
 
-# If timed out or invalid input, fall back to default
 if [[ "$DISPLAY_CHOICE" != "2" ]]; then
-  DISPLAY_TYPE="waveshare"
+    DISPLAY_TYPE="waveshare"
 else
-  DISPLAY_TYPE="tft154"
+    DISPLAY_TYPE="tft154"
 fi
-
-# Validate DISPLAY_TYPE
-case "$DISPLAY_TYPE" in
-    waveshare|tft154|mock)
-        ;;
-    *)
-        echo "Error: DISPLAY_TYPE must be one of: waveshare, tft154, mock"
-        exit 1
-        ;;
-esac
 
 echo "Display type set to: $DISPLAY_TYPE"
 
-# Overwrite systemd service with display version
-SERVICE_FILE="/etc/systemd/system/gshock.service"
-sudo tee "$SERVICE_FILE" > /dev/null <<EOL
+# Create launcher script
+mkdir -p "$(dirname "$LAUNCHER")"
+cat > "$LAUNCHER" <<EOL
+#!/bin/bash
+export PATH="\$HOME/.local/bin:\$PATH"
+uv run "$INSTALL_DIR/gshock_server_display.py" --display $DISPLAY_TYPE
+EOL
+chmod +x "$LAUNCHER"
+
+# Create systemd user service
+mkdir -p "$USER_SYSTEMD_DIR"
+cat > "$SERVICE_FILE" <<EOL
 [Unit]
-Description=G-Shock Time Server
+Description=G-Shock Display Server
 After=network.target
 
 [Service]
-ExecStart=$VENV_DIR/bin/python $INSTALL_DIR/gshock_server_display.py --display $DISPLAY_TYPE
-WorkingDirectory=$INSTALL_DIR
-Environment=PYTHONUNBUFFERED=1
+ExecStart=$LAUNCHER
 Restart=on-failure
 RestartSec=5
-User=$SERVICE_USER
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 EOL
 
-sudo systemctl daemon-reload
-sudo systemctl enable gshock.service
-sudo systemctl start gshock.service
+# Enable linger so the service runs without login
+loginctl enable-linger "$SERVICE_USER"
 
-echo "✅ Display setup complete!"
+# Enable and start the service
+systemctl --user daemon-reload
+systemctl --user enable gshock_display.service
+systemctl --user start gshock_display.service
+
+echo "✅ G-Shock display server installed and started (via systemd user service)."
+echo "Manage with: systemctl --user status gshock_display.service"
 EOF
 chmod +x "$DIST_DIR/setup-display.sh"
 echo "setup-display.sh has been created and made executable."

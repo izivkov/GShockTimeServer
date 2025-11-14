@@ -1,12 +1,36 @@
+[project]
+name = "gshock-server"
+version = "1.0.0"
+description = "Headless G-Shock Bluetooth Time Sync Server for Raspberry Pi"
+authors = [{ name = "Ivo Zivkov" }]
+readme = "README.md"
+requires-python = ">=3.9"
+
+dependencies = [
+    "bleak>=0.22.0",
+    "asyncio",
+    "pillow",
+    "numpy==2.2.4",
+    "requests",
+    "configparser",
+    "pyserial",
+    "typing-extensions",
+]
+
+[project.scripts]
+gshock-server = "gshock_server:main"
+
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[project]
-name = "GShockTimeServer" 
-version = "1.0.0"
-description = "Pythgon script to updqte time on GShock Watches using BLE"
-readme = "README.rst"
-authors = [{ name = "Ivo Zivkov", email = "izivkov@gmail.com" }]
-license = { file = "LICENSE" }
-dependencies = ["requests"]  # Add any required dependencies
+[tool.uv]
+# Enable automatic virtual environment management
+managed = true
+python-preference = "system"
+cache-dir = "~/.cache/uv"
+
+[tool.uv.pip]
+# Optional: enable pip compatibility mode for some edge packages
+require-hashes = false
+upgrade = true
