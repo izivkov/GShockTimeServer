@@ -50,6 +50,7 @@ SERVICE_USER="$(whoami)"
 LAUNCHER="$HOME/.local/bin/start_gshock.sh"
 USER_SYSTEMD_DIR="$HOME/.config/systemd/user"
 SERVICE_FILE="$USER_SYSTEMD_DIR/gshock.service"
+VENV_DIR="$HOME/venv"
 
 echo "== G-Shock Server Installer =="
 
@@ -70,6 +71,12 @@ if ! command -v uv >/dev/null 2>&1; then
     export PATH="$HOME/.local/bin:$PATH"
 fi
 
+# Setup virtual environment in home directory
+if [ ! -d "$VENV_DIR" ]; then
+  uv venv --system-site-packages "$VENV_DIR"
+fi
+. "$VENV_DIR/bin/activate"
+
 echo "== Installing system dependencies for Pillow and other libs =="
 sudo apt update
 sudo apt install -y \
@@ -81,7 +88,6 @@ sudo apt install -y \
 # Install dependencies using uv
 echo "== Installing dependencies via uv =="
 cd "$INSTALL_DIR"
-uv pip install numpy==1.26.4
 uv sync -q
 
 # Optional: disable WiFi power-saving
@@ -314,7 +320,9 @@ fi
 # Ensure system packages are available
 echo "== Installing required system libraries =="
 sudo apt-get update -qq
+
 sudo apt install -y \
+  swig liblgpio-dev \
   build-essential python3-dev python3-numpy cython3 \
   libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev \
   libopenjp2-7-dev libtiff-dev libwebp-dev tcl-dev tk-dev \
@@ -322,10 +330,14 @@ sudo apt install -y \
   
 sudo apt-get -y autoremove
 
+rm -rf /home/pi/venv
+uv venv --system-site-packages /home/pi/venv
+. /home/pi/venv/bin/activate
+
 # Sync display-related Python dependencies (auto env handled by uv)
 echo "== Installing display-related Python packages with uv =="
 uv sync --quiet
-uv pip install spidev smbus smbus2 gpiozero numpy luma.oled luma.lcd lgpio pillow st7789 RPi.GPIO
+uv pip install spidev smbus smbus2 gpiozero luma.oled luma.lcd lgpio pillow st7789 RPi.GPIO
 
 # Ask user for display type
 echo "Select your display type:"

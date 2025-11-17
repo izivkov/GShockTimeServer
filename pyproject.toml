@@ -9,8 +9,6 @@ requires-python = ">=3.10"
 dependencies = [
     "bleak>=0.22.0",
     "asyncio",
-    "pillow",
-    # "numpy==1.26.4",
     "requests",
     "configparser",
     "pyserial",
