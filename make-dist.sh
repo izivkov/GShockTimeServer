@@ -283,7 +283,8 @@ sudo apt-get -y autoremove
 
 # Install Python packages
 pip install --upgrade pip
-pip install spidev smbus smbus2 gpiozero numpy luma.oled luma.lcd lgpio pillow st7789 RPi.GPIO
+pip install --extra-index-url https://www.piwheels.org/simple spidev smbus smbus2 gpiozero numpy luma.oled luma.lcd lgpio pillow st7789 RPi.GPIO
+
 
 echo "Select your display type:"
 echo "  1) waveshare (default)"
