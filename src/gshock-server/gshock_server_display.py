@@ -14,7 +14,7 @@ from gshock_api.watch_info import watch_info
 from utils import run_once_key
 from peristent_store import PersistentMap
 from gshock_api.always_connected_watch_filter import always_connected_watch_filter as watch_filter
-
+from display.dimmer_service import DimmerService
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
@@ -55,6 +55,11 @@ def get_display(display_type: str):
         raise ValueError(f"Unsupported display type: {display_type}")
 
 oled = get_display(args.display)
+
+def start_dimmer(display):
+    DimmerService(display, dim_after=10, blank_after=20).start()
+
+start_dimmer(oled)
 
 def get_next_alarm_time(alarms):
     now = datetime.now()
