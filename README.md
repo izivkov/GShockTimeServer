@@ -10,15 +10,13 @@ Check out our [list of features](https://github.com/izivkov/GShockTimeServer/iss
 
 The server can run on a Raspberry Pi device with a small LCD display, ot can run headless on any device with Bluetooth and Python.
 
-💡 Note: Here we refer to Raspberry Pi, but the same instructions apply to other Pi-like devices, like Banana-Pi and other hardware compatible devices.
-
 [![Watch the video](https://img.youtube.com/vi/esZWTlzKvus/mqdefault.jpg)](https://youtu.be/esZWTlzKvus)
 
 ### Supported Watch Models
 
 Works with many **G-Shock**, **Edifice**, and **Pro Trek** variants. Here are the models reported to be compatible with the app and their modules.
 
-> **Note:** By _compatible watches_ we mean that these watches can work with the app, but this does not mean that every function of the watch is supported by the app. For example, fitness functions are not implemented in the app.
+💡 **Note:** By _compatible watches_ we mean that these watches can work with the app, but this does not mean that every function of the watch is supported by the app. For example, fitness functions are not implemented in the app.
 
 | Model              | Module Number(s)     |
 |--------------------|----------------------|
@@ -162,6 +160,8 @@ and then get the software:
 ```
 git clone https://github.com/izivkov/gshock-server-dist.git
 ```
+
+💡 Note: You will need minimum Python version 3.12
 
 This will create a directory `gshock-server-dist` containing a number of shell scripts needed to set up the server. Note that running the scripts takes relativey long time. In the Pi 3/4, typically half an hour. On the Pi Zero, let it run overnight ;-).
 
