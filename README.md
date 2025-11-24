@@ -78,6 +78,8 @@ gshock_server_display.py – for devices with an attached display
 
 To quickly get started with the headless server (on a device without a display), follow the steps below. For a more thorough and permanent installation, refer to the setup scripts described later in this document.
 
+💡 **Note**: You will need minimum Python version **3.12**.
+
 - First you need to install the follwoing dependencies:
 
 ```
@@ -160,8 +162,6 @@ and then get the software:
 ```
 git clone https://github.com/izivkov/gshock-server-dist.git
 ```
-
-💡 Note: You will need minimum Python version 3.12
 
 This will create a directory `gshock-server-dist` containing a number of shell scripts needed to set up the server. Note that running the scripts takes relativey long time. In the Pi 3/4, typically half an hour. On the Pi Zero, let it run overnight ;-).
 
