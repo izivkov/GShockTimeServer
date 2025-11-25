@@ -3,10 +3,23 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "GShockTimeServer" 
+name = "GShockTimeServer"
 version = "1.0.0"
-description = "Pythgon script to updqte time on GShock Watches using BLE"
-readme = "README.rst"
+description = "Python script to update time on GShock Watches using BLE"
+readme = "README.md"
 authors = [{ name = "Ivo Zivkov", email = "izivkov@gmail.com" }]
-license = { file = "LICENSE" }
-dependencies = ["requests"]  # Add any required dependencies
+dependencies = ["requests"]
+license = "MIT"
+license-files = ["LICENSE*"]
+requires-python = ">=3.12"
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3"
+]
+
+[project.urls]
+Documentation = "https://pyscaffold.org/"
+
+[project.optional-dependencies]
+testing = ["setuptools", "pytest", "pytest-cov"]
