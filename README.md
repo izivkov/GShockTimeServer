@@ -156,7 +156,7 @@ Use an SD card with a minimum of 4GB size and flash new image using the Pi Image
 Use the flashed SD card to boot your Pi and SSH into it. Next we need to get the software from a GitHub repository. To do that, first install the `git` package on your device:
 
 ```
-sudo apt-get install git
+sudo apt-get -y install git
 ```
 and then get the software:
 ```

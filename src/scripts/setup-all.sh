@@ -5,5 +5,4 @@
 . ./setup.sh
 . ./setup-display.sh
 . ./setup-boot.sh
-. ./gshock-updater.sh
 . ./enable-spi.sh
