@@ -74,5 +74,4 @@ CRON_JOB="0 * * * * $REPO_DIR/gshock-updater.sh >> $LOG_FILE 2>&1"
 
 echo "Updater job installed in crontab (hourly check)." | tee -a "$LOG_FILE"
 
-chmod +x "$DIST_DIR/gshock-updater.sh"
 echo "gshock-updater has been created and made executable."
