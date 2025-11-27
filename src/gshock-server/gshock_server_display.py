@@ -1,32 +1,33 @@
 import asyncio
 import sys
-
-from datetime import datetime
 import time
+from datetime import datetime, timedelta
+from typing import List, Tuple
 
 from gshock_api.connection import Connection
 from gshock_api.gshock_api import GshockAPI
 from gshock_api.iolib.button_pressed_io import WatchButton
 from gshock_api.logger import logger
 from args import args
-from datetime import timedelta
 from gshock_api.watch_info import watch_info
 from utils import run_once_key
 from peristent_store import PersistentMap
 from gshock_api.always_connected_watch_filter import always_connected_watch_filter as watch_filter
 
+
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
 
-# This script is used to set the time on a G-Shock watch and display information on a connected display.
 
-async def main(argv):
+async def main(argv: List[str]) -> None:
     await run_time_server()
+
 
 store = PersistentMap("gshock_server_data.json")
 
-def prompt():
+
+def prompt() -> None:
     logger.info(
         "=============================================================================================="
     )
@@ -40,7 +41,8 @@ def prompt():
     )
     logger.info("")
 
-def get_display(display_type: str):
+
+def get_display(display_type: str) -> object:
     if display_type == "mock":
         from display.mock_display import MockDisplay
         return MockDisplay()
@@ -53,13 +55,15 @@ def get_display(display_type: str):
     else:
         raise ValueError(f"Unsupported display type: {display_type}")
 
+
 oled = get_display(args.display)
 
-def get_next_alarm_time(alarms):
+
+def get_next_alarm_time(alarms: List[dict[str, int]]) -> Tuple[int, int] | None:
     now = datetime.now()
     today = now.date()
-    times_today = []
-    times_tomorrow = []
+    times_today: List[datetime] = []
+    times_tomorrow: List[datetime] = []
 
     for alarm in alarms:
         if not alarm.get("enabled", True):
@@ -72,7 +76,6 @@ def get_next_alarm_time(alarms):
         if alarm_time_today > now:
             times_today.append(alarm_time_today)
         else:
-            # For tomorrow
             alarm_time_tomorrow = alarm_time_today + timedelta(days=1)
             times_tomorrow.append(alarm_time_tomorrow)
 
@@ -81,11 +84,12 @@ def get_next_alarm_time(alarms):
     elif times_tomorrow:
         next_alarm = min(times_tomorrow)
     else:
-        return None, None
+        return None
 
     return next_alarm.hour, next_alarm.minute
 
-async def show_display(api: GshockAPI):
+
+async def show_display(api: GshockAPI) -> None:
     try:
         alarms = await api.get_alarms()
         hour, minute = get_next_alarm_time(alarms)
@@ -102,44 +106,44 @@ async def show_display(api: GshockAPI):
         name = watch_info.name
         short_name = ' '.join(name.strip().split()[1:])
 
-        oled.show_status( 
+        oled.show_status(
             watch_name=short_name,
-            battery = battery,
-            temperature = temperature,
+            battery=battery,
+            temperature=temperature,
             last_sync=datetime.now().strftime("%m/%d %H:%M"),
-            alarm= alarm_str,
+            alarm=alarm_str,
             reminder=reminder_title,
             auto_sync="On" if await api.get_time_adjustment() else "Off",
         )
-
     except Exception as e:
         logger.error(f"Got error: {e}")
 
-async def safe_set_time(api, offset = 0):
+
+async def safe_set_time(api: GshockAPI, offset: int = 0) -> None:
     try:
-        await api.set_time(offset = offset)
+        await api.set_time(offset=offset)
     except Exception as e:
         logger.error(f"Got error while setting time: {e}")
 
-async def safe_show_display(api):
+
+async def safe_show_display(api: GshockAPI) -> None:
     try:
         await show_display(api)
     except Exception as e:
         logger.error(f"Got error while showing display: {e}")
 
-async def run_time_server():
-    pressed_button = WatchButton.NO_BUTTON  # Always defined
+
+async def run_time_server() -> None:
+    pressed_button: WatchButton = WatchButton.NO_BUTTON
 
     prompt()
 
     while True:
-        connection = None  # In case connection creation fails
-        
-        # avoud tight loops
+        connection: Connection | None = None
+
         time.sleep(1)
 
         try:
-            # Show welcome screen only once
             run_once_key(
                 "show_welcome_screen",
                 oled.show_welcome_screen,
@@ -156,38 +160,31 @@ async def run_time_server():
                 logger.info("Failed to connect")
                 continue
 
-            # Show connected screen
             oled.show_welcome_screen(message="Connected!")
 
-            # Update store
             store.add("last_connected", datetime.now().strftime("%m/%d %H:%M"))
             store.add("watch_name", watch_info.name)
 
-            # Create API interface and wait for button
             api = GshockAPI(connection)
             pressed_button = await api.get_pressed_button()
 
-            # Only continue if relevant buttons were pressed
             if pressed_button not in [WatchButton.LOWER_RIGHT, WatchButton.NO_BUTTON, WatchButton.LOWER_LEFT]:
                 continue
 
-            # Set the time with fine adjustment
             fine_adjustment_secs = args.fine_adjustment_secs
-            await safe_set_time(api, offset = int(fine_adjustment_secs))
+            await safe_set_time(api, offset=int(fine_adjustment_secs))
 
             logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
 
-            # Display next view depending on button
             if pressed_button == WatchButton.LOWER_LEFT:
                 await safe_show_display(api)
-            elif pressed_button == WatchButton.LOWER_RIGHT or pressed_button == WatchButton.NO_BUTTON:
+            elif pressed_button in [WatchButton.LOWER_RIGHT, WatchButton.NO_BUTTON]:
                 oled.show_welcome_screen(
                     "Waiting\nfor connection...",
                     watch_name=store.get("watch_name", None),
                     last_sync=store.get("last_connected", None),
                 )
 
-            # Disconnect if needed
             if not watch_info.alwaysConnected:
                 try:
                     await connection.disconnect()
@@ -202,13 +199,9 @@ async def run_time_server():
                 watch_name=store.get("watch_name", None),
                 last_sync=store.get("last_connected", None),
             )
-
         finally:
-            # Optional: handle any cleanup here
             pass
+
 
 if __name__ == "__main__":
     asyncio.run(main(sys.argv[1:]))
-
-
-

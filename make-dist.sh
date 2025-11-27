@@ -26,6 +26,7 @@ cp "$SRC_DIR"/display/lib/*.py "$DIST_DIR/display/lib/"
 cp "$SRC_DIR"/display/pic/"*" "$DIST_DIR/display/pic/" 2>/dev/null || true
 cp "$SETUP_SCRIPT_DIR"/*.sh "$DIST_DIR"
 cp pyproject.toml "$DIST_DIR"
+cp "$SRC_DIR"/display/pic/dw-b5600.png "$DIST_DIR/display/pic/"
 
 cp requirements.txt "$DIST_DIR/"
 [ -f LICENSE ] && cp LICENSE "$DIST_DIR/"

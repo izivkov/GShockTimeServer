@@ -1,8 +1,8 @@
 import asyncio
 import sys
-
-from datetime import datetime
 import time
+from datetime import datetime, timedelta
+from typing import List, Tuple
 
 from gshock_api.connection import Connection
 from gshock_api.gshock_api import GshockAPI
@@ -10,18 +10,20 @@ from gshock_api.iolib.button_pressed_io import WatchButton
 from gshock_api.logger import logger
 from gshock_api.watch_info import watch_info
 from args import args
-from datetime import timedelta
 from peristent_store import PersistentMap
 from gshock_api.always_connected_watch_filter import always_connected_watch_filter as watch_filter
+
 
 __author__ = "Ivo Zivkov"
 __copyright__ = "Ivo Zivkov"
 __license__ = "MIT"
 
-async def main(argv):
+
+async def main(argv: List[str]) -> None:
     await run_time_server()
 
-def prompt():
+
+def prompt() -> None:
     logger.info(
         "=============================================================================================="
     )
@@ -35,11 +37,12 @@ def prompt():
     )
     logger.info("")
 
-def get_next_alarm_time(alarms):
+
+def get_next_alarm_time(alarms: List[dict[str, int]]) -> Tuple[int, int] | None:
     now = datetime.now()
     today = now.date()
-    times_today = []
-    times_tomorrow = []
+    times_today: List[datetime] = []
+    times_tomorrow: List[datetime] = []
 
     for alarm in alarms:
         if not alarm.get("enabled", True):
@@ -61,11 +64,12 @@ def get_next_alarm_time(alarms):
     elif times_tomorrow:
         next_alarm = min(times_tomorrow)
     else:
-        return None, None
+        return None
 
     return next_alarm.hour, next_alarm.minute
 
-async def run_time_server():
+
+async def run_time_server() -> None:
     store = PersistentMap("gshock_server_data.json")
     prompt()
 
@@ -88,7 +92,7 @@ async def run_time_server():
             logger.info(f"Connected to {watch_info.name} ({watch_info.address})")
             store.add("last_connected", datetime.now().strftime("%m/%d %H:%M"))
             store.add("watch_name", watch_info.name)
- 
+
             api = GshockAPI(connection)
             pressed_button = await api.get_pressed_button()
             if (
@@ -100,8 +104,8 @@ async def run_time_server():
 
             # Apply fine adjustment to the time
             fine_adjustment_secs = args.fine_adjustment_secs
-            
-            await api.set_time(offset = int(fine_adjustment_secs))
+
+            await api.set_time(offset=int(fine_adjustment_secs))
 
             logger.info(f"Time set at {datetime.now()} on {watch_info.name}")
 
@@ -111,6 +115,7 @@ async def run_time_server():
         except Exception as e:
             logger.error(f"Got error: {e}")
             continue
+
 
 if __name__ == "__main__":
     asyncio.run(main(sys.argv[1:]))

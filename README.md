@@ -80,31 +80,18 @@ To quickly get started with the headless server (on a device without a display),
 
 💡 **Note**: You will need minimum Python version **3.12**.
 
-- First you need to install the follwoing dependencies:
+We now use `uv` to manage and run the server:
 
 ```
-pytz
-bleak
-gashock-api
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
+
+uv run src/gshock-server/gshock_server.py [--fine-adjustment-secs 3]
 ```
 
-You can install them using the following command:
-
-```bash
-pip3 install -r requirements.txt
-```
-
-Then run:
-
-```bash
-python3 src/gshock_server.py [--fine-adjustment-secs secs]
-```
-
-The optional `--fine-adjustment-secs` alows you to fine adjust the time setting by providing an offset in seconds. For example:
-```
-python3 src/gshock_server.py --fine-adjustment-secs -9
-```
-will set the watches time 9 secods before the computer's time.
+The optional `--fine-adjustment-secs` alows you to fine adjust the time setting by providing an offset in seconds.
 
 ### 3.2 On Raspberry Pi with Display
 
@@ -185,12 +172,6 @@ Installs all display-related dependencies, such as `luma, spidev, numpy, pillow`
 If you enter the wrong display type, you can change it later by editing the file `/etc/systemd/system/gshock.service` and change the `--display` pareamert value to one of `waveshare`, `tft154` or `mock`. Reboot.
 
 💡 Note: You need to run both `setup.sh` and `setup-display.sh`.
-
-### gshock-updater.sh (Optional)
-
-This script will set the device to automatically update its software if a new version is available on GitHub.
-It will then restart the server, so you will always be running the latest version. The scripts sets us a cron job to
-run periodically and check for new tags on the `gshock-server-dist` GitHub repository. We recommend running this script, because we plan on adding new features soon.
 
 ### setup-boot.sh (Optional)
 
