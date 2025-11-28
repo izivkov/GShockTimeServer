@@ -10,7 +10,7 @@ readme = "README.md"
 authors = [{ name = "Ivo Zivkov", email = "izivkov@gmail.com" }]
 dependencies = [
     "bleak>=1.0.1",
-    "gshock-api>=2.0.34",
+    "gshock-api>=2.0.35",
     "pytz>=2025.2",
     "requests",
 ]
