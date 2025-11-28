@@ -11,7 +11,7 @@ from gshock_api.logger import logger
 from args import args
 from gshock_api.watch_info import watch_info
 from utils import run_once_key
-from peristent_store import PersistentMap
+from persistent_store import PersistentMap
 from gshock_api.always_connected_watch_filter import always_connected_watch_filter as watch_filter
 
 
@@ -141,7 +141,7 @@ async def run_time_server() -> None:
     while True:
         connection: Connection | None = None
 
-        time.sleep(1)
+        await asyncio.sleep(1)
 
         try:
             run_once_key(

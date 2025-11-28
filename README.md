@@ -8,7 +8,7 @@ Check out our [list of features](https://github.com/izivkov/GShockTimeServer/iss
 ### What the project does.
 **ShockTimeServer** automatically sets the correct time on your Casio G-Shock watches. Like your G-Shock itself, it’s designed to be set-and-forget. Just start the server once—it will run reliably for months with no user intervention.
 
-The server can run on a Raspberry Pi device with a small LCD display, ot can run headless on any device with Bluetooth and Python.
+The server can run on a Raspberry Pi device with a small LCD display, or can run headless on any device with Bluetooth and Python.
 
 [![Watch the video](https://img.youtube.com/vi/esZWTlzKvus/mqdefault.jpg)](https://youtu.be/esZWTlzKvus)
 
@@ -39,11 +39,11 @@ Works with many **G-Shock**, **Edifice**, and **Pro Trek** variants. Here are th
 | Edifice ECB-20     | 5638, 5603           |
 | Edifice ECB-30     | 5686, 5672           |
 
-We are looking for feedback about the accuracy of this table, so please comment in the **Issues** section with any disrepancies.
+We are looking for feedback about the accuracy of this table, so please comment in the **Issues** section with any discrepancies.
 
 ### How it works at a high level
 
-The server waits for watches to connect vial Bluetooth, and sends them the time once connected. 
+The server waits for watches to connect via Bluetooth, and sends them the time once connected. 
 
 ## 2. Features
 
@@ -66,7 +66,7 @@ The server waits for watches to connect vial Bluetooth, and sends them the time 
 
 ## 3. Quick Start
 
-💡 Note: In addition to this repository, we have created another repo on GitHub (https://github.com/izivkov/gshock-server-dist), specifically for distribution. It holds all the files nessecary to run the server and no more. This repository is preffereable for getting the distribution files, since ot also controlles versioning. Installing dependencies for the display can get a but complex, so se provide setup scripts, which use this repository to automatically set up your device.
+💡 Note: In addition to this repository, we have created another repo on GitHub (https://github.com/izivkov/gshock-server-dist), specifically for distribution. It holds all the files necessary to run the server and no more. This repository is preferable for getting the distribution files, since it also controls versioning. Installing dependencies for the display can get a bit complex, so we provide setup scripts, which use this repository to automatically set up your device.
 
 ### Headless
 
@@ -82,16 +82,28 @@ To quickly get started with the headless server (on a device without a display),
 
 We now use `uv` to manage and run the server:
 
+Install `uv` if needed:
 ```
 curl -LsSf https://astral.sh/uv/install.sh | sh
-uv venv
-source .venv/bin/activate
-uv pip install -r requirements.txt
-
-uv run src/gshock-server/gshock_server.py [--fine-adjustment-secs 3]
 ```
 
-The optional `--fine-adjustment-secs` alows you to fine adjust the time setting by providing an offset in seconds.
+Create and activate virtual environment:
+```
+uv venv
+source .venv/bin/activate
+```
+
+Install the dependencies:
+```
+uv sync
+```
+
+Run the server:
+```
+uv run src/gshock-server/gshock_server.py
+```
+
+The optional `--fine-adjustment-secs` allows you to fine adjust the time setting by providing an offset in seconds.
 
 ### 3.2 On Raspberry Pi with Display
 
@@ -119,13 +131,13 @@ This image works for both Pi Zero and Pi 3.
 
 2. Use the Raspberry PI Imager to flash to an SD card
 
-- Use an SD card with a minimum of 4GB. Start the Parpberry Pi Imager
+- Use an SD card with a minimum of 4GB. Start the Raspberry Pi Imager
 - Choose your target device
 - For OS choose "Use Custom", and select the image file `time-server-pi.img.gz` you just downloaded.
 - Select as storage a new SD you have mounted
 - Click NEXT, and edit your settings. Here you can enter your networks SSID and password. Also, from the Services tab, enable SSH.
 - Apply settings when asked, and flash your SD. You should be able to now boot your Pi.
-- The image is configured to use the `waveshare` display. If you are using a different display, like the `tft154` or `mock` after booting yout Pi, you need to manually set the display type in file `/etc/systemd/system/gshock.service`. After that, restart the service:
+- The image is configured to use the `waveshare` display. If you are using a different display, like the `tft154` or `mock` after booting your Pi, you need to manually set the display type in file `/etc/systemd/system/gshock.service`. After that, restart the service:
 ```
 sudo systemctl daemon-reload
 sudo systemctl enable gshock.service
@@ -134,7 +146,7 @@ sudo systemctl start gshock.service
 
 ### Downloading and setting up the software
 
-If you preffer to download and setup the software yourself, here are the instructions:
+If you prefer to download and setup the software yourself, here are the instructions:
 
 Use an SD card with a minimum of 4GB size and flash new image using the Pi Imager. Select your device, OS (select Lite), and your storage. Don't forget to set your Wi-Fi network and password, and make sure SSH is enabled. 
 
@@ -150,7 +162,7 @@ and then get the software:
 git clone https://github.com/izivkov/gshock-server-dist.git
 ```
 
-This will create a directory `gshock-server-dist` containing a number of shell scripts needed to set up the server. Note that running the scripts takes relativey long time. In the Pi 3/4, typically half an hour. On the Pi Zero, let it run overnight ;-).
+This will create a directory `gshock-server-dist` containing a number of shell scripts needed to set up the server. Note that running the scripts takes relatively long time. In the Pi 3/4, typically half an hour. On the Pi Zero, let it run overnight ;-).
 
 > **Pro Tip:** If you have another Raspberry Pi device in addition to the Pi Zero, you can set up the server on that device and use the **same SD card** on both.  
 > The key is to use a **32-bit OS** when creating the image with Raspberry Pi Imager, as it ensures compatibility across all Pi models, including the Pi Zero.
@@ -169,7 +181,7 @@ This script installs the basic software, dependencies, creates Python virtual en
 
 Installs all display-related dependencies, such as `luma, spidev, numpy, pillow`. While installing, it will ask you to select the display type. 
 
-If you enter the wrong display type, you can change it later by editing the file `/etc/systemd/system/gshock.service` and change the `--display` pareamert value to one of `waveshare`, `tft154` or `mock`. Reboot.
+If you enter the wrong display type, you can change it later by editing the file `/etc/systemd/system/gshock.service` and change the `--display` parameter value to one of `waveshare`, `tft154` or `mock`. Reboot.
 
 💡 Note: You need to run both `setup.sh` and `setup-display.sh`.
 
@@ -201,15 +213,15 @@ You can change this behavior by either not passing the filter function or by pro
 
 ### Connecting Your Watch
 
-Short-press the **lower-right** or long-press the **lower-left** button on your G-Shock watch to connect. The watch will connect the its correct time will be set by the server. The watch then will be disconnected. If you use the **lower-left** buton, in addition to setting time, the display on the Pi device will be updated with information about the current state of the watch. **lower-right** button will just update the time.
+Short-press the **lower-right** or long-press the **lower-left** button on your G-Shock watch to connect. The watch will connect and its correct time will be set by the server. The watch then will be disconnected. If you use the **lower-left** button, in addition to setting time, the display on the Pi device will be updated with information about the current state of the watch. **lower-right** button will just update the time.
 
-If your watch is set for auto-update time, the watch will connect automaticlly and update its time every 6 hours.
+If your watch is set for auto-update time, the watch will connect automatically and update its time every 6 hours.
 
 ## Adding a Display
 
 ### Running the Display Script
 
-If you have not set the serivce to start your server at boot time, you can start it manually:
+If you have not set the service to start your server at boot time, you can start it manually:
 
 ```bash
 python3 src/gshock_server_display.py [--fine-adjustment-secs SECS] --display [waveshare|tft154|mock]
@@ -275,7 +287,7 @@ This is a lower-cost generic display with the same ST7789 driver chip. It must b
 👉 You can get the display [here](https://amzn.to/3TSXM70)  
 👉 And the Jumper Wires [here](https://amzn.to/4eXT55D)
 
-Here is how to connect the `1.54"-TFT-SPI LCD` to Rasoberry Pi 40-pin header:
+Here is how to connect the `1.54"-TFT-SPI LCD` to Raspberry Pi 40-pin header:
 
 | LCD pin             | Purpose             | Raspberry Pi physical pin | Pi BCM GPIO | Notes                                                |
 | ------------------- | ------------------- | ------------------------- | ----------- | ---------------------------------------------------- |

@@ -10,7 +10,7 @@ from gshock_api.iolib.button_pressed_io import WatchButton
 from gshock_api.logger import logger
 from gshock_api.watch_info import watch_info
 from args import args
-from peristent_store import PersistentMap
+from persistent_store import PersistentMap
 from gshock_api.always_connected_watch_filter import always_connected_watch_filter as watch_filter
 
 
@@ -38,35 +38,7 @@ def prompt() -> None:
     logger.info("")
 
 
-def get_next_alarm_time(alarms: List[dict[str, int]]) -> Tuple[int, int] | None:
-    now = datetime.now()
-    today = now.date()
-    times_today: List[datetime] = []
-    times_tomorrow: List[datetime] = []
 
-    for alarm in alarms:
-        if not alarm.get("enabled", True):
-            continue
-        hour = alarm.get("hour")
-        minute = alarm.get("minute")
-        if not (isinstance(hour, int) and isinstance(minute, int)):
-            continue
-        alarm_time_today = datetime.combine(today, datetime.min.time()).replace(hour=hour, minute=minute)
-        if alarm_time_today > now:
-            times_today.append(alarm_time_today)
-        else:
-            # For tomorrow
-            alarm_time_tomorrow = alarm_time_today + timedelta(days=1)
-            times_tomorrow.append(alarm_time_tomorrow)
-
-    if times_today:
-        next_alarm = min(times_today)
-    elif times_tomorrow:
-        next_alarm = min(times_tomorrow)
-    else:
-        return None
-
-    return next_alarm.hour, next_alarm.minute
 
 
 async def run_time_server() -> None:
@@ -75,8 +47,8 @@ async def run_time_server() -> None:
 
     while True:
         try:
-            # avoud tight loops
-            time.sleep(1)
+            # avoid tight loops
+            await asyncio.sleep(1)
 
             logger.info("Waiting for Connection...")
 
