@@ -7,6 +7,7 @@ cd "$(dirname "$0")"
 
 # Update package list and install system dependencies needed for building Python packages
 sudo apt-get update
+sudo apt-get upgrade -y
 sudo apt-get install -y build-essential python3-dev python3-venv python3-pip curl libffi-dev
 
 # Check if uv is installed, if not install it using the official install script
@@ -21,8 +22,8 @@ fi
 # Remove old or broken .venv directory to start fresh
 rm -rf .venv
 
-# Install dependencies from requirements.txt using uv (creates .venv automatically)
-uv add -r requirements.txt
+# Install dependencies from pyproject.toml using uv (creates .venv automatically)
+uv sync
 
 # Disable power-saving mode for the WiFi, otherwize it disconnects after some time.
 echo 'sudo /sbin/iwconfig wlan0 power off' | sudo tee /etc/rc.local > /dev/null

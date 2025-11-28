@@ -7,7 +7,18 @@ set -e
 
 echo "== Enabling SPI interface =="
 
-CONFIG_FILE="/boot/firmware/config.txt"
+# Check for config.txt in both new and old locations
+if [ -f "/boot/firmware/config.txt" ]; then
+    CONFIG_FILE="/boot/firmware/config.txt"
+elif [ -f "/boot/config.txt" ]; then
+    CONFIG_FILE="/boot/config.txt"
+else
+    echo "Error: Could not find config.txt in /boot/firmware or /boot"
+    exit 1
+fi
+
+echo "Using config file: $CONFIG_FILE"
+
 SPI_LINE="dtparam=spi=on"
 REBOOT_NEEDED=false
 
@@ -26,9 +37,9 @@ else
 fi
 
 # Check if spidev is installed
-if ! uv pip show spidev > /dev/null 2>&1; then
+if ! $HOME/.local/bin/uv pip show spidev > /dev/null 2>&1; then
     echo "Installing Python spidev module..."
-    uv pip install spidev
+    $HOME/.local/bin/uv pip install spidev
 else
     echo "Python spidev module already installed."
 fi
