@@ -301,7 +301,7 @@ wheels = [
 
 [[package]]
 name = "gshock-api"
-version = "2.0.35"
+version = "2.0.36"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
@@ -310,9 +310,9 @@ dependencies = [
     { name = "types-requests" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/52/ca/4fdaee29a7e896d57faadc88f2f5bf50f40a6f25e4b0cff3c6327f973619/gshock_api-2.0.35.tar.gz", hash = "sha256:8a5652c13189af59149b5e52dbaeb440885765ee70080c45e1be137cae141257", size = 39368, upload-time = "2025-11-28T15:28:32.973Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5f/36/b31ded00775199721941856eded35a16f2a173c0e55bd3066203cc221024/gshock_api-2.0.36.tar.gz", hash = "sha256:c21e19160bd1e483312933beafb3ef807f3bf374cbbff0dc9979d81a7a454aae", size = 40505, upload-time = "2025-12-13T19:12:07.85Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0b/e9/89fbf78b4b670ed625104676267f7449b76ba93f475a4b5668e898fcda63/gshock_api-2.0.35-py3-none-any.whl", hash = "sha256:4b2d938e9e8aa485f806e5d2c7d9ef89c8398fd5c36a3c9276866636189bd1d0", size = 47909, upload-time = "2025-11-28T15:28:31.748Z" },
+    { url = "https://files.pythonhosted.org/packages/a6/28/ece55de9a5bfc179338584858863b462f15de7214215c67ce2c218723036/gshock_api-2.0.36-py3-none-any.whl", hash = "sha256:7e58e9e990d8a614bbe7363dae18c4e853290536a4eae56339a41d8518af36c3", size = 50235, upload-time = "2025-12-13T19:12:06.9Z" },
 ]
 
 [[package]]
@@ -336,7 +336,7 @@ testing = [
 [package.metadata]
 requires-dist = [
     { name = "bleak", specifier = ">=1.0.1" },
-    { name = "gshock-api", specifier = ">=2.0.35" },
+    { name = "gshock-api", specifier = ">=2.0.36" },
     { name = "pytest", marker = "extra == 'testing'" },
     { name = "pytest-cov", marker = "extra == 'testing'" },
     { name = "pytz", specifier = ">=2025.2" },
