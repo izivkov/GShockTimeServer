@@ -1,0 +1,11 @@
+Defaulting to user installation because normal site-packages is not writeable
+Collecting gshock-api
+  Downloading gshock_api-2.0.31-py3-none-any.whl.metadata (3.5 kB)
+Requirement already satisfied: requests in /home/izivkov/.local/lib/python3.10/site-packages (from gshock-api) (2.32.3)
+Requirement already satisfied: charset-normalizer<4,>=2 in /home/izivkov/.local/lib/python3.10/site-packages (from requests->gshock-api) (3.3.2)
+Requirement already satisfied: idna<4,>=2.5 in /home/izivkov/.local/lib/python3.10/site-packages (from requests->gshock-api) (2.10)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /home/izivkov/.local/lib/python3.10/site-packages (from requests->gshock-api) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in /home/izivkov/.local/lib/python3.10/site-packages (from requests->gshock-api) (2025.11.12)
+Downloading gshock_api-2.0.31-py3-none-any.whl (36 kB)
+Installing collected packages: gshock-api
+Successfully installed gshock-api-2.0.31
