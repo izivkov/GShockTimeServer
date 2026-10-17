@@ -4,7 +4,7 @@ GShockTimeServer automatically sets the correct time on compatible Casio G-Shock
 
 ## Project split
 
-This repository is the generic headless time server and retains the `GShockTimeServer` name. Raspberry Pi installation, hardware integration, and display support have moved to the separate [GshockTimeSetbetPi project](https://github.com/izivkov/GshockTimeSetbetPi).
+This repository is the generic headless time server and retains the `GShockTimeServer` name. Raspberry Pi installation, hardware integration, and display support have moved to the separate [GshockTimeSetverPi project](https://github.com/izivkov/GshockTimeSetverPi).
 
 ## Requirements
 
@@ -69,4 +69,4 @@ Compatibility does not mean every watch function is supported; for example, fitn
 
 ## Notes
 
-The server includes a filter that limits repeated connections from certain watches. For Raspberry Pi setup and display support, use the [GshockTimeSetbetPi project](https://github.com/izivkov/GshockTimeSetbetPi). For the smaller ESP32 implementation, see [gshock-api-esp32](https://github.com/izivkov/gshock-api-esp32).
+The server includes a filter that limits repeated connections from certain watches. For Raspberry Pi setup and display support, use the [GshockTimeSetverPi project](https://github.com/izivkov/GshockTimeSetverPi). For the smaller ESP32 implementation, see [gshock-api-esp32](https://github.com/izivkov/gshock-api-esp32).
